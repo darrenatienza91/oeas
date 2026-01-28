@@ -1,0 +1,32 @@
+{
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "name": "api",
+    "projectType": "application",
+    "sourceRoot": "backend/api",
+    "targets": {
+        "build": {
+            "executor": "nx:run-commands",
+            "options": {
+                "cwd": "backend/api",
+                "command": "dotnet build api.csproj"
+            },
+            "outputs": [
+                "{projectRoot}/bin"
+            ]
+        },
+        "serve": {
+            "executor": "nx:run-commands",
+            "options": {
+                "cwd": "backend/api",
+                "command": "dotnet run --project api.csproj"
+            }
+        },
+        "test": {
+            "executor": "nx:run-commands",
+            "options": {
+                "cwd": "backend/api",
+                "command": "dotnet test api.csproj"
+            }
+        }
+    }
+}
