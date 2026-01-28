@@ -1,23 +1,16 @@
 import {
-  AfterViewInit,
   Component,
   EventEmitter,
-  Input,
-  OnInit,
-  Output,
+  Input, Output
 } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { UserDetail, UserList } from '@batstateu/data-models';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  fromEvent,
-  map,
-  Observable,
-  switchMap,
-} from 'rxjs';
+import { UserDetail } from '@batstateu/data-models';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
+import { StatusPipe } from 'libs/shared/src/lib/pipes/status/status.pipe';
+import { RouterModule } from '@angular/router';
 @Component({
+  imports: [NgZorroAntdModule, ReactiveFormsModule, FormsModule, StatusPipe, RouterModule],
   selector: 'batstateu-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.less'],
@@ -29,7 +22,7 @@ export class UserListComponent {
   @Output() resetPassword = new EventEmitter();
   searchText = '';
 
-  constructor(private modal: NzModalService) {}
+  constructor(private modal: NzModalService) { }
 
   delete(userdDetail: UserDetail) {
     this.modal.confirm({

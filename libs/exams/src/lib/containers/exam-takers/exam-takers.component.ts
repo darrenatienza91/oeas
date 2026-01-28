@@ -4,8 +4,10 @@ import { ExamTakerList } from '@batstateu/data-models';
 import { ExamsService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, map } from 'rxjs';
+import { ExamTakersListComponent } from '../../components/exam-takers-list/exam-takers-list.component';
 
 @Component({
+  imports: [ExamTakersListComponent],
   selector: 'batstateu-exam-takers',
   templateUrl: './exam-takers.component.html',
   styleUrls: ['./exam-takers.component.less'],
@@ -37,7 +39,7 @@ export class ExamTakersComponent implements OnInit {
     private examService: ExamsService,
     private route: ActivatedRoute,
     private modal: NzModalService
-  ) {}
+  ) { }
   getAll(criteria: string) {
     this.examService
       .getAllExamTakers(this.examId, criteria)
@@ -45,7 +47,7 @@ export class ExamTakersComponent implements OnInit {
         this.examTakerList = val;
       });
   }
-  
+
   ngOnInit(): void {
     this.examId = Number(this.route.snapshot.paramMap.get('examId'));
 

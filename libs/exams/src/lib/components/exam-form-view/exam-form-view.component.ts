@@ -1,14 +1,12 @@
 import { Location } from '@angular/common';
 import {
-  Component,
-  DoCheck,
-  EventEmitter,
+  Component, EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
+  SimpleChanges
 } from '@angular/core';
 import {
   UntypedFormBuilder,
@@ -16,13 +14,13 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { Exam, Section } from '@batstateu/data-models';
-import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { Editor, toHTML, Toolbar } from 'ngx-editor';
+import { Editor, Toolbar } from 'ngx-editor';
+import { ExamsModule } from '../../exams.module';
 
 @Component({
+  imports: [ExamsModule],
   selector: 'batstateu-exam-form-view',
   templateUrl: './exam-form-view.component.html',
   styleUrls: ['./exam-form-view.component.less'],
@@ -38,7 +36,7 @@ export class ExamFormViewComponent implements OnInit, OnChanges, OnDestroy {
 
   toolbar: Toolbar = [
     // default value
-    ['bold', 'italic' ],
+    ['bold', 'italic'],
     ['underline', 'strike'],
     ['blockquote'],
     ['ordered_list', 'bullet_list'],
@@ -59,11 +57,11 @@ export class ExamFormViewComponent implements OnInit, OnChanges, OnDestroy {
       });
     }
   }
-  onBack(){
+  onBack() {
     this.location.back();
   }
   setValue() {
-    this.validateForm.patchValue({...this.examDetail, startOn: new Date(this.examDetail.startOn)});
+    this.validateForm.patchValue({ ...this.examDetail, startOn: new Date(this.examDetail.startOn) });
   }
   updateConfirmValidator(): void {
     /** wait for refresh value */
@@ -81,7 +79,7 @@ export class ExamFormViewComponent implements OnInit, OnChanges, OnDestroy {
     return {};
   };
 
-  constructor(private fb: UntypedFormBuilder, private modal: NzModalService, private location: Location) {}
+  constructor(private fb: UntypedFormBuilder, private modal: NzModalService, private location: Location) { }
   ngOnDestroy(): void {
     this.editor.destroy();
   }

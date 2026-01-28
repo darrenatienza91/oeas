@@ -7,11 +7,10 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { Record, TsEBMLEngine } from '@batstateu/videojs-record';
+import { Record } from '@batstateu/videojs-record';
 import videojs from 'video.js';
 import * as RecordRTC from 'recordrtc';
-import { TakeExamService } from '../../services/take-exam/take-exam.service';
-import { Observable, timer } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'batstateu-take-exam-recording',
@@ -19,8 +18,7 @@ import { Observable, timer } from 'rxjs';
   styleUrls: ['./take-exam-recording.component.less'],
 })
 export class TakeExamRecordingComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+  implements OnInit, OnDestroy, AfterViewInit {
   @Input() limit$!: Observable<number>;
   @Input() tabActive$!: Observable<boolean | null>;
   @Output() startExam = new EventEmitter();
@@ -86,7 +84,7 @@ export class TakeExamRecordingComponent
       },
     };
   }
-  constructor() {}
+  constructor() { }
 
   ngOnDestroy(): void {
     if (this.player) {
@@ -109,7 +107,7 @@ export class TakeExamRecordingComponent
         // print version information at startup
         const msg =
           'Using video.js ' +
-          videojs.VERSION +
+          //videojs.VERSION +
           ' with videojs-record ' +
           videojs.getPluginVersion('record') +
           ' and recordrtc ' +
@@ -194,5 +192,5 @@ export class TakeExamRecordingComponent
     }, 1000);
   }
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit(): void { }
 }

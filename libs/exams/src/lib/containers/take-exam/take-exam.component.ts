@@ -5,11 +5,10 @@ import {
   ViewChild,
   Inject,
   NgZone,
-  HostListener,
-  AfterViewInit,
+  HostListener
 } from '@angular/core';
 
-import { Location } from '@angular/common';
+import { AsyncPipe, Location } from '@angular/common';
 import { TakeExamRecordingComponent } from '../take-exam-recording/take-exam-recording.component';
 import {
   Exam,
@@ -22,12 +21,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ExamsService, TakeExamService, UserService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { APP_CONFIG } from '@batstateu/app-config';
-import { BehaviorSubject, interval, Observable } from 'rxjs';
+import { BehaviorSubject, interval } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as fromAuth from '@batstateu/auth';
 // import { CdTimerComponent } from 'angular-cd-timer';
 import { TakeExamCameraViewComponent } from '../../components/take-exam-camera-view/take-exam-camera-view.component';
+import { ExamsModule } from '../../exams.module';
+import { ExamInstructionViewComponent } from '../../components/exam-instruction-view/exam-instruction-view.component';
+import { TakeExamQuestionViewComponent } from '../../components/take-exam-question-view/take-exam-question-view.component';
+import { TakeExamControlComponent } from '../../components/take-exam-control/take-exam-control.component';
 @Component({
+  imports: [ExamsModule, ExamInstructionViewComponent, TakeExamQuestionViewComponent, TakeExamControlComponent, TakeExamRecordingComponent, AsyncPipe],
   selector: 'batstateu-take-exam',
   templateUrl: './take-exam.component.html',
   styleUrls: ['./take-exam.component.less'],
@@ -306,5 +310,5 @@ export class TakeExamComponent implements OnInit {
     private store: Store<fromAuth.State>,
     private userService: UserService,
     private zone: NgZone
-  ) {}
+  ) { }
 }

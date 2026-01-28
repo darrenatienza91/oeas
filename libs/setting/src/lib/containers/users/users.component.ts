@@ -3,8 +3,10 @@ import { UserDetail } from '@batstateu/data-models';
 import { UserService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, map, switchMap, take } from 'rxjs';
+import { UserListComponent } from '../../components/user-list/user-list.component';
 
 @Component({
+  imports: [UserListComponent],
   selector: 'batstateu-users',
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.less'],
@@ -33,7 +35,7 @@ export class UsersComponent implements OnInit {
       this.getAll('');
     });
   }
-  constructor(private userService: UserService, private modal: NzModalService) {}
+  constructor(private userService: UserService, private modal: NzModalService) { }
 
   ngOnInit(): void {
     this.getAll('');

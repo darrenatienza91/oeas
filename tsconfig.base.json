@@ -4,30 +4,60 @@
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
-    "module": "esnext",
-    "lib": ["es2017", "dom"],
+    "target": "es2022",
+    "module": "es2022",
+    "lib": [
+      "es2017",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@batstateu/account": ["libs/account/src/index.ts"],
-      "@batstateu/app-config": ["libs/app-config/src/index.ts"],
-      "@batstateu/auth": ["libs/auth/src/index.ts"],
-      "@batstateu/dashboard": ["libs/dashboard/src/index.ts"],
-      "@batstateu/data-models": ["libs/data-models/src/index.ts"],
-      "@batstateu/exams": ["libs/exams/src/index.ts"],
-      "@batstateu/layout": ["libs/layout/src/index.ts"],
-      "@batstateu/ng-zorro-antd": ["libs/ng-zorro-antd/src/index.ts"],
-      "@batstateu/products": ["libs/products/src/index.ts"],
-      "@batstateu/setting": ["libs/setting/src/index.ts"],
-      "@batstateu/shared": ["libs/shared/src/index.ts"],
-      "@batstateu/videojs-record": ["libs/videojs-record/src/index.ts"]
+      "@batstateu/account": [
+        "libs/account/src/index.ts"
+      ],
+      "@batstateu/app-config": [
+        "libs/app-config/src/index.ts"
+      ],
+      "@batstateu/auth": [
+        "libs/auth/src/index.ts"
+      ],
+      "@batstateu/dashboard": [
+        "libs/dashboard/src/index.ts"
+      ],
+      "@batstateu/data-models": [
+        "libs/data-models/src/index.ts"
+      ],
+      "@batstateu/exams": [
+        "libs/exams/src/index.ts"
+      ],
+      "@batstateu/layout": [
+        "libs/layout/src/index.ts"
+      ],
+      "@batstateu/ng-zorro-antd": [
+        "libs/ng-zorro-antd/src/index.ts"
+      ],
+      "@batstateu/products": [
+        "libs/products/src/index.ts"
+      ],
+      "@batstateu/setting": [
+        "libs/setting/src/index.ts"
+      ],
+      "@batstateu/shared": [
+        "libs/shared/src/index.ts"
+      ],
+      "@batstateu/videojs-record": [
+        "libs/videojs-record/src/index.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

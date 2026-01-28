@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 @Component({
+  standalone: false,
   selector: 'batstateu-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less'],

@@ -1,4 +1,4 @@
-import { DatePipe, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Exam, Section, User } from '@batstateu/data-models';
 import { ExamsService, SectionService } from '@batstateu/shared';
@@ -8,7 +8,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import * as fromAuth from '@batstateu/auth';
 import { toHTML } from 'ngx-editor';
+import { ExamFormViewComponent } from '../../components/exam-form-view/exam-form-view.component';
 @Component({
+  imports: [ExamFormViewComponent],
   selector: 'batstateu-exam-form',
   templateUrl: './exam-form.component.html',
   styleUrls: ['./exam-form.component.less'],
@@ -72,7 +74,7 @@ export class ExamFormComponent implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     private store: Store<fromAuth.State>
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getUser();

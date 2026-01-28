@@ -1,4 +1,3 @@
-import { ThisReceiver } from '@angular/compiler';
 import {
   Component,
   DoCheck,
@@ -10,10 +9,9 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import {
-  UntypedFormBuilder,
-  FormControl,
-  UntypedFormGroup,
-  Validators,
+  ReactiveFormsModule,
+  UntypedFormBuilder, UntypedFormGroup,
+  Validators
 } from '@angular/forms';
 import {
   Department,
@@ -23,10 +21,12 @@ import {
   UserFormType,
   UserType,
 } from '@batstateu/data-models';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
+  imports: [NgZorroAntdModule, ReactiveFormsModule],
   selector: 'batstateu-user-form-view',
   templateUrl: './user-form-view.component.html',
   styleUrls: ['./user-form-view.component.css'],
@@ -44,7 +44,7 @@ export class UserFormViewComponent implements OnInit, OnChanges, DoCheck {
   @Input() userFormLocation!: UserFormLocation;
   @Input() isHideUserTypeList!: boolean;
   @Input() isSetting!: boolean;
-  
+
   UserFormTypeEnum = UserFormType;
   UserFormLocationEnum = UserFormLocation;
 
@@ -74,11 +74,11 @@ export class UserFormViewComponent implements OnInit, OnChanges, DoCheck {
   }
   onChange(val: number) {
     this.userFormType = val === 3 ? this.UserFormTypeEnum.STUDENT : this.UserFormTypeEnum.FACULTY_ADMIN;
-    if(this.userFormType === this.UserFormTypeEnum.STUDENT){
+    if (this.userFormType === this.UserFormTypeEnum.STUDENT) {
       this.setSectionValidator();
     }
   }
-  constructor(private fb: UntypedFormBuilder, private modal: NzModalService) {}
+  constructor(private fb: UntypedFormBuilder, private modal: NzModalService) { }
 
   ngDoCheck(): void {
     this.validateForm.controls['code'].setValue(this.code);
@@ -96,7 +96,7 @@ export class UserFormViewComponent implements OnInit, OnChanges, DoCheck {
     if (this.userFormType === UserFormType.FACULTY_ADMIN) {
       this.validateForm.controls['sectionId'].clearValidators();
       this.validateForm.controls['sectionId'].updateValueAndValidity();
-    }else{
+    } else {
       this.validateForm.controls['sectionId'].addValidators(Validators.required);
       this.validateForm.controls['sectionId'].updateValueAndValidity();
     }

@@ -11,10 +11,12 @@ import { environment } from '../environments/environment';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { APP_CONFIG } from '@batstateu/app-config';
 import { ExamGuard } from '@batstateu/shared';
+import { LayoutComponent } from 'libs/layout/src/lib/containers/layout/layout.component';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    LayoutComponent,
     BrowserModule,
     RouterModule.forRoot(
       [
@@ -65,10 +67,10 @@ import { ExamGuard } from '@batstateu/shared';
       }
     ),
     EffectsModule.forRoot([]),
-    !environment.production ? StoreDevtoolsModule.instrument({connectInZone: true}) : [],
+    !environment.production ? StoreDevtoolsModule.instrument({ connectInZone: true }) : [],
     StoreRouterConnectingModule.forRoot(),
   ],
   providers: [{ provide: APP_CONFIG, useValue: environment }, ExamGuard],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

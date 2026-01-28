@@ -1,22 +1,24 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { User } from '@batstateu/data-models';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
-import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
+  imports: [NgZorroAntdModule, ReactiveFormsModule],
   selector: 'batstateu-register-form',
   templateUrl: './register-form.component.html',
   styleUrls: ['./register-form.component.less'],
 })
 export class RegisterFormComponent implements OnInit {
   @Output() register = new EventEmitter();
-  user! : User;
+  user!: User;
   validateForm!: UntypedFormGroup;
   captchaTooltipIcon: NzFormTooltipIcon = {
     type: 'info-circle',
@@ -59,7 +61,7 @@ export class RegisterFormComponent implements OnInit {
     e.preventDefault();
   }
 
-  constructor(private fb: UntypedFormBuilder) {}
+  constructor(private fb: UntypedFormBuilder) { }
 
   ngOnInit(): void {
     this.validateForm = this.fb.group({

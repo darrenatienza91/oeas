@@ -1,17 +1,18 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { User, UserDetail } from '@batstateu/data-models';
+import { UserDetail } from '@batstateu/data-models';
 import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { Observable } from 'rxjs';
-import { UserService } from '../../account.module';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 
 @Component({
+  imports: [NgZorroAntdModule, ReactiveFormsModule],
   selector: 'batstateu-profile-form',
   templateUrl: './profile-form.component.html',
   styleUrls: ['./profile-form.component.less'],
@@ -25,7 +26,7 @@ export class ProfileFormComponent implements OnInit {
     theme: 'twotone',
   };
 
-  setValue(userDetail : UserDetail) {
+  setValue(userDetail: UserDetail) {
     this.validateForm.patchValue(userDetail);
   }
   submitForm(): void {
@@ -62,7 +63,7 @@ export class ProfileFormComponent implements OnInit {
     e.preventDefault();
   }
 
-  constructor(private fb: UntypedFormBuilder, private modal: NzModalService) {}
+  constructor(private fb: UntypedFormBuilder, private modal: NzModalService) { }
 
   ngOnInit(): void {
     this.validateForm = this.fb.group({
@@ -76,7 +77,7 @@ export class ProfileFormComponent implements OnInit {
       contactNumber: [null, [Validators.required]],
       departmentId: [null, [Validators.required]],
       sectionId: [null, [Validators.required]],
-      isActive: [{value: false, disabled: true}],
+      isActive: [{ value: false, disabled: true }],
     });
   }
 }

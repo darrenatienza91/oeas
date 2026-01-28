@@ -5,8 +5,10 @@ import { QuestionDetail } from '@batstateu/data-models';
 import { QuestionService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { toHTML } from 'ngx-editor';
+import { QuestionFormViewComponent } from '../../components/question-form-view/question-form-view.component';
 
 @Component({
+  imports: [QuestionFormViewComponent],
   selector: 'batstateu-question-form',
   templateUrl: './question-form.component.html',
   styleUrls: ['./question-form.component.less'],
@@ -56,7 +58,7 @@ export class QuestionFormComponent implements OnInit {
     private questionService: QuestionService,
     private route: ActivatedRoute,
     private location: Location
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getValues();

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
+  imports: [NgZorroAntdModule, ReactiveFormsModule],
   selector: 'batstateu-user-form-view',
   templateUrl: './user-form-view.component.html',
   styleUrls: ['./user-form-view.component.less']
@@ -14,7 +16,7 @@ export class UserFormViewComponent implements OnInit {
     type: 'info-circle',
     theme: 'twotone'
   };
-  
+
   submitForm(): void {
     if (this.validateForm.valid) {
       console.log('submit', this.validateForm.value);
@@ -50,7 +52,7 @@ export class UserFormViewComponent implements OnInit {
     e.preventDefault();
   }
 
-  constructor(private fb: FormBuilder, private modal: NzModalService) {}
+  constructor(private fb: FormBuilder, private modal: NzModalService) { }
 
   ngOnInit(): void {
     this.validateForm = this.fb.group({

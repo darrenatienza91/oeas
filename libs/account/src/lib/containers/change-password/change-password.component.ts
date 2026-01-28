@@ -7,7 +7,9 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { take } from 'rxjs';
 import { FormBuilder, Validators } from '@angular/forms';
 import { confirmationValidator } from './confimration-validator';
+import { ChangePasswordFormComponent } from '../../components/change-password-form/change-password-form.component';
 @Component({
+  imports: [ChangePasswordFormComponent],
   selector: 'batstateu-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.less'],
@@ -21,7 +23,7 @@ export class ChangePasswordComponent {
     checkPassword: [null, [Validators.required, confirmationValidator]],
   });
 
-  constructor(private modal: NzModalService, private userService: UserService) {}
+  constructor(private modal: NzModalService, private userService: UserService) { }
 
   onSave(changePassword: ChangePassword) {
     this.userService

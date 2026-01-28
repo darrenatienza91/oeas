@@ -1,16 +1,18 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { Authenticate, ForgotPassword } from '@batstateu/data-models';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ForgotPassword } from '@batstateu/data-models';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
+  imports: [NgZorroAntdModule, ReactiveFormsModule],
   selector: 'batstateu-forgot-password-form',
   templateUrl: './forgot-password-form.component.html',
   styleUrls: ['./forgot-password-form.component.less']
 })
 export class ForgotPasswordFormComponent implements OnInit {
 
-  constructor(private fb: UntypedFormBuilder, private modal: NzModalService) {}
+  constructor(private fb: UntypedFormBuilder, private modal: NzModalService) { }
 
   @Output() submitForm = new EventEmitter<ForgotPassword>();
   passwordVisible = false;

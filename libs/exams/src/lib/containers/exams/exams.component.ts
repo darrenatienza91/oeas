@@ -4,7 +4,7 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-import { Exam, ExamList } from '@batstateu/data-models';
+import { Exam } from '@batstateu/data-models';
 import { ExamsService } from '@batstateu/shared';
 import { Store } from '@ngrx/store';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -13,10 +13,11 @@ import {
   BehaviorSubject,
   debounceTime,
   distinctUntilChanged,
-  map,
-  Observable,
+  map
 } from 'rxjs';
+import { ExamListComponent } from '../../components/exam-list/exam-list.component';
 @Component({
+  imports: [ExamListComponent],
   selector: 'batstateu-exams',
   templateUrl: './exams.component.html',
   styleUrls: ['./exams.component.less'],
@@ -35,8 +36,8 @@ export class ExamsComponent implements OnInit {
       this.cd.detectChanges();
     });
   }
-  onChangeStatus(value : any){
-    this.examService.changeStatus(value.id,!value.status).subscribe(() => {
+  onChangeStatus(value: any) {
+    this.examService.changeStatus(value.id, !value.status).subscribe(() => {
       this.getAll(this.criteria);
     });
   }
@@ -65,7 +66,7 @@ export class ExamsComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private store: Store<fromAuth.State>,
     private modal: NzModalService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getUser();

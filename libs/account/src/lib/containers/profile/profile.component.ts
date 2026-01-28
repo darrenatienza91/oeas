@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, Observer, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import {
   Department,
   Section,
@@ -13,7 +13,6 @@ import {
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import * as fromAuth from '@batstateu/auth';
 
-import { ProfileFormComponent } from '../../components/profile-form/profile-form.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
@@ -21,7 +20,9 @@ import {
   SectionService,
   UserService,
 } from '@batstateu/shared';
+import { UserFormViewComponent } from 'libs/shared/src/lib/components/user-form-view/user-form-view.component';
 @Component({
+  imports: [UserFormViewComponent],
   selector: 'batstateu-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.less'],
@@ -60,19 +61,19 @@ export class ProfileComponent implements OnInit {
     const newUserDetail =
       this.id != undefined || this.id > 0
         ? {
-            ...userDetail,
-            id: this.id,
-            user_id: this.userId,
-            user_type_id: userDetail.userTypeId,
-            isResetPassword: false,
-          }
+          ...userDetail,
+          id: this.id,
+          user_id: this.userId,
+          user_type_id: userDetail.userTypeId,
+          isResetPassword: false,
+        }
         : {
-            ...userDetail,
-            user_id: this.userId,
-            isActive: false,
-            user_type_id: userDetail.userTypeId,
-            isResetPassword: false,
-          };
+          ...userDetail,
+          user_id: this.userId,
+          isActive: false,
+          user_type_id: userDetail.userTypeId,
+          isResetPassword: false,
+        };
 
     this.userService.save(newUserDetail).subscribe(() => {
       this.modal.success({

@@ -1,25 +1,20 @@
 import {
   AfterViewInit,
-  Component,
-  EventEmitter,
-  Input,
+  Component, Input,
   OnDestroy,
-  OnInit,
-  Output,
+  OnInit
 } from '@angular/core';
-import { Record, TsEBMLEngine } from '@batstateu/videojs-record';
 import videojs from 'video.js';
-import * as RecordRTC from 'recordrtc';
-import { TakeExamService } from '../../services/take-exam/take-exam.service';
 import { Observable } from 'rxjs';
+import { ExamsModule } from '@batstateu/exams';
 @Component({
+  imports: [ExamsModule],
   selector: 'batstateu-take-exam-camera-view',
   templateUrl: './take-exam-camera-view.component.html',
   styleUrls: ['./take-exam-camera-view.component.css'],
 })
 export class TakeExamCameraViewComponent
-  implements OnInit, AfterViewInit, OnDestroy
-{
+  implements OnInit, AfterViewInit, OnDestroy {
   @Input() videoVisible$!: Observable<boolean>;
   @Input() tabActive$!: Observable<boolean | null>;
   videoVisible!: boolean;
@@ -82,7 +77,7 @@ export class TakeExamCameraViewComponent
     this.initCameraView();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   ngOnDestroy(): void {
     if (this.videoPlayer) {

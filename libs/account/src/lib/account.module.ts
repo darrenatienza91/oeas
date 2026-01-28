@@ -18,17 +18,16 @@ export { UserService } from './services/user/user.service';
     ReactiveFormsModule,
     SharedModule,
     NgZorroAntdModule,
+    ProfileFormComponent,
+    ProfileComponent,
+    ChangePasswordComponent,
+    ChangePasswordFormComponent,
     RouterModule.forChild([
       { path: '', pathMatch: 'full', redirectTo: 'profile' },
       { path: 'profile', component: ProfileComponent },
       { path: 'change-password', component: ChangePasswordComponent },
     ]),
   ],
-  declarations: [
-    ProfileFormComponent,
-    ProfileComponent,
-    ChangePasswordComponent,
-    ChangePasswordFormComponent,
-  ],
+
 })
-export class AccountModule {}
+export class AccountModule { }

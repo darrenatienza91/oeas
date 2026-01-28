@@ -1,10 +1,11 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Authenticate } from '@batstateu/data-models';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { AuthService } from '../../services/auth/auth.service';
+import { RegisterFormComponent } from '../../components/register-form/register-form.component';
 
 @Component({
+  imports: [RegisterFormComponent],
   selector: 'batstateu-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.less'],
@@ -37,7 +38,7 @@ export class RegisterComponent implements OnInit {
     private modal: NzModalService,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 }
