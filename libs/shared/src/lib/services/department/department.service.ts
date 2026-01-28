@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { APP_CONFIG } from '@batstateu/app-config';
 import { Department, ResponseWrapper } from '@batstateu/data-models';
@@ -24,5 +24,5 @@ export class DepartmentService {
   constructor(
     private httpClient: HttpClient,
     @Inject(APP_CONFIG) private appConfig: any
-  ) {}
+  ) { }
 }

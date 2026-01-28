@@ -4,7 +4,9 @@ import { ExamsService, QuestionService } from '@batstateu/shared';
 import { Store } from '@ngrx/store';
 import * as fromAuth from '@batstateu/auth';
 import { ActivatedRoute } from '@angular/router';
+import { TakeExamResultViewComponent } from '../../components/take-exam-result-view/take-exam-result-view.component';
 @Component({
+  imports: [TakeExamResultViewComponent],
   selector: 'batstateu-take-exam-result',
   templateUrl: './take-exam-result.component.html',
   styleUrls: ['./take-exam-result.component.less'],
@@ -60,7 +62,7 @@ export class TakeExamResultComponent implements OnInit {
     private questionService: QuestionService,
     private store: Store<fromAuth.State>,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.examId = Number(this.route.snapshot.paramMap.get('examId'));

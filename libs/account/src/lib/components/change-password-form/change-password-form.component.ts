@@ -1,10 +1,12 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ChangePassword } from '@batstateu/data-models';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
+  imports: [NgZorroAntdModule, ReactiveFormsModule],
   selector: 'batstateu-change-password-form',
   templateUrl: './change-password-form.component.html',
   styleUrls: ['./change-password-form.component.less'],
@@ -42,5 +44,5 @@ export class ChangePasswordFormComponent {
     e.preventDefault();
   }
 
-  constructor(private fb: UntypedFormBuilder, private modal: NzModalService) {}
+  constructor(private fb: UntypedFormBuilder, private modal: NzModalService) { }
 }

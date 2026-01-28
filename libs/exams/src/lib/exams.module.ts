@@ -34,9 +34,35 @@ import { TakeExamResultViewComponent } from './components/take-exam-result-view/
 import { SharedModule } from '@batstateu/shared';
 import { TakeExamCameraViewComponent } from './components/take-exam-camera-view/take-exam-camera-view.component';
 import { NgxEditorModule } from 'ngx-editor';
+import { StatusPipe } from 'libs/shared/src/lib/pipes/status/status.pipe';
 
 @NgModule({
   imports: [
+    ExamListComponent,
+    ExamFormComponent,
+    ExamTakersListComponent,
+    ExamItemPointsFormViewComponent,
+    ExamRecordingViewComponent,
+    ExamResultListComponent,
+    ExamResultComponent,
+    ExamRecordingComponent,
+    ExamTakersComponent,
+    ExamItemPointsComponent,
+    ExamFormViewComponent,
+    ExamItemPointsFormViewComponent,
+    ExamsComponent,
+    QuestionsComponent,
+    QuestionFormComponent,
+    QuestionFormViewComponent,
+    QuestionListComponent,
+    ExamInstructionViewComponent,
+    TakeExamComponent,
+    TakeExamRecordingComponent,
+    TakeExamControlComponent,
+    TakeExamQuestionViewComponent,
+    TakeExamResultComponent,
+    TakeExamResultViewComponent,
+    TakeExamCameraViewComponent,
     CommonModule,
     NgZorroAntdModule,
     ReactiveFormsModule,
@@ -77,32 +103,6 @@ import { NgxEditorModule } from 'ngx-editor';
     ]),
   ],
   providers: [provideHttpClient(withInterceptorsFromDi())],
-  declarations: [
-    ExamListComponent,
-    ExamFormComponent,
-    ExamTakersListComponent,
-    ExamItemPointsFormViewComponent,
-    ExamRecordingViewComponent,
-    ExamResultListComponent,
-    ExamResultComponent,
-    ExamRecordingComponent,
-    ExamTakersComponent,
-    ExamItemPointsComponent,
-    ExamFormViewComponent,
-    ExamItemPointsFormViewComponent,
-    ExamsComponent,
-    QuestionsComponent,
-    QuestionFormComponent,
-    QuestionFormViewComponent,
-    QuestionListComponent,
-    ExamInstructionViewComponent,
-    TakeExamComponent,
-    TakeExamRecordingComponent,
-    TakeExamControlComponent,
-    TakeExamQuestionViewComponent,
-    TakeExamResultComponent,
-    TakeExamResultViewComponent,
-    TakeExamCameraViewComponent,
-  ],
+  exports: [NgZorroAntdModule, ReactiveFormsModule, NgxEditorModule, FormsModule, RouterModule, StatusPipe]
 })
-export class ExamsModule {}
+export class ExamsModule { }

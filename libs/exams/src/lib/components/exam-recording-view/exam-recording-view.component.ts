@@ -1,17 +1,16 @@
 import {
   Component,
   OnInit,
-  OnDestroy,
-  ElementRef,
-  Input,
-  DoCheck,
+  OnDestroy, Input
 } from '@angular/core';
-import { Record, adapter } from '@batstateu/videojs-record';
+import { Record } from '@batstateu/videojs-record';
 import videojs from 'video.js';
 import * as RecordRTC from 'recordrtc';
 import { Observable } from 'rxjs';
 import { ExamRecordViewModel } from '@batstateu/data-models';
+import { ExamsModule } from '@batstateu/exams';
 @Component({
+  imports: [ExamsModule],
   selector: 'batstateu-exam-recording-view',
   templateUrl: './exam-recording-view.component.html',
   styleUrls: ['./exam-recording-view.component.less'],
@@ -67,7 +66,7 @@ export class ExamRecordingViewComponent implements OnInit, OnDestroy {
         // print version information at startup
         const msg =
           'Using video.js ' +
-          videojs.VERSION +
+          //videojs.VERSION +
           ' with videojs-record ' +
           videojs.getPluginVersion('record') +
           ' and recordrtc ' +
@@ -105,7 +104,7 @@ export class ExamRecordingViewComponent implements OnInit, OnDestroy {
     });
   }
   // constructor initializes our declared vars
-  constructor() {}
+  constructor() { }
   ngOnInit(): void {
     this.examRecordViewModel$.subscribe((val) => {
       if (val !== null) {

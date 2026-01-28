@@ -9,14 +9,13 @@ import { SideNavComponent } from './components/side-nav/side-nav.component';
 import { LayoutViewComponent } from './components/layout-view/layout-view.component';
 
 @NgModule({
-  imports: [CommonModule, NgZorroAntdModule, RouterModule],
-  declarations: [
-    LayoutComponent,
+  imports: [CommonModule, NgZorroAntdModule, RouterModule, LayoutComponent,
     HeaderComponent,
     FooterComponent,
     SideNavComponent,
-    LayoutViewComponent
-  ],
-  exports: [LayoutComponent]
+    LayoutViewComponent],
+  declarations: [
+
+  ]
 })
-export class LayoutModule {}
+export class LayoutModule { }

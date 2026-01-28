@@ -6,13 +6,13 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AnswerFormModel } from '@batstateu/data-models';
-import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { Observable } from 'rxjs';
+import { ExamsModule } from '../../exams.module';
 
 @Component({
+  imports: [ExamsModule],
   selector: 'batstateu-exam-item-points-form-view',
   templateUrl: './exam-item-points-form-view.component.html',
   styleUrls: ['./exam-item-points-form-view.component.less'],
@@ -71,7 +71,7 @@ export class ExamItemPointsFormViewComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private modal: NzModalService,
     private location: Location
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.validateForm = this.fb.group({

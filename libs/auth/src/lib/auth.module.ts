@@ -51,6 +51,7 @@ const COMPONENTS = [
 ];
 @NgModule({
   imports: [
+    COMPONENTS,
     CommonModule,
     RouterModule,
     HttpClientModule,
@@ -64,7 +65,6 @@ const COMPONENTS = [
     ),
     EffectsModule.forFeature([AuthEffects]),
   ],
-  declarations: COMPONENTS,
   exports: [COMPONENTS],
   providers: [
     { provide: AUTH_LOCAL_STORAGE_KEY, useValue: '__auth_storage__' },
@@ -81,4 +81,4 @@ const COMPONENTS = [
     },
   ],
 })
-export class AuthModule {}
+export class AuthModule { }

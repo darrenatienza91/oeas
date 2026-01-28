@@ -13,22 +13,21 @@ export * from './services/department/department.service';
 export * from './services/user-type/user-type.service';
 export * from './services/exams/exams.service';
 export * from './services/question/question.service';
-export * from './services/take-exam/take-exam.service'; 
-export * from  './guards/exam/exam.guard';
+export * from './services/take-exam/take-exam.service';
+export * from './guards/exam/exam.guard';
 @NgModule({
-    imports: [
-      CommonModule,
-      ReactiveFormsModule,
-      NgZorroAntdModule,
-      RouterModule
-    ],
-    declarations: [
-        UserFormViewComponent,
-        StatusPipe,
-    ],
-    exports:[
-      UserFormViewComponent,
-      StatusPipe
-    ]
-  })
-  export class SharedModule {}
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NgZorroAntdModule,
+    RouterModule,
+    UserFormViewComponent,
+    StatusPipe
+  ],
+
+  exports: [
+    UserFormViewComponent,
+    StatusPipe
+  ]
+})
+export class SharedModule { }

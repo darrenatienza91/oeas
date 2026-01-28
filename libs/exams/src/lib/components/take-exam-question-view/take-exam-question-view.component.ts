@@ -2,11 +2,8 @@ import { Location } from '@angular/common';
 import {
   Component,
   EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
+  Input, OnInit,
+  Output
 } from '@angular/core';
 import {
   UntypedFormBuilder,
@@ -15,12 +12,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { TakerExamQuestion } from '@batstateu/data-models';
-import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
+import { ExamsModule } from '@batstateu/exams';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { Editor, Toolbar } from 'ngx-editor';
 import { Observable } from 'rxjs';
+import { TakeExamCameraViewComponent } from '../take-exam-camera-view/take-exam-camera-view.component';
 
 @Component({
+  imports: [ExamsModule, TakeExamCameraViewComponent],
   selector: 'batstateu-take-exam-question-view',
   templateUrl: './take-exam-question-view.component.html',
   styleUrls: ['./take-exam-question-view.component.less'],
@@ -35,7 +34,7 @@ export class TakeExamQuestionViewComponent implements OnInit {
   limit = 60;
   validateForm!: UntypedFormGroup;
   editor!: Editor;
-  
+
   toolbar: Toolbar = [
     // default value
     ['bold', 'italic'],
@@ -88,7 +87,7 @@ export class TakeExamQuestionViewComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private modal: NzModalService,
     private location: Location
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.editor = new Editor();

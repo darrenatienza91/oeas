@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { QuestionList } from '@batstateu/data-models';
+import { ExamsModule } from '@batstateu/exams';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
+  imports: [ExamsModule],
   selector: 'batstateu-question-list',
   templateUrl: './question-list.component.html',
   styleUrls: ['./question-list.component.less'],
@@ -12,9 +14,9 @@ export class QuestionListComponent implements OnInit {
   @Output() deleteRecord = new EventEmitter<number>();
   @Output() search = new EventEmitter<string>();
   searchText = '';
-  constructor(private modal: NzModalService) {}
+  constructor(private modal: NzModalService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   delete(questionListDetail: QuestionList) {
     this.modal.confirm({

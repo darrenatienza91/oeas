@@ -5,7 +5,6 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzAnchorModule } from 'ng-zorro-antd/anchor';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { NzBackTopModule } from 'ng-zorro-antd/back-top';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -16,14 +15,13 @@ import { NzCascaderModule } from 'ng-zorro-antd/cascader';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzCommentModule } from 'ng-zorro-antd/comment';
-import { NzNoAnimationModule } from 'ng-zorro-antd/core/no-animation';
 import { NzTransButtonModule } from 'ng-zorro-antd/core/trans-button';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
@@ -35,9 +33,7 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzMentionModule } from 'ng-zorro-antd/mention';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
-import { NzMessageModule } from 'ng-zorro-antd/message';
 import { NzModalModule } from 'ng-zorro-antd/modal';
-import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
@@ -58,7 +54,6 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzTimelineModule } from 'ng-zorro-antd/timeline';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzTreeSelectModule } from 'ng-zorro-antd/tree-select';
@@ -134,7 +129,6 @@ const icons: IconDefinition[] = [
     NzAnchorModule,
     NzAutocompleteModule,
     NzAvatarModule,
-    NzBackTopModule,
     NzBadgeModule,
     NzButtonModule,
     NzBreadCrumbModule,
@@ -149,7 +143,7 @@ const icons: IconDefinition[] = [
     NzDescriptionsModule,
     NzDividerModule,
     NzDrawerModule,
-    NzDropDownModule,
+    NzDropdownModule,
     NzEmptyModule,
     NzFormModule,
     NzGridModule,
@@ -161,10 +155,7 @@ const icons: IconDefinition[] = [
     NzListModule,
     NzMentionModule,
     NzMenuModule,
-    NzMessageModule,
     NzModalModule,
-    NzNoAnimationModule,
-    NzNotificationModule,
     NzPageHeaderModule,
     NzPaginationModule,
     NzPopconfirmModule,
@@ -185,7 +176,6 @@ const icons: IconDefinition[] = [
     NzTagModule,
     NzTimePickerModule,
     NzTimelineModule,
-    NzToolTipModule,
     NzTransButtonModule,
     NzTransferModule,
     NzTreeModule,
@@ -197,4 +187,4 @@ const icons: IconDefinition[] = [
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],
 })
-export class NgZorroAntdModule {}
+export class NgZorroAntdModule { }

@@ -1,17 +1,14 @@
 import {
   Component,
   EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
+  Input, Output
 } from '@angular/core';
-import { Exam, ExamList } from '@batstateu/data-models';
+import { Exam } from '@batstateu/data-models';
+import { ExamsModule } from '@batstateu/exams';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { Observable } from 'rxjs';
 
 @Component({
+  imports: [ExamsModule],
   selector: 'batstateu-exam-list',
   templateUrl: './exam-list.component.html',
   styleUrls: ['./exam-list.component.less'],
@@ -23,7 +20,7 @@ export class ExamListComponent {
   @Output() search = new EventEmitter<string>();
   @Output() changeStatus = new EventEmitter();
   searchText = '';
-  constructor(private modal: NzModalService) {}
+  constructor(private modal: NzModalService) { }
 
   delete(examListDetail: Exam) {
     this.modal.confirm({
@@ -37,7 +34,7 @@ export class ExamListComponent {
   onSearchChange(criteria: string) {
     this.search.emit(criteria);
   }
-  onChangeStatus(id? : number, status?: boolean){
-    this.changeStatus.emit({id,status});
+  onChangeStatus(id?: number, status?: boolean) {
+    this.changeStatus.emit({ id, status });
   }
 }

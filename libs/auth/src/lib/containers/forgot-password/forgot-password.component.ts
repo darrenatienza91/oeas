@@ -3,8 +3,10 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UserService } from '@batstateu/shared';
 import { ForgotPassword } from '@batstateu/data-models';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ForgotPasswordFormComponent } from '../../components/forgot-password-form/forgot-password-form.component';
 
 @Component({
+  imports: [ForgotPasswordFormComponent],
   selector: 'batstateu-forgot-password',
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.less'],
@@ -36,7 +38,7 @@ export class ForgotPasswordComponent implements OnInit {
   constructor(
     private userService: UserService,
     private modal: NzModalService
-  ) {}
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 }

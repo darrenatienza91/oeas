@@ -14,7 +14,9 @@ import { Observable } from 'rxjs';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import * as fromAuth from '@batstateu/auth';
 import { ActivatedRoute } from '@angular/router';
+import { UserFormViewComponent } from '../../components/user-form-view/user-form-view.component';
 @Component({
+  imports: [UserFormViewComponent],
   selector: 'batstateu-user-form',
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.less'],
@@ -53,17 +55,17 @@ export class UserFormComponent implements OnInit {
     const newUserDetail =
       this.id != undefined || this.id > 0
         ? {
-            ...userDetail,
-            id: this.id,
-            user_id: this.userId,
-            user_type_id: userDetail.userTypeId,
-          }
+          ...userDetail,
+          id: this.id,
+          user_id: this.userId,
+          user_type_id: userDetail.userTypeId,
+        }
         : {
-            ...userDetail,
-            user_id: this.userId,
-            isActive: false,
-            user_type_id: userDetail.userTypeId,
-          };
+          ...userDetail,
+          user_id: this.userId,
+          isActive: false,
+          user_type_id: userDetail.userTypeId,
+        };
 
     this.userService.save(newUserDetail).subscribe(() =>
       this.modal.success({

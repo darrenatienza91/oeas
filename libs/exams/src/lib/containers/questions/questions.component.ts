@@ -4,8 +4,10 @@ import { QuestionList } from '@batstateu/data-models';
 import { QuestionService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, map } from 'rxjs';
+import { QuestionListComponent } from '../../components/question-list/question-list.component';
 
 @Component({
+  imports: [QuestionListComponent],
   selector: 'batstateu-questions',
   templateUrl: './questions.component.html',
   styleUrls: ['./questions.component.less']
@@ -15,10 +17,10 @@ export class QuestionsComponent implements OnInit {
   questionList!: QuestionList[];
   criteria = '';
   examId!: number;
-  delete(id : number){
+  delete(id: number) {
     alert(id);
   }
-  constructor(private questionService : QuestionService, private modal : NzModalService, private route : ActivatedRoute) { }
+  constructor(private questionService: QuestionService, private modal: NzModalService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.examId = Number(this.route.snapshot.paramMap.get('examId'));
@@ -35,11 +37,11 @@ export class QuestionsComponent implements OnInit {
       });
   }
   getAll(criteria: string) {
-    this.questionService.getAll(this.examId,criteria).subscribe((val) => {
+    this.questionService.getAll(this.examId, criteria).subscribe((val) => {
       this.questionList = val
     });
   }
-  onSearch(criteria : string){
+  onSearch(criteria: string) {
     this.criteria = criteria;
     this.searchSubject$.next(criteria);
   }
