@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { APP_CONFIG } from '@batstateu/app-config';
-import { ResponseWrapper, UserDetail } from '@batstateu/data-models';
+import { UserDetail } from '@batstateu/data-models';
 import { map, Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
@@ -28,21 +28,12 @@ export class UserService {
         }),
       );
   }
-  constructor(private httpClient: HttpClient, @Inject(APP_CONFIG) private appConfig: any) {}
+  constructor(private httpClient: HttpClient, @Inject(APP_CONFIG) private appConfig: any) { }
 
   get(userId: number | undefined): Observable<UserDetail> {
     return this.httpClient
-      .get<ResponseWrapper<UserDetail>>(
-        `${this.appConfig.API_URL}/records/userDetails?filter=user_id,eq,${userId}&join=sections&join=departments&join=users&join=user_types`,
-      )
-      .pipe(
-        map((res: ResponseWrapper<any>) => {
-          const user = res.records[0];
-          if (user === undefined) {
-            throw Error('User Detail not found!');
-          }
-          return { ...user, code: user.user_id.username, userType: user.user_type_id.name };
-        }),
+      .get<UserDetail>(
+        `${this.appConfig.API_URL}/users/${userId}/detail`,
       );
   }
 }

@@ -5,7 +5,6 @@ import { catchError, exhaustMap, filter, map, switchMap, tap } from 'rxjs/operat
 import { AuthActionTypes } from './auth.actions';
 import * as authActions from './auth.actions';
 import { AuthService } from './../services/auth/auth.service';
-import { User } from '@batstateu/data-models';
 import { forkJoin, of } from 'rxjs';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { UserService } from '@batstateu/account';
@@ -19,7 +18,7 @@ export class AuthEffects {
     private userService: UserService,
     private router: Router,
     private modal: NzModalService,
-  ) {}
+  ) { }
 
   login$ = createEffect(() =>
     this.actions$.pipe(
@@ -27,22 +26,22 @@ export class AuthEffects {
       exhaustMap((action) => {
         const { payload } = action;
         return this.authService.login(payload).pipe(
-          catchError(() => of({} as User)),
           switchMap((user) => forkJoin([this.userService.get(user.id), of(user)])),
           filter((userDetail) => !!userDetail),
           map(([userDetail, user]) =>
             authActions.loginSuccess({
               payload: {
                 id: user.id,
-                isActive: userDetail.isActive,
-                username: user.username,
+                isActive: user.isActive,
+                userName: user.userName,
                 firstName: userDetail.firstName,
                 userDetailId: userDetail.id,
                 sectionId: userDetail.sectionId?.id || null,
-                userType: userDetail.userType,
+                userType: user.userType,
               },
             }),
           ),
+          catchError(() => of(authActions.loginFailure({ payload: "Login Failed" }))),
         );
       }),
     ),
@@ -69,6 +68,17 @@ export class AuthEffects {
             nzContent: `Please update your profile now so administrator can review and activate it!`,
           });
           this.router.navigate([`/account/profile`]);
+        }),
+      ),
+    { dispatch: false },
+  );
+
+  loginFailed$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActionTypes.LoginFail),
+        tap(() => {
+          console.log("Login Failed!")
         }),
       ),
     { dispatch: false },

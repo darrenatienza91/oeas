@@ -1,0 +1,10 @@
+GET {{HOST}}/api/users/1/detail HTTP/1.1
+Authorization: Bearer 123
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "Darren",
+  "password": "myPass"
+}
+

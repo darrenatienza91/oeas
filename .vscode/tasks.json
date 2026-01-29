@@ -1,0 +1,13 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "nx: serve oeas",
+            "type": "shell",
+            "command": "npx nx serve oeas",
+            "problemMatcher": [
+                "$tsc"
+            ]
+        }
+    ]
+}

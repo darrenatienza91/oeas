@@ -1,0 +1,20 @@
+POST {{HOST}}/api/auth/login HTTP/1.1
+Authorization: Bearer 123
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "Darren",
+  "password": "myPass"
+}
+
+### Register
+POST {{HOST}}/api/auth/register HTTP/1.1
+Authorization: Bearer 123
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "Darren",
+  "password": "myPass"
+}

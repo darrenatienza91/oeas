@@ -88,7 +88,7 @@ export class ProfileComponent implements OnInit {
     this.user$.subscribe({
       next: (user) => {
         this.userId = user?.id || 0;
-        this.code = user?.username || '';
+        this.code = user?.userName || '';
         if (this.userId > 0) {
           this.userService.get(user?.id).subscribe((val) => {
             this.id = val.id;
