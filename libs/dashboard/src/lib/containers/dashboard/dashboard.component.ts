@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { format } from 'date-fns';
 import * as fromAuth from '@batstateu/auth';
 import { StatsComponent } from '../../components/stats/stats.component';
+import { forkJoin, of, switchMap, take } from 'rxjs';
 export interface Person {
   key: string;
   date: string;
@@ -17,27 +18,27 @@ export interface Person {
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
-  upcomingExams!: ExamCard[];
-  sectionId!: number | null;
-  userDetailId!: number | null;
-  user!: User | null;
-  getUser() {
-    this.store.select(fromAuth.getUser).subscribe((val) => {
-      this.sectionId = val?.sectionId;
-      this.userDetailId = val?.userDetailId || null;
-      this.user = val || null;
-    });
-  }
-  constructor(
-    private examService: ExamsService,
-    private store: Store<fromAuth.State>
-  ) { }
+  public upcomingExams!: ExamCard[];
+  public user: User = {} as User;
+
+  constructor(private examService: ExamsService, private store: Store<fromAuth.State>) {}
 
   ngOnInit(): void {
-    this.getUser();
     const date = format(new Date(), 'yyyy-MM-dd');
-    this.examService
-      .getAllStartOn(date, this.sectionId, this.userDetailId)
-      .subscribe((val) => (this.upcomingExams = val));
+    this.store
+      .select(fromAuth.getUser)
+      .pipe(
+        switchMap((user) =>
+          forkJoin([
+            of(user),
+            this.examService.getAllStartOn(date, user?.sectionId, user?.userDetailId ?? null),
+          ]),
+        ),
+        take(1),
+      )
+      .subscribe(([user, exams]) => {
+        this.user = user as User;
+        this.upcomingExams = exams;
+      });
   }
 }
