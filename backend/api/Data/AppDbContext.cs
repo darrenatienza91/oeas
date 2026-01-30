@@ -10,6 +10,13 @@ namespace api.Data
   public class AppDbContext : DbContext
   {
     public DbSet<User> Users => Set<User>();
+    public DbSet<Answer> Answers => Set<Answer>();
+    public DbSet<Department> Departments => Set<Department>();
+    public DbSet<Exam> Exams => Set<Exam>();
+    public DbSet<ExamTaker> ExamTakers => Set<ExamTaker>();
+    public DbSet<ExamTakerAnswer> ExamTakerAnswers => Set<ExamTakerAnswer>();
+    public DbSet<Question> Questions => Set<Question>();
+    public DbSet<Section> Sections => Set<Section>();
     public DbSet<UserDetail> UserDetails => Set<UserDetail>();
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
@@ -19,12 +26,7 @@ namespace api.Data
     {
       base.OnModelCreating(modelBuilder);
 
-      modelBuilder.Entity<User>().Property(t => t.UserType).HasDefaultValue(UserType.Student);
-      modelBuilder
-        .Entity<User>()
-        .HasOne(u => u.UserDetail)
-        .WithOne(p => p.User)
-        .HasForeignKey<UserDetail>(p => p.UserId);
+      modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
   }
 }
