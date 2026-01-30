@@ -7,6 +7,6 @@ namespace api.Models
 {
   public class BaseEntity<T>
   {
-    public required T Id { get; set; }
+    public T Id { get; set; }
   }
 }

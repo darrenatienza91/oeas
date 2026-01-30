@@ -12,6 +12,7 @@ public class Department : BaseEntity<int>
   public string Name { get; set; } = string.Empty;
 
   public ICollection<Section> Sections { get; set; } = [];
+  public ICollection<UserDetail> UserDetails { get; set; } = [];
 }
 
 public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
@@ -22,8 +23,6 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
 
     entity.HasKey(e => e.Id);
 
-    entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
-
-    entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(255).IsRequired();
+    entity.Property(e => e.Name).HasMaxLength(255).IsRequired();
   }
 }

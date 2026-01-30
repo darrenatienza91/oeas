@@ -15,6 +15,7 @@ namespace api.Models
     public UserDetail UserDetail { get; set; }
     public Exam Exam { get; set; }
     public DateTime CreateDate { get; set; }
+    public ICollection<ExamTakerAnswer> ExamTakerAnswers { get; set; } = [];
   }
 
   public class ExamTakerConfiguration : IEntityTypeConfiguration<ExamTaker>
@@ -25,8 +26,6 @@ namespace api.Models
 
       entity.HasKey(e => e.Id);
 
-      entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
-
       entity
         .HasOne(e => e.Exam)
         .WithMany(s => s.ExamTakers)
@@ -36,7 +35,7 @@ namespace api.Models
       entity
         .HasOne(e => e.UserDetail)
         .WithMany(s => s.ExamTakers)
-        .HasForeignKey(e => e.ExamId)
+        .HasForeignKey(e => e.UserDetailId)
         .OnDelete(DeleteBehavior.Restrict);
     }
   }

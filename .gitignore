@@ -47,3 +47,6 @@ Thumbs.db
 
 **/bin/**
 **/obj/**
+.tmp
+oeas.db
+/docs

@@ -21,48 +21,29 @@ namespace api.Models
     // Navigation properties
     public Section Section { get; set; } = null!;
     public UserDetail? UserDetail { get; set; }
-    public ICollection<Question> Questions { get; set; } = new List<Question>();
-    public ICollection<ExamTaker> ExamTakers { get; set; } = new List<ExamTaker>();
+    public ICollection<Question> Questions { get; set; } = [];
+    public ICollection<ExamTaker> ExamTakers { get; set; } = [];
   }
 
   public class ExamConfiguration : IEntityTypeConfiguration<Exam>
   {
     public void Configure(EntityTypeBuilder<Exam> entity)
     {
-      entity.ToTable("exams");
+      entity.ToTable("Exams");
 
       entity.HasKey(e => e.Id);
 
-      entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
+      entity.Property(e => e.Name).HasMaxLength(255).IsRequired();
 
-      entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(255).IsRequired();
+      entity.Property(e => e.Subject).HasMaxLength(255).IsRequired();
 
-      entity.Property(e => e.Subject).HasColumnName("subject").HasMaxLength(255).IsRequired();
+      entity.Property(e => e.StartOn).IsRequired();
 
-      entity
-        .Property(e => e.StartOn)
-        .HasColumnName("startOn")
-        .HasColumnType("datetime")
-        .IsRequired();
+      entity.Property(e => e.Duration).IsRequired();
 
-      entity.Property(e => e.Duration).HasColumnName("duration").IsRequired();
+      entity.Property(e => e.IsActive).IsRequired();
 
-      entity.Property(e => e.SectionId).HasColumnName("sectionId").IsRequired();
-
-      entity
-        .Property(e => e.IsActive)
-        .HasColumnName("isActive")
-        .HasColumnType("tinyint(1)")
-        .IsRequired();
-
-      entity
-        .Property(e => e.Instructions)
-        .HasColumnName("instructions")
-        .HasColumnType("text")
-        .UseCollation("utf8mb4_0900_ai_ci")
-        .IsRequired();
-
-      entity.Property(e => e.UserDetailId).HasColumnName("userDetailId");
+      entity.Property(e => e.Instructions).HasMaxLength(1000).IsRequired();
 
       // Relationships
       entity

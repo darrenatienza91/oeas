@@ -7,30 +7,26 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace api.Models
 {
-  public class ExamAnswer : BaseEntity<int>
+  public class Answer : BaseEntity<int>
   {
-    public required UserDetail UserDetail { get; set; }
-    public int UserDetailId { get; set; }
     public int Points { get; set; }
     public bool IsCorrect { get; set; }
-    public int ExamId { get; set; }
     public int QuestionId { get; set; }
     public Question Question { get; set; } = null!;
+    public ICollection<ExamTakerAnswer> ExamTakerAnswers { get; set; } = [];
   }
 
-  public class ExamAnswerConfiguration : IEntityTypeConfiguration<ExamAnswer>
+  public class AnswerConfiguration : IEntityTypeConfiguration<Answer>
   {
-    public void Configure(EntityTypeBuilder<ExamAnswer> entity)
+    public void Configure(EntityTypeBuilder<Answer> entity)
     {
-      entity.ToTable("ExamAnswers");
+      entity.ToTable("Answers");
 
       entity.HasKey(e => e.Id);
-
-      entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
-
+      entity.HasKey(e => e.Id);
       entity
         .HasOne(e => e.Question)
-        .WithMany(s => s.ExamAnswers)
+        .WithMany(s => s.Answers)
         .HasForeignKey(e => e.QuestionId)
         .OnDelete(DeleteBehavior.Restrict);
     }

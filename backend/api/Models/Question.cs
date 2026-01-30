@@ -9,45 +9,29 @@ namespace api.Models
 {
   public class Question : BaseEntity<int>
   {
-    public string QuestionText { get; set; } = null!;
-    public string CorrectAnswer { get; set; } = null!;
-    public int MaxPoints { get; set; }
+    public string Description { get; set; } = null!;
+    public int Points { get; set; }
     public int ExamId { get; set; }
 
     // Navigation
     public Exam Exam { get; set; } = null!;
-    public ICollection<ExamAnswer> ExamAnswers { get; set; } = [];
+    public ICollection<Answer> Answers { get; set; } = [];
+    public ICollection<ExamTakerAnswer> ExamTakerAnswers { get; set; } = [];
   }
 
   public class QuestionConfiguration : IEntityTypeConfiguration<Question>
   {
     public void Configure(EntityTypeBuilder<Question> entity)
     {
-      entity.ToTable("questions");
+      entity.ToTable("Questions");
 
       entity.HasKey(q => q.Id);
 
-      entity.Property(q => q.Id).HasColumnName("id").ValueGeneratedOnAdd();
+      entity.Property(q => q.Description).IsRequired();
 
-      entity
-        .Property(q => q.QuestionText)
-        .HasColumnName("question")
-        .HasColumnType("text")
-        .UseCollation("utf8mb4_0900_ai_ci")
-        .IsRequired();
+      entity.Property(q => q.Points).IsRequired();
 
-      entity
-        .Property(q => q.CorrectAnswer)
-        .HasColumnName("correctAnswer")
-        .HasColumnType("text")
-        .UseCollation("utf8mb4_0900_ai_ci")
-        .IsRequired();
-
-      entity.Property(q => q.MaxPoints).HasColumnName("maxpoints").IsRequired();
-
-      entity.Property(q => q.ExamId).HasColumnName("examId").IsRequired();
-
-      entity.HasIndex(q => q.ExamId).HasDatabaseName("questions_FK");
+      entity.Property(q => q.ExamId).IsRequired();
 
       entity
         .HasOne(q => q.Exam)
