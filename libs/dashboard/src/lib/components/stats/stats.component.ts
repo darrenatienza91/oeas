@@ -13,16 +13,15 @@ import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 export class StatsComponent implements OnInit {
   @Input() upcomingExams!: ExamCard[];
   @Input() user!: User | null;
-  constructor(private router: Router) { }
+  constructor(private router: Router) {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   openExam(examId?: number) {
-    if (this.user?.userType == "Student") {
+    if (this.user?.userType == 'Student') {
       this.router.navigate([`exams/${examId}/take-exam`]);
     } else {
       this.router.navigate([`exams/${examId}/form`]);
     }
-
   }
 }

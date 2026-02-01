@@ -1,12 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ExamTakerResultList } from '@batstateu/data-models';
-import { ExamsModule } from '@batstateu/exams';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 
 @Component({
-  imports: [ExamsModule],
+  imports: [ReactiveFormsModule, FormsModule, NgZorroAntdModule, RouterLink, CommonModule],
   selector: 'batstateu-exam-result-list',
   templateUrl: './exam-result-list.component.html',
-  styleUrls: ['./exam-result-list.component.less']
+  styleUrls: ['./exam-result-list.component.less'],
 })
 export class ExamResultListComponent implements OnInit {
   @Input() examTakerResultList: ExamTakerResultList[] = [];
@@ -16,9 +19,7 @@ export class ExamResultListComponent implements OnInit {
     this.search.emit(criteria);
   }
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

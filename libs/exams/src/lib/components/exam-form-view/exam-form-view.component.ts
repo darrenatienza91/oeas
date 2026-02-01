@@ -1,49 +1,45 @@
-import { Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import {
-  Component, EventEmitter,
+  Component,
+  EventEmitter,
+  inject,
+  input,
   Input,
-  OnChanges,
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges
 } from '@angular/core';
 import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { Exam, Section } from '@batstateu/data-models';
-import { NzModalService } from 'ng-zorro-antd/modal';
-import { Editor, Toolbar } from 'ngx-editor';
-import { ExamsModule } from '../../exams.module';
+import { Editor, NgxEditorModule } from 'ngx-editor';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
+import { toolbar as toolbars } from './utils';
 
 @Component({
-  imports: [ExamsModule],
+  imports: [NgxEditorModule, ReactiveFormsModule, FormsModule, NgZorroAntdModule, CommonModule],
   selector: 'batstateu-exam-form-view',
   templateUrl: './exam-form-view.component.html',
   styleUrls: ['./exam-form-view.component.less'],
 })
-export class ExamFormViewComponent implements OnInit, OnChanges, OnDestroy {
+export class ExamFormViewComponent implements OnInit, OnDestroy {
   editor!: Editor;
   html!: '';
   @Output() save = new EventEmitter<Exam>();
-  @Input() sections!: Section[];
+  public sections = input<Section[]>();
   @Input() examDetail!: Exam;
   validateForm!: UntypedFormGroup;
   title = 'Add New';
+  public toolBars = toolbars;
 
-  toolbar: Toolbar = [
-    // default value
-    ['bold', 'italic'],
-    ['underline', 'strike'],
-    ['blockquote'],
-    ['ordered_list', 'bullet_list'],
-    [{ heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
-    ['align_left', 'align_center', 'align_right', 'align_justify'],
-  ];
-
+  private fb: UntypedFormBuilder = inject(UntypedFormBuilder);
+  private location: Location = inject(Location);
 
   submitForm(): void {
     if (this.validateForm.valid) {
@@ -60,14 +56,12 @@ export class ExamFormViewComponent implements OnInit, OnChanges, OnDestroy {
   onBack() {
     this.location.back();
   }
+
   setValue() {
-    this.validateForm.patchValue({ ...this.examDetail, startOn: new Date(this.examDetail.startOn) });
-  }
-  updateConfirmValidator(): void {
-    /** wait for refresh value */
-    Promise.resolve().then(() =>
-      this.validateForm.controls['checkPassword'].updateValueAndValidity()
-    );
+    this.validateForm.patchValue({
+      ...this.examDetail,
+      startOn: new Date(this.examDetail.startOn),
+    });
   }
 
   durationValidator = (control: UntypedFormControl): { [s: string]: boolean } => {
@@ -79,17 +73,8 @@ export class ExamFormViewComponent implements OnInit, OnChanges, OnDestroy {
     return {};
   };
 
-  constructor(private fb: UntypedFormBuilder, private modal: NzModalService, private location: Location) { }
   ngOnDestroy(): void {
     this.editor.destroy();
-  }
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['examDetail']) {
-      if (this.examDetail) {
-        this.setValue();
-        this.title = 'Edit';
-      }
-    }
   }
 
   ngOnInit(): void {

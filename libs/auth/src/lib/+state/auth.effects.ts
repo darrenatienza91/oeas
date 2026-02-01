@@ -18,7 +18,7 @@ export class AuthEffects {
     private userService: UserService,
     private router: Router,
     private modal: NzModalService,
-  ) { }
+  ) {}
 
   login$ = createEffect(() =>
     this.actions$.pipe(
@@ -36,12 +36,12 @@ export class AuthEffects {
                 userName: user.userName,
                 firstName: userDetail.firstName,
                 userDetailId: userDetail.id,
-                sectionId: userDetail.sectionId?.id || null,
+                sectionId: userDetail.sectionId,
                 userType: user.userType,
               },
             }),
           ),
-          catchError(() => of(authActions.loginFailure({ payload: "Login Failed" }))),
+          catchError(() => of(authActions.loginFailure({ payload: 'Login Failed' }))),
         );
       }),
     ),
@@ -78,7 +78,7 @@ export class AuthEffects {
       this.actions$.pipe(
         ofType(AuthActionTypes.LoginFail),
         tap(() => {
-          console.log("Login Failed!")
+          console.log('Login Failed!');
         }),
       ),
     { dispatch: false },

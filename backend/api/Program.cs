@@ -14,6 +14,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserDetailService>();
+builder.Services.AddScoped<IExamService, ExamService>();
+builder.Services.AddScoped<ISectionService, SectionService>();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
   options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
@@ -38,6 +41,8 @@ var api = app.MapGroup("/api");
 api.MapAuthEndpoints();
 api.MapUserDetailEndpoints();
 api.MapUserEndpoints();
+api.MapExamEndpoints();
+api.MapSectionEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -1,25 +1,29 @@
-import { Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
-  Component,
-  EventEmitter,
-  Input, OnInit,
-  Output
-} from '@angular/core';
-import {
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { TakerExamQuestion } from '@batstateu/data-models';
-import { ExamsModule } from '@batstateu/exams';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { Editor, Toolbar } from 'ngx-editor';
+import { Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
 import { Observable } from 'rxjs';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { TakeExamCameraViewComponent } from '../take-exam-camera-view/take-exam-camera-view.component';
 
 @Component({
-  imports: [ExamsModule, TakeExamCameraViewComponent],
+  imports: [
+    NgxEditorModule,
+    TakeExamCameraViewComponent,
+    ReactiveFormsModule,
+    FormsModule,
+    NgZorroAntdModule,
+    CommonModule,
+  ],
   selector: 'batstateu-take-exam-question-view',
   templateUrl: './take-exam-question-view.component.html',
   styleUrls: ['./take-exam-question-view.component.less'],
@@ -86,8 +90,8 @@ export class TakeExamQuestionViewComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private modal: NzModalService,
-    private location: Location
-  ) { }
+    private location: Location,
+  ) {}
 
   ngOnInit(): void {
     this.editor = new Editor();

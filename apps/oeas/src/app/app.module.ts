@@ -25,34 +25,29 @@ import { LayoutComponent } from 'libs/layout/src/lib/containers/layout/layout.co
         {
           path: 'dashboard',
           loadChildren: () =>
-            import('@batstateu/dashboard').then(
-              (module) => module.DashboardModule
-            ),
+            import('@batstateu/dashboard').then((module) => module.DashboardModule),
           canActivate: [AuthGuard],
         },
         {
           path: 'setting',
-          loadChildren: () =>
-            import('@batstateu/setting').then((module) => module.SettingModule),
+          loadChildren: () => import('@batstateu/setting').then((module) => module.SettingModule),
           canActivate: [AuthGuard],
         },
         {
           path: 'exams',
-          loadChildren: () =>
-            import('@batstateu/exams').then((module) => module.ExamsModule),
+          loadChildren: () => import('@batstateu/exams').then((module) => module.ExamsModule),
           canActivate: [AuthGuard],
           canActivateChild: [ExamGuard],
         },
         {
           path: 'account',
-          loadChildren: () =>
-            import('@batstateu/account').then((module) => module.AccountModule),
+          loadChildren: () => import('@batstateu/account').then((module) => module.AccountModule),
           canActivate: [AuthGuard],
         },
       ],
       {
         initialNavigation: 'enabledBlocking',
-      }
+      },
     ),
     AuthModule,
     LayoutModule,
@@ -64,7 +59,7 @@ import { LayoutComponent } from 'libs/layout/src/lib/containers/layout/layout.co
           strictActionImmutability: true,
           strictStateImmutability: true,
         },
-      }
+      },
     ),
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument({ connectInZone: true }) : [],
@@ -73,4 +68,4 @@ import { LayoutComponent } from 'libs/layout/src/lib/containers/layout/layout.co
   providers: [{ provide: APP_CONFIG, useValue: environment }, ExamGuard],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

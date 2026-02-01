@@ -1,14 +1,14 @@
-import {
-  Component,
-  EventEmitter,
-  Input, Output
-} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { Exam } from '@batstateu/data-models';
-import { ExamsModule } from '@batstateu/exams';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
+import { StatusPipe } from 'libs/shared/src/lib/pipes/status/status.pipe';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
-  imports: [ExamsModule],
+  imports: [FormsModule, NgZorroAntdModule, RouterLink, CommonModule, StatusPipe],
   selector: 'batstateu-exam-list',
   templateUrl: './exam-list.component.html',
   styleUrls: ['./exam-list.component.less'],
@@ -20,7 +20,7 @@ export class ExamListComponent {
   @Output() search = new EventEmitter<string>();
   @Output() changeStatus = new EventEmitter();
   searchText = '';
-  constructor(private modal: NzModalService) { }
+  constructor(private modal: NzModalService) {}
 
   delete(examListDetail: Exam) {
     this.modal.confirm({

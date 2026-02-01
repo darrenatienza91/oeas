@@ -6,7 +6,7 @@ using api.Models;
 
 namespace api.Contracts
 {
-  public record UserDetailDto(int Id, string FirstName, int UserId);
+  public record UserDetailDto(int Id, string FirstName, int UserId, int? SectionId);
 
   public record AddUserDetailDto(string FirstName, int UserId);
 
@@ -14,7 +14,12 @@ namespace api.Contracts
   {
     public static UserDetailDto MapToUserDetailDto(UserDetail userDetail)
     {
-      return new(Id: userDetail.Id, FirstName: userDetail.FirstName, UserId: userDetail.UserId);
+      return new(
+        Id: userDetail.Id,
+        FirstName: userDetail.FirstName,
+        UserId: userDetail.UserId,
+        SectionId: userDetail.SectionId
+      );
     }
 
     public static UserDetail MapToUserDetail(AddUserDetailDto dto)

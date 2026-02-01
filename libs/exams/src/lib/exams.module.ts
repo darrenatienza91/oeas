@@ -23,10 +23,7 @@ import { ExamInstructionViewComponent } from './components/exam-instruction-view
 import { TakeExamComponent } from './containers/take-exam/take-exam.component';
 import { TakeExamControlComponent } from './components/take-exam-control/take-exam-control.component';
 import { TakeExamRecordingComponent } from './containers/take-exam-recording/take-exam-recording.component';
-import {
-  provideHttpClient,
-  withInterceptorsFromDi,
-} from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { TakeExamQuestionViewComponent } from './components/take-exam-question-view/take-exam-question-view.component';
 import { DataModelsModule } from '@batstateu/data-models';
 import { TakeExamResultComponent } from './containers/take-exam-result/take-exam-result.component';
@@ -72,37 +69,44 @@ import { StatusPipe } from 'libs/shared/src/lib/pipes/status/status.pipe';
     NgxEditorModule,
     RouterModule.forChild([
       { path: '', component: ExamsComponent },
-      { path: ':examId/form', component: ExamFormComponent },
       { path: 'form', component: ExamFormComponent },
-      { path: 'item-points', component: ExamItemPointsComponent },
-      {
-        path: ':examId/takers/:takerId/recording',
-        component: ExamRecordingComponent,
-      },
-      {
-        path: ':examId/takers/:takerId/results',
-        component: ExamResultComponent,
-      },
-      {
-        path: ':examId/takers/:takerId/results/:examAnsId',
-        component: ExamItemPointsComponent,
-      },
-      { path: ':examId/takers', component: ExamTakersComponent },
-      {
-        path: ':examId/takers/:takerId/recording',
-        component: ExamRecordingComponent,
-      },
-      { path: ':examId/take-exam', component: TakeExamComponent },
-      { path: ':examId/questions', component: QuestionsComponent },
-      {
-        path: ':examId/questions/:questionId/edit',
-        component: QuestionFormComponent,
-      },
-      { path: ':examId/questions/add', component: QuestionFormComponent },
-      { path: ':examId/result', component: TakeExamResultComponent },
+      // { path: ':examId/form', component: ExamFormComponent },
+      // { path: 'item-points', component: ExamItemPointsComponent },
+      // {
+      //   path: ':examId/takers/:takerId/recording',
+      //   component: ExamRecordingComponent,
+      // },
+      // {
+      //   path: ':examId/takers/:takerId/results',
+      //   component: ExamResultComponent,
+      // },
+      // {
+      //   path: ':examId/takers/:takerId/results/:examAnsId',
+      //   component: ExamItemPointsComponent,
+      // },
+      // { path: ':examId/takers', component: ExamTakersComponent },
+      // {
+      //   path: ':examId/takers/:takerId/recording',
+      //   component: ExamRecordingComponent,
+      // },
+      // { path: ':examId/take-exam', component: TakeExamComponent },
+      // { path: ':examId/questions', component: QuestionsComponent },
+      // {
+      //   path: ':examId/questions/:questionId/edit',
+      //   component: QuestionFormComponent,
+      // },
+      // { path: ':examId/questions/add', component: QuestionFormComponent },
+      // { path: ':examId/result', component: TakeExamResultComponent },
     ]),
   ],
   providers: [provideHttpClient(withInterceptorsFromDi())],
-  exports: [NgZorroAntdModule, ReactiveFormsModule, NgxEditorModule, FormsModule, RouterModule, StatusPipe]
+  exports: [
+    NgZorroAntdModule,
+    ReactiveFormsModule,
+    NgxEditorModule,
+    FormsModule,
+    RouterModule,
+    StatusPipe,
+  ],
 })
-export class ExamsModule { }
+export class ExamsModule {}

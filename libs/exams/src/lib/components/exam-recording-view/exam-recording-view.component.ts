@@ -1,16 +1,15 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy, Input
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Record } from '@batstateu/videojs-record';
 import videojs from 'video.js';
 import * as RecordRTC from 'recordrtc';
 import { Observable } from 'rxjs';
 import { ExamRecordViewModel } from '@batstateu/data-models';
-import { ExamsModule } from '@batstateu/exams';
+import { NgZorroAntdModule } from 'libs/ng-zorro-antd/src/lib/ng-zorro-antd.module';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 @Component({
-  imports: [ExamsModule],
+  imports: [ReactiveFormsModule, FormsModule, NgZorroAntdModule, RouterLink, CommonModule],
   selector: 'batstateu-exam-recording-view',
   templateUrl: './exam-recording-view.component.html',
   styleUrls: ['./exam-recording-view.component.less'],
@@ -57,23 +56,19 @@ export class ExamRecordingViewComponent implements OnInit, OnDestroy {
     const el = 'video_' + this.idx;
 
     // setup the player via the unique element ID
-    this.player = videojs(
-      document.getElementById(el) as HTMLVideoElement,
-      this.config,
-      () => {
-        console.log('player ready! id:', el);
+    this.player = videojs(document.getElementById(el) as HTMLVideoElement, this.config, () => {
+      console.log('player ready! id:', el);
 
-        // print version information at startup
-        const msg =
-          'Using video.js ' +
-          //videojs.VERSION +
-          ' with videojs-record ' +
-          videojs.getPluginVersion('record') +
-          ' and recordrtc ' +
-          RecordRTC.version;
-        videojs.log(msg);
-      }
-    );
+      // print version information at startup
+      const msg =
+        'Using video.js ' +
+        //videojs.VERSION +
+        ' with videojs-record ' +
+        videojs.getPluginVersion('record') +
+        ' and recordrtc ' +
+        RecordRTC.version;
+      videojs.log(msg);
+    });
 
     // device is ready
     this.player.on('deviceReady', () => {
@@ -104,7 +99,7 @@ export class ExamRecordingViewComponent implements OnInit, OnDestroy {
     });
   }
   // constructor initializes our declared vars
-  constructor() { }
+  constructor() {}
   ngOnInit(): void {
     this.examRecordViewModel$.subscribe((val) => {
       if (val !== null) {

@@ -11,7 +11,7 @@ namespace api.Models
   {
     public string Name { get; set; } = null!;
     public string Subject { get; set; } = null!;
-    public DateTime StartOn { get; set; }
+    public DateTimeOffset StartOn { get; set; }
     public int Duration { get; set; }
     public int SectionId { get; set; }
     public bool IsActive { get; set; }
@@ -37,7 +37,11 @@ namespace api.Models
 
       entity.Property(e => e.Subject).HasMaxLength(255).IsRequired();
 
-      entity.Property(e => e.StartOn).IsRequired();
+      entity
+        .Property(e => e.StartOn)
+        .HasConversion(v => v.UtcDateTime.ToString("O"), v => DateTimeOffset.Parse(v))
+        .HasColumnType("TEXT")
+        .IsRequired();
 
       entity.Property(e => e.Duration).IsRequired();
 
