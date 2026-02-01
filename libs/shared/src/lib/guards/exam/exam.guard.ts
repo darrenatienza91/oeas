@@ -3,25 +3,29 @@ import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@a
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import * as fromAuth from '@batstateu/auth';
-import { User } from '@batstateu/data-models';
+import { AuthPayload } from '@batstateu/data-models';
 import { NzMessageService } from 'ng-zorro-antd/message';
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class ExamGuard  {
-  user! : User | null;
-  constructor(private store : Store<fromAuth.State>, private router : Router, private message: NzMessageService ){
-    this.store.select(fromAuth.getUser).subscribe(val => this.user = val);
+export class ExamGuard {
+  authSuccess!: AuthPayload | null;
+  constructor(
+    private store: Store<fromAuth.State>,
+    private router: Router,
+    private message: NzMessageService,
+  ) {
+    this.store.select(fromAuth.getAuthSuccess).subscribe((val) => (this.authSuccess = val));
   }
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if(!this.user?.isActive){
+    state: RouterStateSnapshot,
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    if (!this.authSuccess?.user.isActive) {
       this.router.navigate(['/dashboard']);
-      this.message.error("You cannot view exams while your account is inactive!")
+      this.message.error('You cannot view exams while your account is inactive!');
       return false;
     }
     return true;
   }
-  
 }

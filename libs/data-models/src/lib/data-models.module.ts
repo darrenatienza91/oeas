@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-export { Authenticate } from './authenticate';
-export { User } from './user';
+export { Authenticate } from './authenticate.model';
+export { User } from './user.model';
 export { ExamList } from './exam-list';
 export { ExamTakerList } from './exam-taker-list';
 export { ExamTakerResultList } from './exam-taker-result-list';
@@ -27,6 +27,7 @@ export { ExamAnswerList } from './exam-answer-list';
 export { AnswerFormModel } from './answer-form-model';
 export { ExamRecordViewModel } from './exam-recording-view-model';
 export { ExamCard } from './exam-card';
+export { AuthPayload } from './auth-success.model';
 
 @NgModule({
   imports: [CommonModule],

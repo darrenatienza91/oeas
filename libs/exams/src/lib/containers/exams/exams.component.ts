@@ -56,10 +56,10 @@ export class ExamsComponent implements OnInit {
     this.searchSubject$.next(criteria);
   }
   getUser() {
-    this.store.select(fromAuth.getUser).subscribe((val) => {
-      this.sectionId = val?.sectionId;
-      this.userDetailId = val?.userDetailId || null;
-      this.isStudent = val?.userType === 'Student';
+    this.store.select(fromAuth.getAuthSuccess).subscribe((val) => {
+      this.sectionId = val?.user.sectionId ?? null;
+      this.userDetailId = val?.user.userDetailId || null;
+      this.isStudent = val?.user.userType === 'Student';
     });
   }
 

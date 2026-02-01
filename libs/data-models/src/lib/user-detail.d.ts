@@ -1,4 +1,4 @@
-import { User } from './user';
+import { User } from './user.model';
 
 export interface UserDetail extends User {
   code: string;
@@ -9,7 +9,7 @@ export interface UserDetail extends User {
   address: string;
   departmentId: number;
   sectionId: any | null;
-  
+
   contactNumber: string;
   user_id: number;
   contactNumberPrefix: string;

@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Authenticate, User } from '@batstateu/data-models';
+import { Authenticate, AuthPayload } from '@batstateu/data-models';
 
 export enum AuthActionTypes {
   Login = '[Auth Page] Login',
@@ -12,11 +12,14 @@ export enum AuthActionTypes {
 
 export const login = createAction(AuthActionTypes.Login, props<{ payload: Authenticate }>());
 
-export const loginSuccess = createAction(AuthActionTypes.LoginSuccess, props<{ payload: User }>());
+export const loginSuccess = createAction(
+  AuthActionTypes.LoginSuccess,
+  props<{ payload: AuthPayload }>(),
+);
 
 export const loginSuccessNewAccount = createAction(
   AuthActionTypes.LoginSuccessNewAccount,
-  props<{ payload: User }>(),
+  props<{ payload: AuthPayload }>(),
 );
 
 export const loginFailure = createAction(AuthActionTypes.LoginFail, props<{ payload: any }>());

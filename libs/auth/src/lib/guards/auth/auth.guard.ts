@@ -4,17 +4,19 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as fromAuth from '../../+state/auth.reducer';
 import { Store, select } from '@ngrx/store';
-import { getUser } from '../../+state/auth.selectors';
+import { getAuthSuccess } from '../../+state/auth.selectors';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard  {
-
-  constructor(private router: Router, private store: Store<fromAuth.State>) {}
+export class AuthGuard {
+  constructor(
+    private router: Router,
+    private store: Store<fromAuth.State>,
+  ) {}
   canActivate(): Observable<boolean> {
     return this.store.pipe(
-      select(getUser),
+      select(getAuthSuccess),
       map((user) => {
         if (user) {
           return true;
@@ -22,7 +24,7 @@ export class AuthGuard  {
           this.router.navigate([`/auth/login`]);
           return false;
         }
-      })
+      }),
     );
   }
 }

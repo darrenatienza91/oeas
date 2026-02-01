@@ -1,41 +1,43 @@
 import { createReducer, on, Action } from '@ngrx/store';
 import * as AuthActions from './auth.actions';
-import { User } from '@batstateu/data-models';
+import { AuthPayload } from '@batstateu/data-models';
 export const AUTH_FEATURE_KEY = 'auth';
 
 export interface State {
   loading: boolean;
-  user: User | null;
+  authPayload: AuthPayload | null;
   error: '';
 }
 
 export const initialState: State = {
   error: '',
-  user: null,
+  authPayload: null,
   loading: false,
 };
 //feature selector on index.ts
 const authReducer = createReducer(
   initialState,
   on(AuthActions.login, (state, action) => ({ ...state, auth: action.payload, loading: true })),
-  on(AuthActions.loginSuccess, (state,action) => ({
+  on(AuthActions.loginSuccess, (state, action) => {
+    return {
+      ...state,
+      authPayload: action.payload,
+      loading: false,
+    };
+  }),
+  on(AuthActions.loginSuccessNewAccount, (state, action) => ({
     ...state,
-    user: action.payload,
-    loading: false,
-  })),
-  on(AuthActions.loginSuccessNewAccount, (state,action) => ({
-    ...state,
-    user: action.payload,
+    authPayload: action.payload,
     loading: false,
   })),
   on(AuthActions.loginFailure, (state) => ({
     ...state,
-    user: null,
+    authPayload: null,
     loading: false,
   })),
   on(AuthActions.logout, (state) => ({
     ...state,
-    user: null,
+    authPayload: null,
     loading: false,
   })),
 );

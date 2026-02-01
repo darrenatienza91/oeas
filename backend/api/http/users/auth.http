@@ -4,8 +4,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username": "Darren",
-  "password": "myPass"
+  "username": "admin",
+  "password": "admin"
 }
 
 ### Register

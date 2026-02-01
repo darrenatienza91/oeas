@@ -1,11 +1,42 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using api.Data;
 using api.Endpoints;
 using api.Models;
 using api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// JWT config values
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+
+// Add Authentication
+builder
+  .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+  .AddJwtBearer(options =>
+  {
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+      ValidateIssuer = true,
+      ValidateAudience = true,
+      ValidateLifetime = true,
+      ValidateIssuerSigningKey = true,
+
+      ValidIssuer = jwtSettings["Issuer"],
+      ValidAudience = jwtSettings["Audience"],
+      IssuerSigningKey = new SymmetricSecurityKey(key),
+      RoleClaimType = ClaimTypes.Role,
+    };
+  });
+
+// Add Authorization
+builder.Services.AddAuthorization();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -35,6 +66,11 @@ builder.Services.AddCors(options =>
   );
 });
 var app = builder.Build();
+
+// ⚠️ Order matters
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseCors("AllowFrontend");
 var api = app.MapGroup("/api");
 

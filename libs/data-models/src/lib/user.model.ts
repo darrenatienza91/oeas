@@ -4,6 +4,6 @@ export interface User {
   id: number;
   isActive: boolean;
   userDetailId: number;
-  sectionId: numuber | null;
+  sectionId: number | null;
   userType: string;
 }

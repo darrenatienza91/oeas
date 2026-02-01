@@ -35,7 +35,10 @@ export class UsersComponent implements OnInit {
       this.getAll('');
     });
   }
-  constructor(private userService: UserService, private modal: NzModalService) { }
+  constructor(
+    private userService: UserService,
+    private modal: NzModalService,
+  ) {}
 
   ngOnInit(): void {
     this.getAll('');

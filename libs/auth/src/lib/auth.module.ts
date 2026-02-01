@@ -14,11 +14,7 @@ import * as fromAuth from './+state/auth.reducer';
 import { AuthEffects } from './+state/auth.effects';
 import { LocalStorageService } from './services/local-storage.service';
 import { storageMetaReducer } from './storage-metareducer';
-import {
-  AUTH_CONFIG_TOKEN,
-  AUTH_LOCAL_STORAGE_KEY,
-  AUTH_STORAGE_KEYS,
-} from './auth.tokens';
+import { AUTH_CONFIG_TOKEN, AUTH_LOCAL_STORAGE_KEY, AUTH_STORAGE_KEYS } from './auth.tokens';
 import { RegisterFormComponent } from './components/register-form/register-form.component';
 import { RegisterComponent } from './containers/register/register.component';
 import { ForgotPasswordComponent } from './containers/forgot-password/forgot-password.component';
@@ -27,12 +23,10 @@ import { ForgotPasswordFormComponent } from './components/forgot-password-form/f
 export function getAuthConfig(
   saveKeys: string[],
   localStorageKey: string,
-  storageService: LocalStorageService
+  storageService: LocalStorageService,
 ) {
   return {
-    metaReducers: [
-      storageMetaReducer(saveKeys, localStorageKey, storageService),
-    ],
+    metaReducers: [storageMetaReducer(saveKeys, localStorageKey, storageService)],
   };
 }
 
@@ -58,17 +52,13 @@ const COMPONENTS = [
     NgZorroAntdModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    StoreModule.forFeature(
-      fromAuth.AUTH_FEATURE_KEY,
-      fromAuth.reducer,
-      AUTH_CONFIG_TOKEN
-    ),
+    StoreModule.forFeature(fromAuth.AUTH_FEATURE_KEY, fromAuth.reducer, AUTH_CONFIG_TOKEN),
     EffectsModule.forFeature([AuthEffects]),
   ],
   exports: [COMPONENTS],
   providers: [
     { provide: AUTH_LOCAL_STORAGE_KEY, useValue: '__auth_storage__' },
-    { provide: AUTH_STORAGE_KEYS, useValue: ['user'] },
+    { provide: AUTH_STORAGE_KEYS, useValue: ['authPayload'] },
     {
       provide: AUTH_CONFIG_TOKEN,
       deps: [AUTH_STORAGE_KEYS, AUTH_LOCAL_STORAGE_KEY, LocalStorageService],
@@ -81,4 +71,4 @@ const COMPONENTS = [
     },
   ],
 })
-export class AuthModule { }
+export class AuthModule {}

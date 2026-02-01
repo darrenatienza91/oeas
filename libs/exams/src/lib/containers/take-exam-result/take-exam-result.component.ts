@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '@batstateu/data-models';
+import { AuthPayload } from '@batstateu/data-models';
 import { ExamsService, QuestionService } from '@batstateu/shared';
 import { Store } from '@ngrx/store';
 import * as fromAuth from '@batstateu/auth';
@@ -12,7 +12,7 @@ import { TakeExamResultViewComponent } from '../../components/take-exam-result-v
   styleUrls: ['./take-exam-result.component.less'],
 })
 export class TakeExamResultComponent implements OnInit {
-  userStore!: User | null;
+  userStore!: AuthPayload | null;
   examId!: number;
   totalPoints = 0;
   totalQuestionPoints = 0;
@@ -21,10 +21,9 @@ export class TakeExamResultComponent implements OnInit {
   scoreSummary!: string;
   getExamResultPoints() {
     this.examService
-      .getAllTakerAnswers(this.userStore?.userDetailId || 0, this.examId)
+      .getAllTakerAnswers(this.userStore?.user.userDetailId || 0, this.examId)
       .subscribe((ans) => {
-        const hasPoints =
-          ans.filter((x) => x.points && x.points > 0).length > 0;
+        const hasPoints = ans.filter((x) => x.points && x.points > 0).length > 0;
         if (hasPoints) {
           ans.map((val2) => {
             if (val2.points && val2.points >= 0) {
@@ -34,12 +33,9 @@ export class TakeExamResultComponent implements OnInit {
 
           this.questionService.getAllByExamId(this.examId).subscribe((val) => {
             val.map((val) => {
-              this.totalQuestionPoints =
-                this.totalQuestionPoints + val.maxpoints;
+              this.totalQuestionPoints = this.totalQuestionPoints + val.maxpoints;
             });
-            this.percentage = Math.round(
-              (this.totalPoints / this.totalQuestionPoints) * 100
-            );
+            this.percentage = Math.round((this.totalPoints / this.totalQuestionPoints) * 100);
             this.scoreSummary = `${this.totalPoints} / ${this.totalQuestionPoints}`;
           });
         } else {
@@ -48,12 +44,10 @@ export class TakeExamResultComponent implements OnInit {
       });
   }
   getExam() {
-    this.examService
-      .get(this.examId)
-      .subscribe((val) => (this.examTitle = val.name));
+    this.examService.get(this.examId).subscribe((val) => (this.examTitle = val.name));
   }
   getUser() {
-    this.store.select(fromAuth.getUser).subscribe((val) => {
+    this.store.select(fromAuth.getAuthSuccess).subscribe((val) => {
       this.userStore = val;
     });
   }
@@ -61,8 +55,8 @@ export class TakeExamResultComponent implements OnInit {
     private examService: ExamsService,
     private questionService: QuestionService,
     private store: Store<fromAuth.State>,
-    private route: ActivatedRoute
-  ) { }
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
     this.examId = Number(this.route.snapshot.paramMap.get('examId'));
