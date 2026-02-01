@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ExamCard, User } from '@batstateu/data-models';
 import { ExamsService } from '@batstateu/shared';
 import { Store } from '@ngrx/store';
-import { format } from 'date-fns';
 import * as fromAuth from '@batstateu/auth';
 import { StatsComponent } from '../../components/stats/stats.component';
 import { forkJoin, of, switchMap, take } from 'rxjs';
@@ -21,18 +20,18 @@ export class DashboardComponent implements OnInit {
   public upcomingExams!: ExamCard[];
   public user: User = {} as User;
 
-  constructor(private examService: ExamsService, private store: Store<fromAuth.State>) {}
+  constructor(
+    private examService: ExamsService,
+    private store: Store<fromAuth.State>,
+  ) {}
 
   ngOnInit(): void {
-    const date = format(new Date(), 'yyyy-MM-dd');
+    const isoUtcNoMs = new Date().toISOString();
     this.store
       .select(fromAuth.getUser)
       .pipe(
         switchMap((user) =>
-          forkJoin([
-            of(user),
-            this.examService.getAllStartOn(date, user?.sectionId, user?.userDetailId ?? null),
-          ]),
+          forkJoin([of(user), this.examService.getAllStartOn(isoUtcNoMs, user?.sectionId)]),
         ),
         take(1),
       )

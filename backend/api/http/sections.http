@@ -1,0 +1,7 @@
+GET {{HOST}}/api/sections HTTP/1.1
+Authorization: Bearer 123
+Content-Type: application/json
+Accept: application/json
+{
+
+}

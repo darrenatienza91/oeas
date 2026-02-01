@@ -1,10 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { QuestionList } from '@batstateu/data-models';
-import { ExamsModule } from '@batstateu/exams';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
-  imports: [ExamsModule],
+  imports: [ReactiveFormsModule, FormsModule, NgZorroAntdModule, RouterLink, CommonModule],
   selector: 'batstateu-question-list',
   templateUrl: './question-list.component.html',
   styleUrls: ['./question-list.component.less'],
@@ -14,9 +17,9 @@ export class QuestionListComponent implements OnInit {
   @Output() deleteRecord = new EventEmitter<number>();
   @Output() search = new EventEmitter<string>();
   searchText = '';
-  constructor(private modal: NzModalService) { }
+  constructor(private modal: NzModalService) {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   delete(questionListDetail: QuestionList) {
     this.modal.confirm({

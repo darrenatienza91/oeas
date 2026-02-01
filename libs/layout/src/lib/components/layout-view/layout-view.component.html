@@ -1,63 +1,42 @@
 <nz-layout>
-  <nz-sider
-    nzTheme="dark"
-    *ngIf="user$ | async as user"
-    nzCollapsible
-    [(nzCollapsed)]="isCollapsed"
-    [nzTrigger]="null"
-  >
+  @if(user$ | async; as user){
+  <nz-sider nzTheme="dark" nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
     <div style="position: relative; height: 100%; overflow: hidden">
       <img class="sider-background" src="assets/images/sider-bg.jpg" />
       <div class="logo-container">
         <div class="logo">
-          <img
-            *ngIf="!isCollapsed"
-            height="72px"
-            src="assets/images/logo.png"
-          />
+          @if(!isCollapsed){
+          <img height="72px" src="assets/images/logo.png" />
+          }
         </div>
       </div>
 
-      <ul
-        style="position: relative; z-index: 2; top: 0px"
-        nz-menu
-        nzTheme="dark"
-        nzMode="inline"
-      >
-        <li
-          *ngIf="(user$ | async)?.isActive"
-          nz-menu-item
-          routerLink="dashboard"
-        >
+      <ul style="position: relative; z-index: 2; top: 0px" nz-menu nzTheme="dark" nzMode="inline">
+        @if(user.isActive){
+        <li nz-menu-item routerLink="dashboard">
           <i nz-icon nzType="appstore"></i>
           <span>Dashboard</span>
         </li>
-        <li *ngIf="(user$ | async)?.isActive" nz-menu-item routerLink="exams">
+        <li nz-menu-item routerLink="exams">
           <i nz-icon nzType="book"></i>
           <span>Exams</span>
         </li>
-        <li
-          *ngIf="
-            (user$ | async)?.isActive && (user$ | async)?.userType !== 'Student'
-          "
-          nz-submenu
-          nzTitle="Settings"
-          nzIcon="setting"
-        >
+        @if(user?.userType !== 'Student'){
+        <li nz-submenu nzTitle="Settings" nzIcon="setting">
           <ul>
             <li routerLink="setting/users" nz-menu-item>
               <i nz-icon nzType="team"></i> <span>Users</span>
             </li>
           </ul>
         </li>
+        } }
       </ul>
     </div>
   </nz-sider>
+  }
   <nz-layout>
-    <nz-header
-      *ngIf="user$ | async as user"
-      style="display: flex; justify-content: space-between"
-    >
+    @if (user$ | async; as user) {
+    <nz-header style="display: flex; justify-content: space-between">
       <i
         class="trigger"
         nz-icon
@@ -70,37 +49,26 @@
         [nzDropdownMenu]="menu"
         [nzPlacement]="'bottomRight'"
         nzSize="large"
-        nzText="{{
-          (user$ | async)?.firstName?.substring(0, 1)?.toUpperCase()
-        }}"
+        nzText="{{ user?.firstName?.substring(0, 1)?.toUpperCase() }}"
       ></nz-avatar>
     </nz-header>
+    }
     <nz-dropdown-menu #menu="nzDropdownMenu">
       <ul nz-menu>
         <li routerLink="account/profile" nz-menu-item>Profile</li>
-        <li routerLink="account/change-password" nz-menu-item>
-          Change Password
-        </li>
+        <li routerLink="account/change-password" nz-menu-item> Change Password </li>
         <li nz-menu-item (click)="onLogout()">Log out</li>
       </ul>
     </nz-dropdown-menu>
-    <nz-content style="overflow-x: hidden; overflow-y: auto; height: 300px;">
+    <nz-content style="overflow-x: hidden; overflow-y: auto; height: 300px">
       <router-outlet></router-outlet>
     </nz-content>
-    <nz-footer
-      style="background-color: #373737; padding: 8px 8px; text-align: left"
+    <nz-footer style="background-color: #373737; padding: 8px 8px; text-align: left"
       ><div style="display: flex; flex-direction: row; align-items: center">
-        <img
-          alt="bsu_logo"
-          src="assets/images/logo.png"
-          width="50"
-          height="50"
-        />
+        <img alt="bsu_logo" src="assets/images/logo.png" width="50" height="50" />
         <div>
           <p style="color: #fff; margin: 0 8px">Batangas State University</p>
-          <p style="font-size: small; color: #fff; margin: 0 8px">
-            Copyright © 2022
-          </p>
+          <p style="font-size: small; color: #fff; margin: 0 8px"> Copyright © 2022 </p>
         </div>
       </div></nz-footer
     >

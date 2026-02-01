@@ -1,15 +1,38 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { QuestionDetail } from '@batstateu/data-models';
-import { Editor, Toolbar } from 'ngx-editor';
-import { ExamsModule } from '@batstateu/exams';
+import { Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
+import { RouterLink } from '@angular/router';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 @Component({
-  imports: [ExamsModule],
+  imports: [
+    NgxEditorModule,
+    ReactiveFormsModule,
+    FormsModule,
+    NgZorroAntdModule,
+    RouterLink,
+    CommonModule,
+  ],
   selector: 'batstateu-question-form-view',
   templateUrl: './question-form-view.component.html',
-  styleUrls: ['./question-form-view.component.less']
+  styleUrls: ['./question-form-view.component.less'],
 })
 export class QuestionFormViewComponent implements OnInit, OnChanges, OnDestroy {
   editor!: Editor;
@@ -17,7 +40,7 @@ export class QuestionFormViewComponent implements OnInit, OnChanges, OnDestroy {
   @Output() save = new EventEmitter<QuestionDetail>();
   @Input() questionDetail!: QuestionDetail;
   validateForm!: UntypedFormGroup;
-  title = "Add New";
+  title = 'Add New';
   toolbar: Toolbar = [
     // default value
     ['bold', 'italic'],
@@ -31,7 +54,6 @@ export class QuestionFormViewComponent implements OnInit, OnChanges, OnDestroy {
   submitForm(): void {
     if (this.validateForm.valid) {
       this.save.emit(this.validateForm.value);
-
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
         if (control.invalid) {
@@ -48,7 +70,7 @@ export class QuestionFormViewComponent implements OnInit, OnChanges, OnDestroy {
     if (changes['questionDetail']) {
       if (this.questionDetail) {
         this.setValue();
-        this.title = "Edit"
+        this.title = 'Edit';
       }
     }
   }
@@ -59,8 +81,8 @@ export class QuestionFormViewComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private fb: UntypedFormBuilder,
     private modal: NzModalService,
-    private location: Location
-  ) { }
+    private location: Location,
+  ) {}
   ngOnDestroy(): void {
     this.editor.destroy();
     this.editorAns.destroy();
@@ -75,5 +97,4 @@ export class QuestionFormViewComponent implements OnInit, OnChanges, OnDestroy {
       maxpoints: [60, [Validators.required]],
     });
   }
-
 }

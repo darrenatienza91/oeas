@@ -5,7 +5,7 @@ import {
   ViewChild,
   Inject,
   NgZone,
-  HostListener
+  HostListener,
 } from '@angular/core';
 
 import { AsyncPipe, Location } from '@angular/common';
@@ -26,12 +26,19 @@ import { Store } from '@ngrx/store';
 import * as fromAuth from '@batstateu/auth';
 // import { CdTimerComponent } from 'angular-cd-timer';
 import { TakeExamCameraViewComponent } from '../../components/take-exam-camera-view/take-exam-camera-view.component';
-import { ExamsModule } from '../../exams.module';
 import { ExamInstructionViewComponent } from '../../components/exam-instruction-view/exam-instruction-view.component';
 import { TakeExamQuestionViewComponent } from '../../components/take-exam-question-view/take-exam-question-view.component';
 import { TakeExamControlComponent } from '../../components/take-exam-control/take-exam-control.component';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 @Component({
-  imports: [ExamsModule, ExamInstructionViewComponent, TakeExamQuestionViewComponent, TakeExamControlComponent, TakeExamRecordingComponent, AsyncPipe],
+  imports: [
+    NgZorroAntdModule,
+    ExamInstructionViewComponent,
+    TakeExamQuestionViewComponent,
+    TakeExamControlComponent,
+    TakeExamRecordingComponent,
+    AsyncPipe,
+  ],
   selector: 'batstateu-take-exam',
   templateUrl: './take-exam.component.html',
   styleUrls: ['./take-exam.component.less'],
@@ -187,43 +194,41 @@ export class TakeExamComponent implements OnInit {
   getQuestions() {
     this.takeExamService.getAnswers(this.userDetailId).subscribe((val) => {
       const answerArr = val.map((item: any) => item['questionId']);
-      this.takeExamService
-        .getQuestions(this.examId, answerArr)
-        .subscribe((val2) => {
-          if (val2.length > 0) {
-            if (this.questionIdx < 0 || this.questionIdx > val2.length - 1) {
-              this.modal.error({
-                nzTitle: 'Fetching questions',
-                nzContent: `No more questions available`,
-                nzOnOk: () => {
-                  //
-                  this.questionIdx =
-                    this.questionIdx > 0
-                      ? this.questionIdx >= val2.length - 1
-                        ? val2.length - 1
-                        : this.questionIdx
-                      : 0;
-                  this.questionCount = val2.length;
-                  this.currentQuestion = val2[this.questionIdx];
-                  this.questionId = val2[this.questionIdx].id;
-                  this.currentQuestionSubject$.next(this.currentQuestion);
-                },
-              });
-            } else {
-              this.currentQuestion = val2[this.questionIdx];
-              this.questionId = val2[this.questionIdx].id;
-              this.currentQuestionSubject$.next(this.currentQuestion);
-            }
-          } else {
-            this.modal.info({
-              nzTitle: 'Completed Exam',
-              nzContent: `You completed the exam, click Ok to finish the exam.`,
+      this.takeExamService.getQuestions(this.examId, answerArr).subscribe((val2) => {
+        if (val2.length > 0) {
+          if (this.questionIdx < 0 || this.questionIdx > val2.length - 1) {
+            this.modal.error({
+              nzTitle: 'Fetching questions',
+              nzContent: `No more questions available`,
               nzOnOk: () => {
-                this.onFinishExamination();
+                //
+                this.questionIdx =
+                  this.questionIdx > 0
+                    ? this.questionIdx >= val2.length - 1
+                      ? val2.length - 1
+                      : this.questionIdx
+                    : 0;
+                this.questionCount = val2.length;
+                this.currentQuestion = val2[this.questionIdx];
+                this.questionId = val2[this.questionIdx].id;
+                this.currentQuestionSubject$.next(this.currentQuestion);
               },
             });
+          } else {
+            this.currentQuestion = val2[this.questionIdx];
+            this.questionId = val2[this.questionIdx].id;
+            this.currentQuestionSubject$.next(this.currentQuestion);
           }
-        });
+        } else {
+          this.modal.info({
+            nzTitle: 'Completed Exam',
+            nzContent: `You completed the exam, click Ok to finish the exam.`,
+            nzOnOk: () => {
+              this.onFinishExamination();
+            },
+          });
+        }
+      });
     });
   }
   onStartExam() {
@@ -281,7 +286,7 @@ export class TakeExamComponent implements OnInit {
               })
               .subscribe((val) => {
                 this.goToResults();
-              })
+              }),
           ),
         error: (err) => console.log(err),
       });
@@ -309,6 +314,6 @@ export class TakeExamComponent implements OnInit {
     @Inject(APP_CONFIG) private appConfig: any,
     private store: Store<fromAuth.State>,
     private userService: UserService,
-    private zone: NgZone
-  ) { }
+    private zone: NgZone,
+  ) {}
 }

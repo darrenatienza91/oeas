@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import * as fromAuth from '@batstateu/auth';
 import { User } from '@batstateu/data-models';
 import { Observable } from 'rxjs';
-import { AuthService, getUser } from '@batstateu/auth';
+import { AuthService } from '@batstateu/auth';
 import { Store } from '@ngrx/store';
-import { UserService } from '@batstateu/account';
 import { LayoutViewComponent } from '../../components/layout-view/layout-view.component';
 
 @Component({
@@ -14,22 +13,20 @@ import { LayoutViewComponent } from '../../components/layout-view/layout-view.co
   styleUrls: ['./layout.component.less'],
 })
 export class LayoutComponent implements OnInit {
-  user$: Observable<User | null>;
+  user$!: Observable<User | null>;
   isCollapsed = false;
-  onCollapsed(isCollapsed: boolean) {
-    this.isCollapsed = isCollapsed
+  private store = inject(Store<fromAuth.State>);
+  private authService = inject(AuthService);
+
+  public onCollapsed(isCollapsed: boolean): void {
+    this.isCollapsed = isCollapsed;
   }
-  constructor(
-    private store: Store<fromAuth.State>,
-    private userService: UserService,
-    private authService: AuthService
-  ) {
-    this.user$ = this.store.select(getUser);
-  }
-  onLogout() {
-    this.authService.logout();
-  }
+
   ngOnInit(): void {
-    console.log('layout init');
+    this.user$ = this.store.select(fromAuth.getUser);
+  }
+
+  public onLogout(): void {
+    this.authService.logout();
   }
 }

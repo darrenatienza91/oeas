@@ -1,35 +1,35 @@
 <div class="stats-container">
-  <h4 style="margin-bottom: 24px" nz-typography>Upcomings</h4>
+  <h4 style="margin-bottom: 24px" nz-typography> Upcomings </h4>
+
   <div class="row" nz-row [nzGutter]="[16, 24]">
-    <div
-      *ngFor="let item of upcomingExams"
-      nz-col
-      [nzSpan]="6"
-      class="gutter-row"
-    >
-      <div *ngIf="item.isActive">
-        <nz-card [nzCover]="coverTemplate" [nzActions]="[actionOpen]">
-          <h5 style="margin: 0 0 14px" nz-typography>{{ item.name }}</h5>
-
-          <p class="sub-detail">{{ item.schedule | date: 'medium' }}</p>
-          <p class="sub-detail">{{ item.duration }} mins</p>
-        </nz-card>
-
-        <ng-template #coverTemplate>
-          <img alt="example" src="assets/images/take-exam-1.jpg" />
-        </ng-template>
-        <ng-template #actionOpen>
-          <i
-            (click)="openExam(item?.id)"
-            nz-icon
-            nzType="folder-open"
-            nzTheme="twotone"
-            [nzTwotoneColor]="'#d30000'"
-            nz-tooltip="Open"
-            style="font-size: 24px"
-          ></i>
-        </ng-template>
+    @for (item of upcomingExams; track item.id) {
+      <div nz-col [nzSpan]="6" class="gutter-row">
+        @if (item.isActive) {
+          <nz-card [nzCover]="coverTemplate" [nzActions]="[actionOpen]">
+            <h5 style="margin: 0 0 14px" nz-typography>{{ item.name }}</h5>
+            <p class="sub-detail">{{ item.schedule | date: 'medium' }}</p>
+            <p class="sub-detail">{{ item.duration }} mins</p>
+          </nz-card>
+        }
       </div>
-    </div>
+    }
   </div>
+
+  <!-- Cover template stays outside the loop -->
+  <ng-template #coverTemplate>
+    <img alt="example" src="assets/images/take-exam-1.jpg" />
+  </ng-template>
+
+  <!-- Action template receives item as input -->
+  <ng-template #actionOpen let-item>
+    <i
+      (click)="openExam(item?.id)"
+      nz-icon
+      nzType="folder-open"
+      nzTheme="twotone"
+      [nzTwotoneColor]="'#d30000'"
+      nz-tooltip="Open"
+      style="font-size: 24px"
+    ></i>
+  </ng-template>
 </div>

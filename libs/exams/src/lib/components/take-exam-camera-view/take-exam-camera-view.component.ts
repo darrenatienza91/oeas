@@ -1,20 +1,16 @@
-import {
-  AfterViewInit,
-  Component, Input,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import videojs from 'video.js';
 import { Observable } from 'rxjs';
-import { ExamsModule } from '@batstateu/exams';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 @Component({
-  imports: [ExamsModule],
+  imports: [ReactiveFormsModule, FormsModule, NgZorroAntdModule, CommonModule],
   selector: 'batstateu-take-exam-camera-view',
   templateUrl: './take-exam-camera-view.component.html',
   styleUrls: ['./take-exam-camera-view.component.css'],
 })
-export class TakeExamCameraViewComponent
-  implements OnInit, AfterViewInit, OnDestroy {
+export class TakeExamCameraViewComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() videoVisible$!: Observable<boolean>;
   @Input() tabActive$!: Observable<boolean | null>;
   videoVisible!: boolean;
@@ -38,7 +34,7 @@ export class TakeExamCameraViewComponent
       this.videoConf,
       () => {
         console.log('player ready! id:', el);
-      }
+      },
     );
     // error handling
     this.videoPlayer.on('deviceError', () => {
@@ -77,7 +73,7 @@ export class TakeExamCameraViewComponent
     this.initCameraView();
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     if (this.videoPlayer) {
