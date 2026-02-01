@@ -28,15 +28,18 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     const isoUtcNoMs = new Date().toISOString();
     this.store
-      .select(fromAuth.getUser)
+      .select(fromAuth.getAuthSuccess)
       .pipe(
-        switchMap((user) =>
-          forkJoin([of(user), this.examService.getAllStartOn(isoUtcNoMs, user?.sectionId)]),
+        switchMap((authSuccess) =>
+          forkJoin([
+            of(authSuccess),
+            this.examService.getAllStartOn(isoUtcNoMs, authSuccess?.user.sectionId ?? null),
+          ]),
         ),
         take(1),
       )
-      .subscribe(([user, exams]) => {
-        this.user = user as User;
+      .subscribe(([authSuccess, exams]) => {
+        this.user = authSuccess?.user as User;
         this.upcomingExams = exams;
       });
   }

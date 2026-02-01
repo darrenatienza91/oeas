@@ -1,6 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { Exam, User } from '@batstateu/data-models';
+import { AuthPayload, Exam } from '@batstateu/data-models';
 import { ExamsService, SectionService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { format } from 'date-fns';
@@ -22,7 +22,7 @@ export class ExamFormComponent implements OnInit {
   public sections = toSignal(this.sectionService.getAll());
 
   examDetail!: Exam;
-  userStore!: User | null;
+  userStore!: AuthPayload | null;
 
   constructor(
     private modal: NzModalService,
@@ -53,7 +53,7 @@ export class ExamFormComponent implements OnInit {
           ...val,
           startOn: date,
           isActive: true,
-          userDetailId: this.userStore?.userDetailId,
+          userDetailId: this.userStore?.user.userDetailId,
           instructions: toHTML(val.instructions),
         })
         .pipe(take(1))
@@ -75,7 +75,7 @@ export class ExamFormComponent implements OnInit {
     }
   }
   getUser() {
-    this.store.select(fromAuth.getUser).subscribe((val) => {
+    this.store.select(fromAuth.getAuthSuccess).subscribe((val) => {
       this.userStore = val;
     });
   }

@@ -26,18 +26,23 @@ export class AuthEffects {
       exhaustMap((action) => {
         const { payload } = action;
         return this.authService.login(payload).pipe(
-          switchMap((user) => forkJoin([this.userService.get(user.id), of(user)])),
+          switchMap((authSuccess) =>
+            forkJoin([this.userService.get(authSuccess.user.id), of(authSuccess)]),
+          ),
           filter((userDetail) => !!userDetail),
-          map(([userDetail, user]) =>
+          map(([userDetail, authSuccess]) =>
             authActions.loginSuccess({
               payload: {
-                id: user.id,
-                isActive: user.isActive,
-                userName: user.userName,
-                firstName: userDetail.firstName,
-                userDetailId: userDetail.id,
-                sectionId: userDetail.sectionId,
-                userType: user.userType,
+                token: authSuccess.token,
+                user: {
+                  id: authSuccess.user.id,
+                  isActive: authSuccess.user.isActive,
+                  userName: authSuccess.user.userName,
+                  firstName: userDetail.firstName,
+                  userDetailId: userDetail.id,
+                  sectionId: userDetail.sectionId,
+                  userType: authSuccess.user.userType,
+                },
               },
             }),
           ),

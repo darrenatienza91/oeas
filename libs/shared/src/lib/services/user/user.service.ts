@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { APP_CONFIG } from '@batstateu/app-config';
 import {
+  AuthPayload,
   ForgotPassword,
   ResponseWrapper,
   User,
@@ -54,9 +55,9 @@ export class UserService {
 
   validateForgotPassword(forgotPassword: ForgotPassword): Observable<UserDetail> {
     return this.httpClient
-      .get<ResponseWrapper<UserDetail>>(
-        `${this.appConfig.API_URL}/records/userDetails?filter=email,eq,${forgotPassword.email}&join=users`,
-      )
+      .get<
+        ResponseWrapper<UserDetail>
+      >(`${this.appConfig.API_URL}/records/userDetails?filter=email,eq,${forgotPassword.email}&join=users`)
       .pipe(
         map((res: ResponseWrapper<any>) => {
           const user = res.records[0];
@@ -101,9 +102,9 @@ export class UserService {
 
   get(userId: number | undefined): Observable<UserDetail> {
     return this.httpClient
-      .get<ResponseWrapper<UserDetail>>(
-        `${this.appConfig.API_URL}/records/userDetails?filter=user_id,eq,${userId}&join=users&join=user_types`,
-      )
+      .get<
+        ResponseWrapper<UserDetail>
+      >(`${this.appConfig.API_URL}/records/userDetails?filter=user_id,eq,${userId}&join=users&join=user_types`)
       .pipe(
         map((res: ResponseWrapper<any>) => {
           const user = res.records[0];
@@ -172,10 +173,10 @@ export class UserService {
   }
 
   private getUserId() {
-    this.user$.subscribe((val) => (this.userId = val?.id || 0));
+    this.user$.subscribe((val) => (this.userId = val?.user.id || 0));
   }
 
-  user$!: Observable<User | null>;
+  user$!: Observable<AuthPayload | null>;
   userId!: number;
 
   constructor(
@@ -183,7 +184,7 @@ export class UserService {
     @Inject(APP_CONFIG) private appConfig: any,
     private store: Store<fromAuth.State>,
   ) {
-    this.user$ = store.select(fromAuth.getUser);
+    this.user$ = store.select(fromAuth.getAuthSuccess);
     this.getUserId();
   }
 }

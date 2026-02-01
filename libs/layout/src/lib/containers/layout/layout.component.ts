@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import * as fromAuth from '@batstateu/auth';
-import { User } from '@batstateu/data-models';
+import { AuthPayload } from '@batstateu/data-models';
 import { Observable } from 'rxjs';
 import { AuthService } from '@batstateu/auth';
 import { Store } from '@ngrx/store';
@@ -13,7 +13,7 @@ import { LayoutViewComponent } from '../../components/layout-view/layout-view.co
   styleUrls: ['./layout.component.less'],
 })
 export class LayoutComponent implements OnInit {
-  user$!: Observable<User | null>;
+  user$!: Observable<AuthPayload | null>;
   isCollapsed = false;
   private store = inject(Store<fromAuth.State>);
   private authService = inject(AuthService);
@@ -23,7 +23,7 @@ export class LayoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.user$ = this.store.select(fromAuth.getUser);
+    this.user$ = this.store.select(fromAuth.getAuthSuccess);
   }
 
   public onLogout(): void {

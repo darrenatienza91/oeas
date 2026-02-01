@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Contracts;
+using api.Models;
 using api.Services;
 
 namespace api.Endpoints
@@ -11,7 +12,9 @@ namespace api.Endpoints
   {
     public static void MapSectionEndpoints(this IEndpointRouteBuilder app)
     {
-      app.MapGet("/sections", GetSections);
+      app.MapGet("/sections", GetSections)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
+      ;
     }
 
     static async Task<IResult> GetSections(ISectionService service)

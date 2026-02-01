@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DepartmentService, SectionService, UserService } from '@batstateu/shared';
 import {
+  AuthPayload,
   Department,
   Section,
-  User,
   UserDetail,
   UserFormType,
   UserType,
@@ -22,7 +22,7 @@ import { UserFormViewComponent } from '../../components/user-form-view/user-form
   styleUrls: ['./user-form.component.less'],
 })
 export class UserFormComponent implements OnInit {
-  user$!: Observable<User | null>;
+  authSuccess$!: Observable<AuthPayload | null>;
   userId!: number;
   id!: number;
   userDetail!: UserDetail;
@@ -42,7 +42,7 @@ export class UserFormComponent implements OnInit {
     private departmentService: DepartmentService,
     private sectionService: SectionService,
   ) {
-    this.user$ = this.store.select(fromAuth.getUser);
+    this.authSuccess$ = this.store.select(fromAuth.getAuthSuccess);
   }
 
   ngOnInit(): void {
@@ -55,17 +55,17 @@ export class UserFormComponent implements OnInit {
     const newUserDetail =
       this.id != undefined || this.id > 0
         ? {
-          ...userDetail,
-          id: this.id,
-          user_id: this.userId,
-          user_type_id: userDetail.userTypeId,
-        }
+            ...userDetail,
+            id: this.id,
+            user_id: this.userId,
+            user_type_id: userDetail.userTypeId,
+          }
         : {
-          ...userDetail,
-          user_id: this.userId,
-          isActive: false,
-          user_type_id: userDetail.userTypeId,
-        };
+            ...userDetail,
+            user_id: this.userId,
+            isActive: false,
+            user_type_id: userDetail.userTypeId,
+          };
 
     this.userService.save(newUserDetail).subscribe(() =>
       this.modal.success({

@@ -10,11 +10,13 @@ namespace api.Contracts
 
   public record LoginDto(string UserName, string Password);
 
-  public record LoginSuccessDto(int Id, string UserName, string Role, bool IsActive);
+  public record CurrentUserDTO(int Id, string UserName, string Role, bool IsActive);
+
+  public record LoginResponseDto(string Token, CurrentUserDTO User);
 
   public static class AuthMapper
   {
-    public static LoginSuccessDto MapToLoginSuccessDto(User user)
+    public static CurrentUserDTO MapToCurrentUserDTO(User user)
     {
       return new(Id: user.Id, UserName: user.UserName, Role: user.Role, IsActive: user.IsActive);
     }

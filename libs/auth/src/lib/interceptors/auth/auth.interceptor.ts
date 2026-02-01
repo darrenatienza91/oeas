@@ -1,42 +1,48 @@
 import { inject, Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor
-} from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
+import { Observable, take, tap } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import * as fromAuth from '../../+state/auth.reducer';
 import * as authActions from './../../+state/auth.actions';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { getAuthState } from '../../+state/auth.selectors';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private readonly modal = inject(NzNotificationService);
   constructor(
     private router: Router,
 
-    private store: Store<fromAuth.State>
-  ) { }
-  intercept(
-    req: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+    private store: Store<fromAuth.State>,
+  ) {}
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     req = req.clone({
       withCredentials: true,
     });
+
+    this.store
+      .select(getAuthState)
+      .pipe(take(1))
+      .subscribe((state) => {
+        if (state) {
+          req = req.clone({
+            withCredentials: true,
+            setHeaders: {
+              Authorization: `Bearer ${state.authPayload?.token}`,
+            },
+          });
+        }
+      });
     return next.handle(req).pipe(
       tap({
-        error: (err: { error: { code: number, message: string }, status: number }) => {
-
+        error: (err: { error: { code: number; message: string }; status: number }) => {
           if (err.status === 0) {
             this.showNotification('error', 'Error', `Can't connect to server!`);
           }
 
           // una authorized
           if (err.status === 401) {
-            this.showNotification("error", "Login", "Incorrect user name or password!")
+            this.showNotification('error', 'Login', 'Incorrect user name or password!');
           }
           const error = err?.error;
           if (!error) {
@@ -56,7 +62,7 @@ export class AuthInterceptor implements HttpInterceptor {
             this.showNotification(
               'warning',
               'Update your profile now!',
-              `Please update your profile now so administrator can review and activate it!`
+              `Please update your profile now so administrator can review and activate it!`,
             );
           }
 
@@ -64,7 +70,7 @@ export class AuthInterceptor implements HttpInterceptor {
             this.showNotification(
               'error',
               'Error',
-              `Record is related to other record. Cannot delete!`
+              `Record is related to other record. Cannot delete!`,
             );
           }
 
@@ -72,10 +78,10 @@ export class AuthInterceptor implements HttpInterceptor {
             this.showNotification('error', 'Error', `Invalid Input!`);
           }
         },
-      })
+      }),
     );
   }
-  private showNotification(type: "error" | "warning" | "info", title: string, message: string) {
+  private showNotification(type: 'error' | 'warning' | 'info', title: string, message: string) {
     this.modal.create(type, title, message);
   }
 }

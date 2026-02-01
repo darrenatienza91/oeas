@@ -1,57 +1,58 @@
 <nz-layout>
-  @if(user$ | async; as user){
-  <nz-sider nzTheme="dark" nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
-    <div style="position: relative; height: 100%; overflow: hidden">
-      <img class="sider-background" src="assets/images/sider-bg.jpg" />
-      <div class="logo-container">
-        <div class="logo">
-          @if(!isCollapsed){
-          <img height="72px" src="assets/images/logo.png" />
-          }
+  @if (user$ | async; as authPayload) {
+    <nz-sider nzTheme="dark" nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
+      <div style="position: relative; height: 100%; overflow: hidden">
+        <img class="sider-background" src="assets/images/sider-bg.jpg" />
+        <div class="logo-container">
+          <div class="logo">
+            @if (!isCollapsed) {
+              <img height="72px" src="assets/images/logo.png" />
+            }
+          </div>
         </div>
-      </div>
 
-      <ul style="position: relative; z-index: 2; top: 0px" nz-menu nzTheme="dark" nzMode="inline">
-        @if(user.isActive){
-        <li nz-menu-item routerLink="dashboard">
-          <i nz-icon nzType="appstore"></i>
-          <span>Dashboard</span>
-        </li>
-        <li nz-menu-item routerLink="exams">
-          <i nz-icon nzType="book"></i>
-          <span>Exams</span>
-        </li>
-        @if(user?.userType !== 'Student'){
-        <li nz-submenu nzTitle="Settings" nzIcon="setting">
-          <ul>
-            <li routerLink="setting/users" nz-menu-item>
-              <i nz-icon nzType="team"></i> <span>Users</span>
+        <ul style="position: relative; z-index: 2; top: 0px" nz-menu nzTheme="dark" nzMode="inline">
+          @if (authPayload.user.isActive) {
+            <li nz-menu-item routerLink="dashboard">
+              <i nz-icon nzType="appstore"></i>
+              <span>Dashboard</span>
             </li>
-          </ul>
-        </li>
-        } }
-      </ul>
-    </div>
-  </nz-sider>
+            <li nz-menu-item routerLink="exams">
+              <i nz-icon nzType="book"></i>
+              <span>Exams</span>
+            </li>
+            @if (authPayload.user.userType !== 'Student') {
+              <li nz-submenu nzTitle="Settings" nzIcon="setting">
+                <ul>
+                  <li routerLink="setting/users" nz-menu-item>
+                    <i nz-icon nzType="team"></i> <span>Users</span>
+                  </li>
+                </ul>
+              </li>
+            }
+          }
+        </ul>
+      </div>
+    </nz-sider>
   }
   <nz-layout>
-    @if (user$ | async; as user) {
-    <nz-header style="display: flex; justify-content: space-between">
-      <i
-        class="trigger"
-        nz-icon
-        [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
-        (click)="isCollapsed = !isCollapsed"
-      ></i>
+    @if (user$ | async; as authPayload) {
+      <nz-header style="display: flex; justify-content: space-between">
+        <i
+          class="trigger"
+          nz-icon
+          [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+          (click)="isCollapsed = !isCollapsed"
+        ></i>
 
-      <nz-avatar
-        nz-dropdown
-        [nzDropdownMenu]="menu"
-        [nzPlacement]="'bottomRight'"
-        nzSize="large"
-        nzText="{{ user?.firstName?.substring(0, 1)?.toUpperCase() }}"
-      ></nz-avatar>
-    </nz-header>
+        <nz-avatar
+          nz-dropdown
+          [nzDropdownMenu]="menu"
+          [nzPlacement]="'bottomRight'"
+          nzSize="large"
+          nzText="{{ authPayload.user.firstName.substring(0, 1).toUpperCase() }}"
+        ></nz-avatar>
+      </nz-header>
     }
     <nz-dropdown-menu #menu="nzDropdownMenu">
       <ul nz-menu>

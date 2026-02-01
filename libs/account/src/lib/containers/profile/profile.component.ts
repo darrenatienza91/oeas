@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import {
+  AuthPayload,
   Department,
   Section,
-  User,
   UserDetail,
   UserFormLocation,
   UserFormType,
@@ -15,11 +15,7 @@ import * as fromAuth from '@batstateu/auth';
 
 import { NzModalService } from 'ng-zorro-antd/modal';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import {
-  DepartmentService,
-  SectionService,
-  UserService,
-} from '@batstateu/shared';
+import { DepartmentService, SectionService, UserService } from '@batstateu/shared';
 import { UserFormViewComponent } from 'libs/shared/src/lib/components/user-form-view/user-form-view.component';
 @Component({
   imports: [UserFormViewComponent],
@@ -28,7 +24,7 @@ import { UserFormViewComponent } from 'libs/shared/src/lib/components/user-form-
   styleUrls: ['./profile.component.less'],
 })
 export class ProfileComponent implements OnInit {
-  user$!: Observable<User | null>;
+  authSuccess$!: Observable<AuthPayload | null>;
   userId!: number;
   id!: number;
   userDetail!: UserDetail;
@@ -45,9 +41,9 @@ export class ProfileComponent implements OnInit {
     private userService: UserService,
     private modal: NzModalService,
     private departmentService: DepartmentService,
-    private sectionService: SectionService
+    private sectionService: SectionService,
   ) {
-    this.user$ = this.store.select(fromAuth.getUser);
+    this.authSuccess$ = this.store.select(fromAuth.getAuthSuccess);
   }
 
   ngOnInit(): void {
@@ -61,19 +57,19 @@ export class ProfileComponent implements OnInit {
     const newUserDetail =
       this.id != undefined || this.id > 0
         ? {
-          ...userDetail,
-          id: this.id,
-          user_id: this.userId,
-          user_type_id: userDetail.userTypeId,
-          isResetPassword: false,
-        }
+            ...userDetail,
+            id: this.id,
+            user_id: this.userId,
+            user_type_id: userDetail.userTypeId,
+            isResetPassword: false,
+          }
         : {
-          ...userDetail,
-          user_id: this.userId,
-          isActive: false,
-          user_type_id: userDetail.userTypeId,
-          isResetPassword: false,
-        };
+            ...userDetail,
+            user_id: this.userId,
+            isActive: false,
+            user_type_id: userDetail.userTypeId,
+            isResetPassword: false,
+          };
 
     this.userService.save(newUserDetail).subscribe(() => {
       this.modal.success({
@@ -85,12 +81,12 @@ export class ProfileComponent implements OnInit {
     });
   }
   getValues() {
-    this.user$.subscribe({
+    this.authSuccess$.subscribe({
       next: (user) => {
-        this.userId = user?.id || 0;
-        this.code = user?.userName || '';
+        this.userId = user?.user.id || 0;
+        this.code = user?.user.userName || '';
         if (this.userId > 0) {
-          this.userService.get(user?.id).subscribe((val) => {
+          this.userService.get(user?.user.id).subscribe((val) => {
             this.id = val.id;
             this.userDetail = val;
             this.isHideUserTypeList = true;

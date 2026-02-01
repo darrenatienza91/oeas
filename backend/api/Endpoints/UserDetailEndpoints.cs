@@ -14,7 +14,7 @@ namespace api.Endpoints
   {
     public static void MapUserDetailEndpoints(this IEndpointRouteBuilder app)
     {
-      app.MapPost("/user-details/{id}", GetOne);
+      app.MapPost("/user-details/{id}", GetOne).RequireAuthorization();
       app.MapPost("/user-details", Add);
     }
 
