@@ -73,8 +73,8 @@ export class ExamsService {
   delete(id: number): Observable<number> {
     return this.httpClient.delete<number>(`${this.appConfig.API_URL}/records/exams/${id}`);
   }
-  public add(val: Exam): Observable<number> {
-    return this.httpClient.post<number>(`${this.appConfig.API_URL}/exams`, val);
+  public add(val: Exam): Observable<Exam> {
+    return this.httpClient.post<Exam>(`${this.appConfig.API_URL}/exams`, val);
   }
 
   public getAll(

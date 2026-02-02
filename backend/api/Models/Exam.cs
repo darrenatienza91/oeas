@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,13 +17,23 @@ namespace api.Models
     public int SectionId { get; set; }
     public bool IsActive { get; set; }
     public string Instructions { get; set; } = null!;
-    public int? UserDetailId { get; set; }
+    public int? UserDetailId { get; private set; }
 
     // Navigation properties
     public Section Section { get; set; } = null!;
-    public UserDetail? UserDetail { get; set; }
+    public UserDetail? UserDetail { get; private set; }
     public ICollection<Question> Questions { get; set; } = [];
     public ICollection<ExamTaker> ExamTakers { get; set; } = [];
+
+    public void SetUserDetailId(int? userDetailId)
+    {
+      if (userDetailId is null)
+      {
+        throw new DomainException($"{nameof(userDetailId)} is required!");
+      }
+
+      this.UserDetailId = userDetailId;
+    }
   }
 
   public class ExamConfiguration : IEntityTypeConfiguration<Exam>

@@ -14,3 +14,23 @@ Accept: application/json
 {
 
 }
+
+### AddExam
+# @name AddExam
+# @import ./users/auth.http
+# @ref login
+{{
+}}
+POST {{HOST}}/api/exams HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Name",
+  "sectionId": 1,
+  "startOn": "2026-03-01T10:15:00Z",
+  "instructions": "Instruction",
+  "subject": "",
+  "duration": 1
+}

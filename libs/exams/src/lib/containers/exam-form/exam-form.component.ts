@@ -3,7 +3,6 @@ import { Component, inject, OnInit } from '@angular/core';
 import { AuthPayload, Exam } from '@batstateu/data-models';
 import { ExamsService, SectionService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { format } from 'date-fns';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import * as fromAuth from '@batstateu/auth';
@@ -38,7 +37,7 @@ export class ExamFormComponent implements OnInit {
   }
 
   onSave(val: any) {
-    const date = format(new Date(val.startOn), 'yyyy-MM-dd kk:mm:ss');
+    const date = new Date(val.startOn);
     if (this.examDetail && this.examDetail.id > 0) {
       this.examService.edit({ ...val, id: this.examDetail.id, startOn: date }).subscribe(() =>
         this.modal.success({

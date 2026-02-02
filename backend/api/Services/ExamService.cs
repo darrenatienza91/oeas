@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.Exceptions;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -51,7 +52,7 @@ namespace api.Services
     {
       return await appDbContext
         .Exams.Where(x =>
-          x.SectionId == sectionId && x.UserDetailId >= userDetailId && x.Name.Contains(criteria)
+          x.SectionId == sectionId && x.UserDetailId == userDetailId && x.Name.Contains(criteria)
         )
         .ToListAsync();
     }

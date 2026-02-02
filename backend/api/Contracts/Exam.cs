@@ -6,7 +6,14 @@ using api.Models;
 
 namespace api.Contracts
 {
-  public record ExamDto(int Id, string Name, DateTimeOffset Schedule, int Duration, bool IsActive);
+  public record ExamDto(
+    int Id,
+    string Name,
+    DateTimeOffset Schedule,
+    int Duration,
+    bool IsActive,
+    string Subject
+  );
 
   public record AddExamDto(
     string Name,
@@ -14,7 +21,8 @@ namespace api.Contracts
     DateTimeOffset StartOn,
     int Duration,
     int SectionId,
-    string Instruction
+    string Instructions,
+    bool IsActive
   );
 
   public static class ExamMapper
@@ -26,19 +34,27 @@ namespace api.Contracts
         Name: exam.Name,
         Schedule: exam.StartOn,
         Duration: exam.Duration,
-        IsActive: exam.IsActive
+        IsActive: exam.IsActive,
+        Subject: exam.Subject
       );
     }
 
-    public static Exam MapToExam(AddExamDto dto)
+    public static Exam MapToExam(AddExamDto dto, int userDetailId)
     {
-      return new()
+      Exam exam = new()
       {
         Name = dto.Name,
         StartOn = dto.StartOn,
         Duration = dto.Duration,
         SectionId = dto.SectionId,
+        IsActive = dto.IsActive,
+        Subject = dto.Subject,
+        Instructions = dto.Instructions,
       };
+
+      exam.SetUserDetailId(userDetailId);
+
+      return exam;
     }
   }
 }
