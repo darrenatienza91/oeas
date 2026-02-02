@@ -6,10 +6,10 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import * as fromAuth from '@batstateu/auth';
-import { toHTML } from 'ngx-editor';
 import { ExamFormViewComponent } from '../../components/exam-form-view/exam-form-view.component';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { take } from 'rxjs';
+import { map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { toHTML } from 'ngx-editor';
 @Component({
   imports: [ExamFormViewComponent, CommonModule],
   selector: 'batstateu-exam-form',
@@ -20,7 +20,7 @@ export class ExamFormComponent implements OnInit {
   private sectionService = inject(SectionService);
   public sections = toSignal(this.sectionService.getAll());
 
-  examDetail!: Exam;
+  examDetail$!: Observable<Exam>;
   userStore!: AuthPayload | null;
 
   constructor(
@@ -38,40 +38,50 @@ export class ExamFormComponent implements OnInit {
 
   onSave(val: any) {
     const date = new Date(val.startOn);
-    if (this.examDetail && this.examDetail.id > 0) {
-      this.examService.edit({ ...val, id: this.examDetail.id, startOn: date }).subscribe(() =>
-        this.modal.success({
-          nzTitle: 'Success',
-          nzContent: 'Exam has been saved',
-          nzOkText: 'Ok',
+    this.examDetail$
+      .pipe(
+        map((x) => x.id),
+        switchMap((id) => {
+          if (id) {
+            return this.examService
+              .edit({ ...val, id: id, startOn: date, instructions: toHTML(val.instructions) })
+              .pipe(
+                tap(() => {
+                  this.modal.success({
+                    nzTitle: 'Success',
+                    nzContent: 'Exam has been saved',
+                    nzOkText: 'Ok',
+                  });
+                }),
+              );
+          } else {
+            return this.examService
+              .add({
+                ...val,
+                startOn: date,
+                isActive: true,
+                userDetailId: this.userStore?.user.userDetailId,
+                instructions: toHTML(val.instructions),
+              })
+              .pipe(
+                tap(() => {
+                  this.modal.success({
+                    nzTitle: 'Success',
+                    nzContent: 'Exam has been saved',
+                    nzOnOk: () => this.location.back(),
+                  });
+                }),
+              );
+          }
         }),
-      );
-    } else {
-      this.examService
-        .add({
-          ...val,
-          startOn: date,
-          isActive: true,
-          userDetailId: this.userStore?.user.userDetailId,
-          instructions: toHTML(val.instructions),
-        })
-        .pipe(take(1))
-        .subscribe(() => {
-          this.modal.success({
-            nzTitle: 'Success',
-            nzContent: 'Exam has been saved',
-            nzOnOk: () => this.location.back(),
-          });
-        });
-    }
+      )
+      .pipe(take(1))
+      .subscribe();
   }
   getValues() {
     const id = Number(this.route.snapshot.paramMap.get('examId'));
-    if (id) {
-      this.examService.get(id).subscribe((val) => {
-        this.examDetail = val;
-      });
-    }
+
+    this.examDetail$ = id ? this.examService.get(id) : of({} as Exam);
   }
   getUser() {
     this.store.select(fromAuth.getAuthSuccess).subscribe((val) => {

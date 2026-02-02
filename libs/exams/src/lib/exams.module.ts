@@ -70,7 +70,7 @@ import { StatusPipe } from 'libs/shared/src/lib/pipes/status/status.pipe';
     RouterModule.forChild([
       { path: '', component: ExamsComponent },
       { path: 'form', component: ExamFormComponent },
-      // { path: ':examId/form', component: ExamFormComponent },
+      { path: ':examId/form', component: ExamFormComponent },
       // { path: 'item-points', component: ExamItemPointsComponent },
       // {
       //   path: ':examId/takers/:takerId/recording',

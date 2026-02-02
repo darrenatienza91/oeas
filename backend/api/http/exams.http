@@ -34,3 +34,14 @@ Accept: application/json
   "subject": "",
   "duration": 1
 }
+### Get Exams
+# @name AddExam
+# @import ./users/auth.http
+# @ref login
+GET {{HOST}}/api/exams/100 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+
+}

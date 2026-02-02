@@ -9,10 +9,12 @@ namespace api.Contracts
   public record ExamDto(
     int Id,
     string Name,
-    DateTimeOffset Schedule,
+    DateTimeOffset StartOn,
     int Duration,
     bool IsActive,
-    string Subject
+    string Subject,
+    string Instructions,
+    int SectionId
   );
 
   public record AddExamDto(
@@ -32,10 +34,12 @@ namespace api.Contracts
       return new(
         Id: exam.Id,
         Name: exam.Name,
-        Schedule: exam.StartOn,
+        StartOn: exam.StartOn,
         Duration: exam.Duration,
         IsActive: exam.IsActive,
-        Subject: exam.Subject
+        Subject: exam.Subject,
+        Instructions: exam.Instructions,
+        SectionId: exam.SectionId
       );
     }
 

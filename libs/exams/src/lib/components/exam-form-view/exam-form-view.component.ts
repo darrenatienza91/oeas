@@ -79,13 +79,19 @@ export class ExamFormViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.editor = new Editor();
+    if (this.examDetail?.id) {
+      this.title = 'Edit';
+    }
     this.validateForm = this.fb.group({
-      name: [null, [Validators.required]],
-      subject: [null, [Validators.required]],
-      startOn: [new Date(), [Validators.required]],
-      duration: [60, [Validators.required, this.durationValidator]],
-      sectionId: [null, [Validators.required]],
-      instructions: [null, [Validators.required]],
+      name: [this.examDetail.name, [Validators.required]],
+      subject: [this.examDetail.subject, [Validators.required]],
+      startOn: [
+        this.examDetail.startOn ? new Date(this.examDetail.startOn) : new Date(),
+        [Validators.required],
+      ],
+      duration: [this.examDetail?.duration ?? 60, [Validators.required, this.durationValidator]],
+      sectionId: [this.examDetail.sectionId, [Validators.required]],
+      instructions: [this.examDetail.instructions, [Validators.required]],
     });
   }
 }

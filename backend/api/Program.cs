@@ -111,6 +111,17 @@ app.UseExceptionHandler(errorApp =>
         context.Response.StatusCode = StatusCodes.Status400BadRequest;
         break;
 
+      case NotFoundException notFoundEx:
+        problem = new ProblemDetails
+        {
+          Title = "Resource not found",
+          Status = StatusCodes.Status404NotFound,
+          Detail = notFoundEx.Message,
+          Instance = context.Request.Path,
+        };
+        context.Response.StatusCode = StatusCodes.Status404NotFound;
+        break;
+
       default:
         problem = new ProblemDetails
         {
@@ -129,10 +140,9 @@ app.UseExceptionHandler(errorApp =>
 });
 
 // ⚠️ Order matters
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors("AllowFrontend");
 var api = app.MapGroup("/api");
 
 api.MapAuthEndpoints();

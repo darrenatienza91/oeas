@@ -68,7 +68,7 @@ export class ExamsService {
       .pipe(map((res: number) => res));
   }
   get(id: number): Observable<Exam> {
-    return this.httpClient.get<Exam>(`${this.appConfig.API_URL}/records/exams/${id}`);
+    return this.httpClient.get<Exam>(`${this.appConfig.API_URL}/exams/${id}`);
   }
   delete(id: number): Observable<number> {
     return this.httpClient.delete<number>(`${this.appConfig.API_URL}/records/exams/${id}`);

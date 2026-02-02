@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using api.Auth;
 using api.Contracts;
 using api.Endpoints.Validators;
+using api.Exceptions;
 using api.Models;
 using api.Services;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +19,8 @@ namespace api.Endpoints
     public static void MapExamEndpoints(this IEndpointRouteBuilder app)
     {
       app.MapGet("/exams", GetExamsBySectionAndStartOn);
+      app.MapGet("/exams/{id}", GetExamById)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
 
       app.MapGet(
         "/user-details/{userDetailId}/sections/{sectionId}/exams",
@@ -38,6 +41,15 @@ namespace api.Endpoints
       var exams = await service.GetExamsBySectionAndStartOn(sectionId, startOn);
 
       return Results.Ok(exams.Select(ExamMapper.MapToExamDto));
+    }
+
+    static async Task<IResult> GetExamById(IExamService service, [FromRoute] int id)
+    {
+      var exam =
+        await service.GetExamById(id)
+        ?? throw new NotFoundException($"Exam with id {id}  was not found.");
+
+      return Results.Ok(ExamMapper.MapToExamDto(exam));
     }
 
     static async Task<IResult> GetExamsBySectionIdUserDetailIdAndCriteria(

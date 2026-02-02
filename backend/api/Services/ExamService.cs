@@ -13,6 +13,7 @@ namespace api.Services
   public interface IExamService
   {
     Task<Exam> AddExam(Exam exam);
+    Task<Exam?> GetExamById(int id);
     Task<IEnumerable<Exam>> GetExamsBySectionAndStartOn(int sectionId, DateTimeOffset startOn);
     Task<IEnumerable<Exam>> GetExamsBySectionIdUserDetailIdAndCriteriaAsync(
       int sectionId,
@@ -32,6 +33,11 @@ namespace api.Services
       await appDbContext.SaveChangesAsync();
 
       return exam;
+    }
+
+    public async Task<Exam?> GetExamById(int id)
+    {
+      return await appDbContext.Exams.FindAsync(id);
     }
 
     public async Task<IEnumerable<Exam>> GetExamsBySectionAndStartOn(
