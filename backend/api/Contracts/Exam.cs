@@ -6,6 +6,16 @@ using api.Models;
 
 namespace api.Contracts
 {
+  public record ExamWriteDto(
+    string Name,
+    string Subject,
+    DateTimeOffset StartOn,
+    int Duration,
+    int SectionId,
+    string Instructions,
+    bool IsActive
+  );
+
   public record ExamDto(
     int Id,
     string Name,
@@ -25,27 +35,35 @@ namespace api.Contracts
     int SectionId,
     string Instructions,
     bool IsActive
-  );
+  ) : ExamWriteDto(Name, Subject, StartOn, Duration, SectionId, Instructions, IsActive);
+
+  public record EditExamDto(
+    string Name,
+    string Subject,
+    DateTimeOffset StartOn,
+    int Duration,
+    int SectionId,
+    string Instructions,
+    bool IsActive
+  ) : ExamWriteDto(Name, Subject, StartOn, Duration, SectionId, Instructions, IsActive);
 
   public static class ExamMapper
   {
-    public static ExamDto MapToExamDto(Exam exam)
-    {
-      return new(
-        Id: exam.Id,
-        Name: exam.Name,
-        StartOn: exam.StartOn,
-        Duration: exam.Duration,
-        IsActive: exam.IsActive,
-        Subject: exam.Subject,
-        Instructions: exam.Instructions,
-        SectionId: exam.SectionId
+    public static ExamDto MapToExamDto(Exam exam) =>
+      new(
+        exam.Id,
+        exam.Name,
+        exam.StartOn,
+        exam.Duration,
+        exam.IsActive,
+        exam.Subject,
+        exam.Instructions,
+        exam.SectionId
       );
-    }
 
-    public static Exam MapToExam(AddExamDto dto, int userDetailId)
+    public static Exam MapToExam(ExamWriteDto dto, int userDetailId)
     {
-      Exam exam = new()
+      var exam = new Exam
       {
         Name = dto.Name,
         StartOn = dto.StartOn,
@@ -57,8 +75,18 @@ namespace api.Contracts
       };
 
       exam.SetUserDetailId(userDetailId);
-
       return exam;
+    }
+
+    public static void MapToExistingExam(ExamWriteDto dto, Exam exam)
+    {
+      exam.Name = dto.Name;
+      exam.StartOn = dto.StartOn;
+      exam.Duration = dto.Duration;
+      exam.SectionId = dto.SectionId;
+      exam.IsActive = dto.IsActive;
+      exam.Subject = dto.Subject;
+      exam.Instructions = dto.Instructions;
     }
   }
 }

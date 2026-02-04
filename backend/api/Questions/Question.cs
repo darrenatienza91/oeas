@@ -10,6 +10,7 @@ namespace api.Models
   public class Question : BaseEntity<int>
   {
     public string Description { get; set; } = null!;
+    public string CorrectAnswer { get; set; } = null!;
     public int Points { get; set; }
     public int ExamId { get; set; }
 

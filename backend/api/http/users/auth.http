@@ -20,6 +20,6 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username": "admin",
-  "password": "admin"
+  "username": "admin2",
+  "password": "admin2"
 }

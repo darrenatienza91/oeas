@@ -1,13 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -15,7 +6,6 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { NzModalService } from 'ng-zorro-antd/modal';
 import { CommonModule, Location } from '@angular/common';
 import { QuestionDetail } from '@batstateu/data-models';
 import { Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
@@ -34,7 +24,7 @@ import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
   templateUrl: './question-form-view.component.html',
   styleUrls: ['./question-form-view.component.less'],
 })
-export class QuestionFormViewComponent implements OnInit, OnChanges, OnDestroy {
+export class QuestionFormViewComponent implements OnInit, OnDestroy {
   editor!: Editor;
   editorAns!: Editor;
   @Output() save = new EventEmitter<QuestionDetail>();
@@ -63,24 +53,13 @@ export class QuestionFormViewComponent implements OnInit, OnChanges, OnDestroy {
       });
     }
   }
-  setValue() {
-    this.validateForm.patchValue(this.questionDetail);
-  }
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['questionDetail']) {
-      if (this.questionDetail) {
-        this.setValue();
-        this.title = 'Edit';
-      }
-    }
-  }
+
   cancel() {
     this.location.back();
   }
 
   constructor(
     private fb: UntypedFormBuilder,
-    private modal: NzModalService,
     private location: Location,
   ) {}
   ngOnDestroy(): void {
@@ -92,9 +71,9 @@ export class QuestionFormViewComponent implements OnInit, OnChanges, OnDestroy {
     this.editor = new Editor();
     this.editorAns = new Editor();
     this.validateForm = this.fb.group({
-      question: [null, [Validators.required]],
-      correctAnswer: [null, [Validators.required]],
-      maxpoints: [60, [Validators.required]],
+      description: [this.questionDetail.description, [Validators.required]],
+      correctAnswer: [this.questionDetail.correctAnswer, [Validators.required]],
+      points: [this.questionDetail.points ?? 60, [Validators.required]],
     });
   }
 }

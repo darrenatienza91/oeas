@@ -44,7 +44,7 @@ export class ExamFormComponent implements OnInit {
         switchMap((id) => {
           if (id) {
             return this.examService
-              .edit({ ...val, id: id, startOn: date, instructions: toHTML(val.instructions) })
+              .edit({ ...val, id: id, startOn: date, instructions: val.instructions })
               .pipe(
                 tap(() => {
                   this.modal.success({

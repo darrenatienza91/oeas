@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using api.Auth;
 using api.Data;
 using api.Endpoints;
 using api.Exceptions;
@@ -41,6 +42,13 @@ builder
 
 // Add Authorization
 builder.Services.AddAuthorization();
+
+// Needed for accessing HttpContext in services
+builder.Services.AddHttpContextAccessor();
+
+// Current user abstraction
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Add services to the container.
@@ -52,6 +60,7 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserDetailService>();
 builder.Services.AddScoped<IExamService, ExamService>();
 builder.Services.AddScoped<ISectionService, SectionService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
   options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -149,6 +158,7 @@ api.MapAuthEndpoints();
 api.MapUserDetailEndpoints();
 api.MapUserEndpoints();
 api.MapExamEndpoints();
+api.MapQuestionEndpoints();
 api.MapSectionEndpoints();
 
 // Configure the HTTP request pipeline.

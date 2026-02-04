@@ -30,15 +30,27 @@ namespace api.Endpoints
       app.MapPost("/exams", Add)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin))
         .AddEndpointFilter<ValidationFilter<AddExamDto>>();
+
+      app.MapPut("/exams/{id}", Edit)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin))
+        .AddEndpointFilter<ValidationFilter<EditExamDto>>();
+
+      app.MapDelete("/exams/{id}", Delete)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
     }
 
     static async Task<IResult> GetExamsBySectionAndStartOn(
       IExamService service,
       [FromQuery] int sectionId,
-      [FromQuery] DateTime startOn
+      [FromQuery] DateTime startOn,
+      ClaimsPrincipal user
     )
     {
-      var exams = await service.GetExamsBySectionAndStartOn(sectionId, startOn);
+      var exams = await service.GetExamsBySectionAndStartOn(
+        sectionId,
+        startOn,
+        user.GetUserDetailId()
+      );
 
       return Results.Ok(exams.Select(ExamMapper.MapToExamDto));
     }
@@ -82,6 +94,40 @@ namespace api.Endpoints
       var response = ExamMapper.MapToExamDto(exam);
 
       return Results.Created($"{http.Request.Path}/{exam.Id}", response);
+    }
+
+    static async Task<IResult> Edit(
+      [FromRoute] int id,
+      [FromBody] EditExamDto dto,
+      IExamService service,
+      HttpContext http,
+      ClaimsPrincipal user
+    )
+    {
+      var exam =
+        await service.GetExamById(id)
+        ?? throw new NotFoundException($"Exam with id {id}  was not found.");
+
+      ExamMapper.MapToExistingExam(dto, exam);
+
+      await service.EditExam(exam);
+
+      return Results.NoContent();
+    }
+
+    static async Task<IResult> Delete(
+      [FromRoute] int id,
+      IExamService service,
+      ClaimsPrincipal user
+    )
+    {
+      var exam =
+        await service.GetExamById(id)
+        ?? throw new NotFoundException($"Exam with id {id}  was not found.");
+
+      await service.RemoveExam(exam);
+
+      return Results.NoContent();
     }
   }
 }

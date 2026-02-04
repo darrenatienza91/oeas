@@ -90,12 +90,12 @@ import { StatusPipe } from 'libs/shared/src/lib/pipes/status/status.pipe';
       //   component: ExamRecordingComponent,
       // },
       // { path: ':examId/take-exam', component: TakeExamComponent },
-      // { path: ':examId/questions', component: QuestionsComponent },
-      // {
-      //   path: ':examId/questions/:questionId/edit',
-      //   component: QuestionFormComponent,
-      // },
-      // { path: ':examId/questions/add', component: QuestionFormComponent },
+      { path: ':examId/questions', component: QuestionsComponent },
+      {
+        path: ':examId/questions/:questionId/edit',
+        component: QuestionFormComponent,
+      },
+      { path: ':examId/questions/add', component: QuestionFormComponent },
       // { path: ':examId/result', component: TakeExamResultComponent },
     ]),
   ],

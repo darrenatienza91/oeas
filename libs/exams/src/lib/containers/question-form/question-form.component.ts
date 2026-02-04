@@ -14,26 +14,24 @@ import { QuestionFormViewComponent } from '../../components/question-form-view/q
   styleUrls: ['./question-form.component.less'],
 })
 export class QuestionFormComponent implements OnInit {
-  questionDetail!: QuestionDetail;
+  public questionDetail: QuestionDetail = {} as QuestionDetail;
 
   onSave(val: any) {
     const examId = Number(this.route.snapshot.paramMap.get('examId'));
     if (this.questionDetail && this.questionDetail.id > 0) {
-      this.questionService
-        .edit({ ...val, id: this.questionDetail.id })
-        .subscribe(() =>
-          this.modal.success({
-            nzTitle: 'Success',
-            nzContent: 'Record has been saved',
-            nzOkText: 'Ok',
-          })
-        );
+      this.questionService.edit({ ...val, id: this.questionDetail.id }).subscribe(() =>
+        this.modal.success({
+          nzTitle: 'Success',
+          nzContent: 'Record has been saved',
+          nzOkText: 'Ok',
+        }),
+      );
     } else {
       this.questionService
         .add({
           ...val,
           examId: examId,
-          question: toHTML(val.question),
+          description: toHTML(val.description),
           correctAnswer: toHTML(val.correctAnswer),
         })
         .subscribe(() => {
@@ -57,8 +55,8 @@ export class QuestionFormComponent implements OnInit {
     private modal: NzModalService,
     private questionService: QuestionService,
     private route: ActivatedRoute,
-    private location: Location
-  ) { }
+    private location: Location,
+  ) {}
 
   ngOnInit(): void {
     this.getValues();

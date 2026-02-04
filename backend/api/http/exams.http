@@ -1,5 +1,9 @@
+### GetExamsBySectionIdStartOn
+# @name GetExams
+# @import ./users/auth.http
+# @ref login
 GET {{HOST}}/api/exams?sectionId=1&startOn=2025-01-31T10:15:00Z HTTP/1.1
-Authorization: Bearer 123
+Authorization: Bearer {{login.token}}
 Content-Type: application/json
 Accept: application/json
 {
@@ -7,8 +11,11 @@ Accept: application/json
 }
 
 ### GetExamsBySectionIdUserDetailIdAndCriteria
+# @name GetExams
+# @import ./users/auth.http
+# @ref login
 GET {{HOST}}/api/user-details/1/sections/1/exams?criteria= HTTP/1.1
-Authorization: Bearer 123
+Authorization: Bearer {{login.token}}
 Content-Type: application/json
 Accept: application/json
 {
@@ -34,11 +41,24 @@ Accept: application/json
   "subject": "",
   "duration": 1
 }
+
 ### Get Exams
 # @name AddExam
 # @import ./users/auth.http
 # @ref login
 GET {{HOST}}/api/exams/100 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+
+}
+
+### DeleteExam
+# @name DeleteExam
+# @import ./users/auth.http
+# @ref login
+DELETE {{HOST}}/api/exams/1?criteria= HTTP/1.1
 Authorization: Bearer {{login.token}}
 Content-Type: application/json
 Accept: application/json

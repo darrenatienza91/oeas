@@ -62,16 +62,14 @@ export class ExamsService {
         }),
       );
   }
-  edit(val: Exam): Observable<number> {
-    return this.httpClient
-      .put<number>(`${this.appConfig.API_URL}/records/exams/${val.id}`, val)
-      .pipe(map((res: number) => res));
+  public edit(val: Exam): Observable<number> {
+    return this.httpClient.put<number>(`${this.appConfig.API_URL}/exams/${val.id}`, val);
   }
   get(id: number): Observable<Exam> {
     return this.httpClient.get<Exam>(`${this.appConfig.API_URL}/exams/${id}`);
   }
   delete(id: number): Observable<number> {
-    return this.httpClient.delete<number>(`${this.appConfig.API_URL}/records/exams/${id}`);
+    return this.httpClient.delete<number>(`${this.appConfig.API_URL}/exams/${id}`);
   }
   public add(val: Exam): Observable<Exam> {
     return this.httpClient.post<Exam>(`${this.appConfig.API_URL}/exams`, val);

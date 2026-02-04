@@ -1,5 +1,5 @@
-export interface QuestionList{
-    id : number,
-    question: string,
-    maxpoints: number,
+export interface QuestionList {
+  id: number;
+  description: string;
+  points: number;
 }

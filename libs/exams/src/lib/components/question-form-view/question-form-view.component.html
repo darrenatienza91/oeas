@@ -2,28 +2,19 @@
   <nz-page-header class="site-page-header" [nzTitle]="title">
     <nz-breadcrumb nz-page-header-breadcrumb>
       <nz-breadcrumb-item>Exams</nz-breadcrumb-item>
-      <nz-breadcrumb-item> Takers </nz-breadcrumb-item>
-      <nz-breadcrumb-item>Results</nz-breadcrumb-item>
+      <nz-breadcrumb-item>Questions</nz-breadcrumb-item>
       <nz-breadcrumb-item>{{ title }}</nz-breadcrumb-item>
     </nz-breadcrumb>
   </nz-page-header>
   <nz-card>
-    <form
-      nz-form
-      [formGroup]="validateForm"
-      nzLayout="vertical"
-      (ngSubmit)="submitForm()"
-    >
+    <form nz-form [formGroup]="validateForm" nzLayout="vertical" (ngSubmit)="submitForm()">
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="question"
-          >Question</nz-form-label
-        >
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="question">Question</nz-form-label>
         <nz-form-control nzErrorTip="The input is not valid Question!">
           <div class="NgxEditor__Wrapper">
-            <ngx-editor-menu [editor]="editor" [toolbar]="toolbar">
-            </ngx-editor-menu>
+            <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"> </ngx-editor-menu>
             <ngx-editor
-              formControlName="question"
+              formControlName="description"
               [editor]="editor"
               [placeholder]="'Type here...'"
             ></ngx-editor>
@@ -33,17 +24,14 @@
 
       <nz-form-item>
         <p style="margin: 0"></p>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="correctAnswer"
-          >Correct Answer</nz-form-label
-        >
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="correctAnswer">Correct Answer</nz-form-label>
         <nz-form-control
           nzErrorTip="Please input correct Answer!"
           nzExtra="Correct Answer is not visible to
         students. This serves only as a reference on checking students answer."
         >
           <div class="NgxEditor__Wrapper">
-            <ngx-editor-menu [editor]="editorAns" [toolbar]="toolbar">
-            </ngx-editor-menu>
+            <ngx-editor-menu [editor]="editorAns" [toolbar]="toolbar"> </ngx-editor-menu>
             <ngx-editor
               formControlName="correctAnswer"
               [editor]="editorAns"
@@ -53,31 +41,20 @@
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="maxpoints"
-          >Max points</nz-form-label
-        >
-        <nz-form-control nzErrorTip="Please input maxpoints!">
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="points">Max points</nz-form-label>
+        <nz-form-control nzErrorTip="Please input points!">
           <nz-input-number
             style="width: 100%"
             nz-input
-            id="maxpoints"
-            formControlName="maxpoints"
+            id="points"
+            formControlName="points"
           ></nz-input-number>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
-        <nz-form-control
-          style="display: flex; flex-direction: row; justify-content: flex-end"
-        >
+        <nz-form-control style="display: flex; flex-direction: row; justify-content: flex-end">
           <nz-space>
-            <a
-              *nzSpaceItem
-              nz-button
-              nzType="default"
-              routerLink="{{ questionDetail === undefined ? '..' : '../..' }}"
-            >
-              Cancel
-            </a>
+            <a *nzSpaceItem nz-button nzType="default" (click)="cancel()"> Cancel </a>
             <button *nzSpaceItem nz-button nzType="primary">Save</button>
           </nz-space>
         </nz-form-control>

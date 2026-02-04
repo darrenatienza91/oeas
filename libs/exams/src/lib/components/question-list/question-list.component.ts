@@ -24,7 +24,7 @@ export class QuestionListComponent implements OnInit {
   delete(questionListDetail: QuestionList) {
     this.modal.confirm({
       nzTitle: 'Delete Record',
-      nzContent: `Are you sure you want to delete question with name <b>${questionListDetail.question}</b>?`,
+      nzContent: `Are you sure you want to delete question with name <b>${questionListDetail.description}</b>?`,
       nzOnOk: () => {
         this.deleteRecord.emit(questionListDetail.id);
       },
