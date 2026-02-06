@@ -1,25 +1,37 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { QuestionDetail } from '@batstateu/data-models';
 import { QuestionService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { toHTML } from 'ngx-editor';
 import { QuestionFormViewComponent } from '../../components/question-form-view/question-form-view.component';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   imports: [QuestionFormViewComponent],
   selector: 'batstateu-question-form',
   templateUrl: './question-form.component.html',
   styleUrls: ['./question-form.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionFormComponent implements OnInit {
-  public questionDetail: QuestionDetail = {} as QuestionDetail;
+  private modal: NzModalService = inject(NzModalService);
+  private questionService = inject(QuestionService);
+  private route = inject(ActivatedRoute);
+  private location = inject(Location);
+  private id = Number(this.route.snapshot.paramMap.get('id'));
+  private examId = Number(this.route.snapshot.paramMap.get('examId'));
+
+  public questionDetail = this.id
+    ? toSignal(this.questionService.get(this.id, this.examId))
+    : signal({} as QuestionDetail);
 
   onSave(val: any) {
     const examId = Number(this.route.snapshot.paramMap.get('examId'));
-    if (this.questionDetail && this.questionDetail.id > 0) {
-      this.questionService.edit({ ...val, id: this.questionDetail.id }).subscribe(() =>
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (this.questionDetail && this.questionDetail()!.id > 0) {
+      this.questionService.edit({ ...val, id: id, examId: examId }).subscribe(() =>
         this.modal.success({
           nzTitle: 'Success',
           nzContent: 'Record has been saved',
@@ -43,22 +55,6 @@ export class QuestionFormComponent implements OnInit {
         });
     }
   }
-  getValues() {
-    const id = Number(this.route.snapshot.paramMap.get('questionId'));
-    if (id) {
-      this.questionService.get(id).subscribe((val) => {
-        this.questionDetail = val;
-      });
-    }
-  }
-  constructor(
-    private modal: NzModalService,
-    private questionService: QuestionService,
-    private route: ActivatedRoute,
-    private location: Location,
-  ) {}
 
-  ngOnInit(): void {
-    this.getValues();
-  }
+  ngOnInit(): void {}
 }

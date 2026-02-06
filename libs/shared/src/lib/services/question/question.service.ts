@@ -15,8 +15,10 @@ export class QuestionService {
       >(`${this.appConfig.API_URL}/records/questions?filter=examId,eq,${examId}`)
       .pipe(map((res: ResponseWrapper<any>) => res.records));
   }
-  delete(id: number): Observable<number> {
-    return this.httpClient.delete<number>(`${this.appConfig.API_URL}/records/questions/${id}`);
+  public delete(id: number, examId: number): Observable<void> {
+    return this.httpClient.delete<void>(
+      `${this.appConfig.API_URL}/exams/${examId}/questions/${id}`,
+    );
   }
   public getAll(examId: number, criteria: string): Observable<QuestionList[]> {
     return this.httpClient.get<QuestionList[]>(
@@ -29,13 +31,16 @@ export class QuestionService {
       val,
     );
   }
-  get(id: number): Observable<QuestionDetail> {
-    return this.httpClient.get<QuestionDetail>(`${this.appConfig.API_URL}/questions/${id}`);
+  public get(id: number, examId: number): Observable<QuestionDetail> {
+    return this.httpClient.get<QuestionDetail>(
+      `${this.appConfig.API_URL}/exams/${examId}/questions/${id}`,
+    );
   }
-  edit(val: QuestionDetail): Observable<number> {
-    return this.httpClient
-      .put<number>(`${this.appConfig.API_URL}/records/questions/${val.id}`, val)
-      .pipe(map((res: number) => res));
+  public edit(val: QuestionDetail): Observable<number> {
+    return this.httpClient.put<number>(
+      `${this.appConfig.API_URL}/exams/${val.examId}/questions/${val.id}`,
+      val,
+    );
   }
   constructor(
     private httpClient: HttpClient,

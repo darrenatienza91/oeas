@@ -37,15 +37,15 @@ namespace api.Contracts
     bool IsActive
   ) : ExamWriteDto(Name, Subject, StartOn, Duration, SectionId, Instructions, IsActive);
 
-  public record EditExamDto(
+  public record PatchExamDto(
     string Name,
     string Subject,
-    DateTimeOffset StartOn,
-    int Duration,
-    int SectionId,
+    DateTimeOffset? StartOn,
+    int? Duration,
+    int? SectionId,
     string Instructions,
-    bool IsActive
-  ) : ExamWriteDto(Name, Subject, StartOn, Duration, SectionId, Instructions, IsActive);
+    bool? IsActive
+  );
 
   public static class ExamMapper
   {
@@ -69,24 +69,24 @@ namespace api.Contracts
         StartOn = dto.StartOn,
         Duration = dto.Duration,
         SectionId = dto.SectionId,
-        IsActive = dto.IsActive,
         Subject = dto.Subject,
         Instructions = dto.Instructions,
       };
 
       exam.SetUserDetailId(userDetailId);
+      exam.Activate(dto.IsActive);
       return exam;
     }
 
-    public static void MapToExistingExam(ExamWriteDto dto, Exam exam)
+    public static void ApplyPatch(PatchExamDto dto, Exam exam)
     {
-      exam.Name = dto.Name;
-      exam.StartOn = dto.StartOn;
-      exam.Duration = dto.Duration;
-      exam.SectionId = dto.SectionId;
-      exam.IsActive = dto.IsActive;
-      exam.Subject = dto.Subject;
-      exam.Instructions = dto.Instructions;
+      exam.Name = dto.Name ?? exam.Name;
+      exam.StartOn = dto.StartOn ?? exam.StartOn;
+      exam.Duration = dto.Duration ?? exam.Duration;
+      exam.SectionId = dto.SectionId ?? exam.SectionId;
+      exam.Subject = dto.Subject ?? exam.Subject;
+      exam.Instructions = dto.Instructions ?? exam.Instructions;
+      exam.Activate(dto.IsActive ?? exam.IsActive);
     }
   }
 }

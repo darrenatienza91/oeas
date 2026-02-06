@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { Exam } from '@batstateu/data-models';
 import { ExamsService } from '@batstateu/shared';
 import { Store } from '@ngrx/store';
@@ -15,7 +15,7 @@ import { ExamListComponent } from '../../components/exam-list/exam-list.componen
 })
 export class ExamsComponent implements OnInit {
   criteria = '';
-  examList: Exam[] = [];
+  public examList = signal<Exam[]>([]);
   sectionId!: number | null;
   userDetailId!: number | null;
   private searchSubject$ = new BehaviorSubject<string>('');
@@ -31,17 +31,37 @@ export class ExamsComponent implements OnInit {
 
   getAll(criteria: string) {
     this.examService
-      .getAll(criteria, this.sectionId, this.userDetailId)
+      .getAll(criteria, this.sectionId)
       .pipe(take(1))
       .subscribe((val) => {
-        this.examList = [...val];
+        this.examList.set([...val]);
       });
   }
-  onChangeStatus(value: any) {
-    this.examService.changeStatus(value.id, !value.status).subscribe(() => {
-      this.getAll(this.criteria);
-    });
+  onChangeStatus(value: { id: number; status: boolean }) {
+    if (!!value.status) {
+      this.examService
+        .deActivate(value.id)
+        .pipe(
+          switchMap(() => this.examService.getAll(this.criteria, this.sectionId)),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe((val) => {
+          this.examList.set([...val]);
+        });
+      return;
+    }
+
+    this.examService
+      .activate(value.id)
+      .pipe(
+        switchMap(() => this.examService.getAll(this.criteria, this.sectionId)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((val) => {
+        this.examList.set([...val]);
+      });
   }
+
   onDelete(id: number) {
     this.examService.delete(id).subscribe(() => {
       this.modal.success({
@@ -74,12 +94,12 @@ export class ExamsComponent implements OnInit {
         debounceTime(300),
         distinctUntilChanged(),
         switchMap((x) => {
-          return this.examService.getAll(x, this.sectionId, this.userDetailId);
+          return this.examService.getAll(x, this.sectionId);
         }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((val) => {
-        this.examList = val;
+        this.examList.set([...val]);
       });
   }
 }

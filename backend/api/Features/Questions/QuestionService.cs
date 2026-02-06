@@ -15,15 +15,11 @@ namespace api.Services
     Task<Question> AddQuestion(Question question);
     Task<Question?> GetQuestionByExamIdAndId(int examId, int id);
 
-    // Task RemoveExam(Exam exam);
-    // Task<Exam> EditExam(Exam exam);
-    // Task<Exam?> GetExamById(int id);
-    // Task<IEnumerable<Exam>> GetExamsBySectionAndStartOn(
-    //   int sectionId,
-    //   DateTimeOffset startOn,
-    //   int userDetailId
-    // );
+    Task RemoveQuestion(Question exam);
+    Task<Question> EditQuestion(Question question);
+    Task<Question?> GetQuestionByIdAndExamId(int examId, int id);
     Task<IEnumerable<Question>> GetQuestions(int examId, string criteria);
+    Task RemoveExam(Question question);
   }
 
   public class QuestionService(AppDbContext appDbContext) : IQuestionService
@@ -46,26 +42,28 @@ namespace api.Services
       );
     }
 
-    // public async Task RemoveExam(Exam exam)
-    // {
-    //   appDbContext.Remove(exam);
+    public async Task RemoveQuestion(Question question)
+    {
+      appDbContext.Remove(question);
 
-    //   await appDbContext.SaveChangesAsync();
-    // }
+      await appDbContext.SaveChangesAsync();
+    }
 
-    // public async Task<Exam> EditExam(Exam exam)
-    // {
-    //   appDbContext.Exams.Update(exam);
+    public async Task<Question> EditQuestion(Question exam)
+    {
+      appDbContext.Questions.Update(exam);
 
-    //   await appDbContext.SaveChangesAsync();
+      await appDbContext.SaveChangesAsync();
 
-    //   return exam;
-    // }
+      return exam;
+    }
 
-    // public async Task<Exam?> GetExamById(int id)
-    // {
-    //   return await appDbContext.Exams.FindAsync(id);
-    // }
+    public async Task<Question?> GetQuestionByIdAndExamId(int examId, int id)
+    {
+      return await appDbContext.Questions.FirstOrDefaultAsync(x =>
+        x.ExamId == examId && x.Id == id
+      );
+    }
 
     public async Task<IEnumerable<Question>> GetQuestions(int examId, string criteria)
     {
@@ -74,15 +72,15 @@ namespace api.Services
         .ToListAsync();
     }
 
-    // public async Task<IEnumerable<Exam>> GetExamsBySectionIdUserDetailIdAndCriteriaAsync(
-    //   int sectionId,
-    //   int userDetailId,
-    //   string criteria
-    // )
-    // {
-    //   return await appDbContext
-    //     .Exams.Where(x => x.SectionId == sectionId && x.Name.Contains(criteria))
-    //     .ToListAsync();
-    // }
+    public Task<Exam?> GetQuestion(int examId, int id)
+    {
+      throw new NotImplementedException();
+    }
+
+    public async Task RemoveExam(Question question)
+    {
+      this.appDbContext.Remove(question);
+      await this.appDbContext.SaveChangesAsync();
+    }
   }
 }

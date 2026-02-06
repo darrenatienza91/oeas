@@ -16,14 +16,9 @@ namespace api.Services
     Task RemoveExam(Exam exam);
     Task<Exam> EditExam(Exam exam);
     Task<Exam?> GetExamById(int id);
-    Task<IEnumerable<Exam>> GetExamsBySectionAndStartOn(
-      int sectionId,
-      DateTimeOffset startOn,
-      int userDetailId
-    );
+    Task<IEnumerable<Exam>> GetExamsBySectionAndStartOn(int sectionId, DateTimeOffset startOn);
     Task<IEnumerable<Exam>> GetExamsBySectionIdUserDetailIdAndCriteriaAsync(
       int sectionId,
-      int userDetailId,
       string criteria
     );
   }
@@ -64,8 +59,7 @@ namespace api.Services
 
     public async Task<IEnumerable<Exam>> GetExamsBySectionAndStartOn(
       int sectionId,
-      DateTimeOffset startOn,
-      int userDetailId
+      DateTimeOffset startOn
     )
     {
       return await appDbContext
@@ -75,7 +69,6 @@ namespace api.Services
 
     public async Task<IEnumerable<Exam>> GetExamsBySectionIdUserDetailIdAndCriteriaAsync(
       int sectionId,
-      int userDetailId,
       string criteria
     )
     {
@@ -83,5 +76,6 @@ namespace api.Services
         .Exams.Where(x => x.SectionId == sectionId && x.Name.Contains(criteria))
         .ToListAsync();
     }
+
   }
 }

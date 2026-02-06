@@ -1,6 +1,6 @@
 ### GetExamsBySectionIdStartOn
 # @name GetExams
-# @import ./users/auth.http
+# @import ../../http/users/auth.http
 # @ref login
 GET {{HOST}}/api/exams?sectionId=1&startOn=2025-01-31T10:15:00Z HTTP/1.1
 Authorization: Bearer {{login.token}}
@@ -12,9 +12,9 @@ Accept: application/json
 
 ### GetExamsBySectionIdUserDetailIdAndCriteria
 # @name GetExams
-# @import ./users/auth.http
+# @import ../../http/users/auth.http
 # @ref login
-GET {{HOST}}/api/user-details/1/sections/1/exams?criteria= HTTP/1.1
+GET {{HOST}}/api/sections/1/exams?criteria= HTTP/1.1
 Authorization: Bearer {{login.token}}
 Content-Type: application/json
 Accept: application/json
@@ -65,3 +65,12 @@ Accept: application/json
 {
 
 }
+
+### ActivateExam
+# @name ActivateExam
+# @import ../../http/users/auth.http
+# @ref login
+PATCH {{HOST}}/api/exams/10/activate HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json

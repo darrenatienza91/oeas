@@ -22,18 +22,19 @@ namespace api.Endpoints
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
 
       app.MapGet("/exams/{examId}/questions/{id}", GetQuestionByExamIdAndId)
-        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));;
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
+      ;
 
       app.MapPost("/exams/{examid}/questions", Add)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin))
         .AddEndpointFilter<ValidationFilter<AddExamDto>>();
 
-      // app.MapPut("/exams/{id}", Edit)
-      //   .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin))
-      //   .AddEndpointFilter<ValidationFilter<EditExamDto>>();
+      app.MapPut("/exams/{examid}/questions/{id}", Edit)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin))
+        .AddEndpointFilter<ValidationFilter<PatchExamDto>>();
 
-      // app.MapDelete("/exams/{id}", Delete)
-      //   .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
+      app.MapDelete("/exams/{examId}/questions/{id}", Delete)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
     }
 
     static async Task<IResult> GetQuestionsByExamId(
@@ -63,22 +64,6 @@ namespace api.Endpoints
       return Results.Ok(QuestionMapper.MapToReadQuestionDto(question));
     }
 
-    // static async Task<IResult> GetExamsBySectionIdUserDetailIdAndCriteria(
-    //   IExamService service,
-    //   [FromRoute] int sectionId,
-    //   [FromRoute] int userDetailId,
-    //   [FromQuery] string criteria
-    // )
-    // {
-    //   var exams = await service.GetExamsBySectionIdUserDetailIdAndCriteriaAsync(
-    //     sectionId,
-    //     userDetailId,
-    //     criteria
-    //   );
-
-    //   return Results.Ok(exams.Select(ExamMapper.MapToExamDto));
-    // }
-
     static async Task<IResult> Add(
       AddQuestionDto dto,
       [FromRoute] int examId,
@@ -100,38 +85,42 @@ namespace api.Endpoints
       return Results.Created($"{http.Request.Path}/{question.Id}", response);
     }
 
-    // static async Task<IResult> Edit(
-    //   [FromRoute] int id,
-    //   [FromBody] EditExamDto dto,
-    //   IExamService service,
-    //   HttpContext http,
-    //   ClaimsPrincipal user
-    // )
-    // {
-    //   var exam =
-    //     await service.GetExamById(id)
-    //     ?? throw new NotFoundException($"Exam with id {id}  was not found.");
+    static async Task<IResult> Edit(
+      [FromRoute] int id,
+      [FromRoute] int examId,
+      [FromBody] EditQuestionDto dto,
+      IQuestionService service,
+      HttpContext http
+    )
+    {
+      var question =
+        await service.GetQuestionByExamIdAndId(examId, id)
+        ?? throw new NotFoundException(
+          $"Question with id {id}  was not found for Exam with id {examId}"
+        );
 
-    //   ExamMapper.MapToExistingExam(dto, exam);
+      QuestionMapper.MapToExistingQuestion(dto, question);
 
-    //   await service.EditExam(exam);
+      await service.EditQuestion(question);
 
-    //   return Results.NoContent();
-    // }
+      return Results.NoContent();
+    }
 
-    // static async Task<IResult> Delete(
-    //   [FromRoute] int id,
-    //   IExamService service,
-    //   ClaimsPrincipal user
-    // )
-    // {
-    //   var exam =
-    //     await service.GetExamById(id)
-    //     ?? throw new NotFoundException($"Exam with id {id}  was not found.");
+    static async Task<IResult> Delete(
+      [FromRoute] int id,
+      [FromRoute] int examId,
+      IQuestionService service
+    )
+    {
+      var question =
+        await service.GetQuestionByExamIdAndId(examId, id)
+        ?? throw new NotFoundException(
+          $"Question with id {id}  was not found for Exam with id {examId}"
+        );
 
-    //   await service.RemoveExam(exam);
+      await service.RemoveExam(question);
 
-    //   return Results.NoContent();
-    // }
+      return Results.NoContent();
+    }
   }
 }

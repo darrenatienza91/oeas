@@ -92,7 +92,7 @@ import { StatusPipe } from 'libs/shared/src/lib/pipes/status/status.pipe';
       // { path: ':examId/take-exam', component: TakeExamComponent },
       { path: ':examId/questions', component: QuestionsComponent },
       {
-        path: ':examId/questions/:questionId/edit',
+        path: ':examId/questions/:id/edit',
         component: QuestionFormComponent,
       },
       { path: ':examId/questions/add', component: QuestionFormComponent },

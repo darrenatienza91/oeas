@@ -15,7 +15,7 @@ namespace api.Models
     public DateTimeOffset StartOn { get; set; }
     public int Duration { get; set; }
     public int SectionId { get; set; }
-    public bool IsActive { get; set; }
+    public bool IsActive { get; private set; }
     public string Instructions { get; set; } = null!;
     public int? UserDetailId { get; private set; }
 
@@ -33,6 +33,11 @@ namespace api.Models
       }
 
       this.UserDetailId = userDetailId;
+    }
+
+    public void Activate(bool isActive)
+    {
+      this.IsActive = isActive;
     }
   }
 

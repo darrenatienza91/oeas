@@ -10,7 +10,7 @@ import { QuestionListComponent } from '../../components/question-list/question-l
   imports: [QuestionListComponent],
   selector: 'batstateu-questions',
   templateUrl: './questions.component.html',
-  styleUrls: ['./questions.component.less']
+  styleUrls: ['./questions.component.less'],
 })
 export class QuestionsComponent implements OnInit {
   private searchSubject$ = new BehaviorSubject<string>('');
@@ -20,7 +20,11 @@ export class QuestionsComponent implements OnInit {
   delete(id: number) {
     alert(id);
   }
-  constructor(private questionService: QuestionService, private modal: NzModalService, private route: ActivatedRoute) { }
+  constructor(
+    private questionService: QuestionService,
+    private modal: NzModalService,
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
     this.examId = Number(this.route.snapshot.paramMap.get('examId'));
@@ -30,7 +34,7 @@ export class QuestionsComponent implements OnInit {
       .pipe(
         map((val) => val.trim()),
         debounceTime(1000),
-        distinctUntilChanged()
+        distinctUntilChanged(),
       )
       .subscribe((val) => {
         this.getAll(val);
@@ -38,7 +42,7 @@ export class QuestionsComponent implements OnInit {
   }
   getAll(criteria: string) {
     this.questionService.getAll(this.examId, criteria).subscribe((val) => {
-      this.questionList = val
+      this.questionList = val;
     });
   }
   onSearch(criteria: string) {
@@ -46,8 +50,8 @@ export class QuestionsComponent implements OnInit {
     this.searchSubject$.next(criteria);
   }
 
-  onDelete(id: number) {
-    this.questionService.delete(id).subscribe(() => {
+  onDelete(questionList: QuestionList) {
+    this.questionService.delete(questionList.id, questionList.examId).subscribe(() => {
       this.modal.success({
         nzTitle: 'Delete Success',
         nzContent: `Record has been deleted`,

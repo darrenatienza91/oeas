@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, input, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Exam } from '@batstateu/data-models';
@@ -14,7 +14,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   styleUrls: ['./exam-list.component.less'],
 })
 export class ExamListComponent {
-  @Input() examList!: Exam[];
+  public examList = input<Exam[]>();
   @Input() isStudent!: boolean;
   @Output() deleteRecord = new EventEmitter<number>();
   @Output() search = new EventEmitter<string>();

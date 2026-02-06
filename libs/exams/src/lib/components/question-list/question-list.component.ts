@@ -14,7 +14,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 })
 export class QuestionListComponent implements OnInit {
   @Input() questionList: QuestionList[] = [];
-  @Output() deleteRecord = new EventEmitter<number>();
+  @Output() deleteRecord = new EventEmitter<QuestionList>();
   @Output() search = new EventEmitter<string>();
   searchText = '';
   constructor(private modal: NzModalService) {}
@@ -26,7 +26,7 @@ export class QuestionListComponent implements OnInit {
       nzTitle: 'Delete Record',
       nzContent: `Are you sure you want to delete question with name <b>${questionListDetail.description}</b>?`,
       nzOnOk: () => {
-        this.deleteRecord.emit(questionListDetail.id);
+        this.deleteRecord.emit(questionListDetail);
       },
     });
   }
