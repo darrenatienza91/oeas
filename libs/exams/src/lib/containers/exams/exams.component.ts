@@ -85,7 +85,6 @@ export class ExamsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUser();
-    this.getAll('');
 
     this.searchSubject$
       .asObservable()

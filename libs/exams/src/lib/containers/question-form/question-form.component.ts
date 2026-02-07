@@ -1,10 +1,9 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { QuestionDetail } from '@batstateu/data-models';
 import { QuestionService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { toHTML } from 'ngx-editor';
 import { QuestionFormViewComponent } from '../../components/question-form-view/question-form-view.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -15,7 +14,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   styleUrls: ['./question-form.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class QuestionFormComponent implements OnInit {
+export class QuestionFormComponent {
   private modal: NzModalService = inject(NzModalService);
   private questionService = inject(QuestionService);
   private route = inject(ActivatedRoute);
@@ -43,8 +42,8 @@ export class QuestionFormComponent implements OnInit {
         .add({
           ...val,
           examId: examId,
-          description: toHTML(val.description),
-          correctAnswer: toHTML(val.correctAnswer),
+          description: val.description,
+          correctAnswer: val.correctAnswer,
         })
         .subscribe(() => {
           this.modal.success({
@@ -55,6 +54,4 @@ export class QuestionFormComponent implements OnInit {
         });
     }
   }
-
-  ngOnInit(): void {}
 }

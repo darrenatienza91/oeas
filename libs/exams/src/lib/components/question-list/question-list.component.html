@@ -4,22 +4,24 @@
       <nz-breadcrumb-item>Exams</nz-breadcrumb-item>
       <nz-breadcrumb-item>Questions</nz-breadcrumb-item>
     </nz-breadcrumb>
-    <nz-page-header-extra
-      ><a style="width: 72px" nz-button nzType="primary" routerLink="add">Add</a>
-      <nz-input-group style="width: 240px" [nzSuffix]="suffixIconSearch">
-        <input
-          type="text"
-          nz-input
-          placeholder="Search"
-          [(ngModel)]="searchText"
-          (ngModelChange)="onSearchChange($event)"
-        />
-      </nz-input-group>
-      <ng-template #suffixIconSearch> <i nz-icon nzType="search"></i> </ng-template
-    ></nz-page-header-extra>
+    <nz-page-header-extra>
+      <nz-space-compact nzSize="default">
+        <a style="width: 72px" nz-button nzType="primary" routerLink="add">Add</a>
+        <nz-input-wrapper>
+          <nz-icon nzInputSuffix nzType="search" />
+          <input
+            type="text"
+            nz-input
+            placeholder="Search"
+            [(ngModel)]="searchText"
+            (ngModelChange)="onSearchChange($event)"
+          />
+        </nz-input-wrapper>
+      </nz-space-compact>
+    </nz-page-header-extra>
   </nz-page-header>
 
-  <nz-table #basicTable [nzData]="questionList" nzBordered>
+  <nz-table #basicTable [nzData]="questionList() ?? []" nzBordered>
     <thead>
       <tr>
         <th>Name</th>

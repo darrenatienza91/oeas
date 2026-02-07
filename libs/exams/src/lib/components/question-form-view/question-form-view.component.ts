@@ -1,14 +1,15 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   EventEmitter,
   inject,
   input,
-  InputSignal,
   OnDestroy,
   OnInit,
   Output,
+  Signal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { CommonModule, Location } from '@angular/common';
@@ -37,10 +38,10 @@ export class QuestionFormViewComponent implements OnInit, OnDestroy {
   editor!: Editor;
   editorAns!: Editor;
   @Output() save = new EventEmitter<QuestionDetail>();
-  public questionDetail: InputSignal<QuestionDetail | undefined> = input<
-    QuestionDetail | undefined
-  >({} as QuestionDetail);
-  title = 'Add New';
+  public questionDetail = input<QuestionDetail>();
+  public title: Signal<'Edit' | 'Add New'> = computed(() =>
+    this.questionDetail()?.id ? 'Edit' : 'Add New',
+  );
   toolbar: Toolbar = TOOLBAR_MINIMAL;
 
   public validateForm = this.fb.group({

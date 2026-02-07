@@ -1,7 +1,5 @@
-@if (examDetail$ | async; as examDetail) {
-  <batstateu-exam-form-view
-    [sections]="sections()"
-    (save)="onSave($event)"
-    [examDetail]="examDetail"
-  ></batstateu-exam-form-view>
-}
+<batstateu-exam-form-view
+  [sections]="sections()"
+  (save)="onSave($event)"
+  [examDetail]="examDetail()"
+></batstateu-exam-form-view>

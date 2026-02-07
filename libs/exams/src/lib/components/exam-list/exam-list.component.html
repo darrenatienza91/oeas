@@ -1,22 +1,21 @@
 <div class="exam-list-container">
   <nz-page-header class="site-page-header" nzTitle="Exams">
     <nz-page-header-extra>
-      <nz-space>
-        <nz-space-compact *nzSpaceItem>
-          @if (!isStudent) {
-            <button nzInputAddonBefore nz-button nzType="primary" routerLink="form"> Add </button>
-          }
-          <nz-input-search nzEnterButton>
-            <input
-              nz-input
-              type="text"
-              placeholder="Search"
-              [(ngModel)]="searchText"
-              (ngModelChange)="onSearchChange($event)"
-            />
-          </nz-input-search>
-        </nz-space-compact>
-      </nz-space>
+      <nz-space-compact>
+        @if (!isStudent) {
+          <button nzInputAddonBefore nz-button nzType="primary" routerLink="form"> Add </button>
+        }
+        <nz-input-wrapper>
+          <nz-icon nzInputSuffix nzType="search" />
+          <input
+            nz-input
+            type="text"
+            placeholder="Search"
+            [(ngModel)]="searchText"
+            (ngModelChange)="onSearchChange($event)"
+          />
+        </nz-input-wrapper>
+      </nz-space-compact>
     </nz-page-header-extra>
   </nz-page-header>
 

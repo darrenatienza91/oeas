@@ -1,8 +1,8 @@
 <div class="exam-form-view-container">
-  <nz-page-header class="site-page-header" [nzTitle]="title">
+  <nz-page-header class="site-page-header" [nzTitle]="title()">
     <nz-breadcrumb nz-page-header-breadcrumb>
       <nz-breadcrumb-item>Exams</nz-breadcrumb-item>
-      <nz-breadcrumb-item>{{ title }}</nz-breadcrumb-item>
+      <nz-breadcrumb-item>{{ title() }}</nz-breadcrumb-item>
     </nz-breadcrumb>
   </nz-page-header>
 
@@ -49,7 +49,7 @@
             </nz-form-label>
             <nz-form-control nzErrorTip="Please input your duration!">
               <nz-input-number style="width: 100%" id="duration" formControlName="duration">
-                <span nzInputAddonAfter>$</span></nz-input-number
+                <span nzInputAddonAfter>Minutes</span></nz-input-number
               >
             </nz-form-control>
           </nz-form-item>
