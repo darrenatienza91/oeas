@@ -60,7 +60,7 @@ namespace api.Services
     )
     {
       return await appDbContext
-        .Exams.Where(x => x.SectionId == sectionId && x.StartOn >= startOn)
+        .Exams.Where(x => x.SectionId == sectionId && x.StartOn >= startOn && x.IsActive)
         .ToListAsync();
     }
 
