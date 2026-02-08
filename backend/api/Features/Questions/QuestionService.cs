@@ -68,7 +68,9 @@ namespace api.Services
     public async Task<IEnumerable<Question>> GetQuestions(int examId, string criteria)
     {
       return await appDbContext
-        .Questions.Where(x => x.ExamId == examId && x.Description.Contains(criteria))
+        .Questions.Where(x =>
+          x.ExamId == examId && EF.Functions.Like(x.Description, $"%{criteria}%")
+        )
         .ToListAsync();
     }
 

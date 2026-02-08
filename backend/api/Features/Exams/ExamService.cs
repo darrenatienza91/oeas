@@ -17,10 +17,7 @@ namespace api.Services
     Task<Exam> EditExam(Exam exam);
     Task<Exam?> GetExamById(int id);
     Task<IEnumerable<Exam>> GetExamsBySectionAndStartOn(int sectionId, DateTimeOffset startOn);
-    Task<IEnumerable<Exam>> GetExamsBySectionIdUserDetailIdAndCriteriaAsync(
-      int sectionId,
-      string criteria
-    );
+    Task<IEnumerable<Exam>> GetExamsBySectionIdAndCriteriaAsync(int sectionId, string criteria);
   }
 
   public class ExamService(AppDbContext appDbContext) : IExamService
@@ -67,15 +64,14 @@ namespace api.Services
         .ToListAsync();
     }
 
-    public async Task<IEnumerable<Exam>> GetExamsBySectionIdUserDetailIdAndCriteriaAsync(
+    public async Task<IEnumerable<Exam>> GetExamsBySectionIdAndCriteriaAsync(
       int sectionId,
       string criteria
     )
     {
       return await appDbContext
-        .Exams.Where(x => x.SectionId == sectionId && x.Name.Contains(criteria))
+        .Exams.Where(x => x.SectionId == sectionId && EF.Functions.Like(x.Name, $"%{criteria}%"))
         .ToListAsync();
     }
-
   }
 }

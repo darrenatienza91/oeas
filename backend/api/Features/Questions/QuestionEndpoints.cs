@@ -27,11 +27,11 @@ namespace api.Endpoints
 
       app.MapPost("/exams/{examid}/questions", Add)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin))
-        .AddEndpointFilter<ValidationFilter<AddExamDto>>();
+        .AddEndpointFilter<ValidationFilter<AddQuestionDto>>();
 
       app.MapPut("/exams/{examid}/questions/{id}", Edit)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin))
-        .AddEndpointFilter<ValidationFilter<PatchExamDto>>();
+        .AddEndpointFilter<ValidationFilter<EditQuestionDto>>();
 
       app.MapDelete("/exams/{examId}/questions/{id}", Delete)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));

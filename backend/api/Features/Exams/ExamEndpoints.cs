@@ -71,7 +71,7 @@ namespace api.Endpoints
       [FromQuery] string criteria
     )
     {
-      var exams = await service.GetExamsBySectionIdUserDetailIdAndCriteriaAsync(
+      var exams = await service.GetExamsBySectionIdAndCriteriaAsync(
         sectionId,
         criteria
       );

@@ -45,23 +45,29 @@ export class ExamFormViewComponent implements OnInit, OnDestroy {
 
   @Output() save = new EventEmitter<Exam>();
   public sections = input<Section[]>();
-  public examDetail = input<Exam | undefined>({} as Exam);
+  public examDetail = input<Exam | null>(null);
   public validateForm: UntypedFormGroup = this.fb.group({
-    name: [null, [Validators.required]],
-    subject: [null, [Validators.required]],
+    name: ['', [Validators.required]],
+    subject: ['', [Validators.required]],
     startOn: [new Date(), [Validators.required]],
     duration: [60, [Validators.required, this.durationValidator]],
     sectionId: [null, [Validators.required]],
-    instructions: [null, [Validators.required]],
+    instructions: ['', [Validators.required]],
   });
 
   public title = computed(() => {
     return !this.examDetail()?.id ? 'Add New' : 'Edit';
   });
+
   public toolBars = toolbars;
 
   constructor() {
+    this.editor = new Editor();
     effect(() => {
+      if (!this.examDetail()?.id) {
+        return;
+      }
+
       this.validateForm.patchValue({
         ...this.examDetail(),
         startOn: new Date(this.examDetail()?.startOn as string),
@@ -91,7 +97,5 @@ export class ExamFormViewComponent implements OnInit, OnDestroy {
     this.editor.destroy();
   }
 
-  ngOnInit(): void {
-    this.editor = new Editor();
-  }
+  ngOnInit(): void {}
 }

@@ -13,7 +13,7 @@ namespace api.Contracts
     int Duration,
     int SectionId,
     string Instructions,
-    bool IsActive
+    bool? IsActive
   );
 
   public record ExamDto(
@@ -34,18 +34,18 @@ namespace api.Contracts
     int Duration,
     int SectionId,
     string Instructions,
-    bool IsActive
+    bool? IsActive
   ) : ExamWriteDto(Name, Subject, StartOn, Duration, SectionId, Instructions, IsActive);
 
   public record PatchExamDto(
     string Name,
     string Subject,
-    DateTimeOffset? StartOn,
-    int? Duration,
-    int? SectionId,
+    DateTimeOffset StartOn,
+    int Duration,
+    int SectionId,
     string Instructions,
     bool? IsActive
-  );
+  ) : ExamWriteDto(Name, Subject, StartOn, Duration, SectionId, Instructions, IsActive);
 
   public static class ExamMapper
   {
@@ -74,16 +74,16 @@ namespace api.Contracts
       };
 
       exam.SetUserDetailId(userDetailId);
-      exam.Activate(dto.IsActive);
+      exam.Activate(true);
       return exam;
     }
 
     public static void ApplyPatch(PatchExamDto dto, Exam exam)
     {
       exam.Name = dto.Name ?? exam.Name;
-      exam.StartOn = dto.StartOn ?? exam.StartOn;
-      exam.Duration = dto.Duration ?? exam.Duration;
-      exam.SectionId = dto.SectionId ?? exam.SectionId;
+      exam.StartOn = dto.StartOn;
+      exam.Duration = dto.Duration;
+      exam.SectionId = dto.SectionId;
       exam.Subject = dto.Subject ?? exam.Subject;
       exam.Instructions = dto.Instructions ?? exam.Instructions;
       exam.Activate(dto.IsActive ?? exam.IsActive);

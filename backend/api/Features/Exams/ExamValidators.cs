@@ -7,7 +7,7 @@ using FluentValidation;
 
 namespace api.Endpoints.Validators
 {
-  public abstract class ExamWriteDtoValidatorBase : AbstractValidator<ExamWriteDto>
+  public abstract class ExamWriteDtoValidatorBase<T> : AbstractValidator<T> where T : ExamWriteDto
   {
     protected ExamWriteDtoValidatorBase()
     {
@@ -19,7 +19,7 @@ namespace api.Endpoints.Validators
     }
   }
 
-  public sealed class CreateExamDtoValidator : ExamWriteDtoValidatorBase
+  public sealed class CreateExamDtoValidator : ExamWriteDtoValidatorBase<AddExamDto>
   {
     public CreateExamDtoValidator()
     {
@@ -27,7 +27,7 @@ namespace api.Endpoints.Validators
     }
   }
 
-  public sealed class EditExamDtoValidator : ExamWriteDtoValidatorBase
+  public sealed class EditExamDtoValidator : ExamWriteDtoValidatorBase<PatchExamDto>
   {
     public EditExamDtoValidator()
     {

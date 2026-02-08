@@ -24,7 +24,7 @@ Accept: application/json
 
 ### AddExam
 # @name AddExam
-# @import ./users/auth.http
+# @import ../../http/users/auth.http
 # @ref login
 {{
 }}
@@ -34,11 +34,11 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "Name",
+  "name": "test",
   "sectionId": 1,
   "startOn": "2026-03-01T10:15:00Z",
   "instructions": "Instruction",
-  "subject": "",
+  "subject": "test",
   "duration": 1
 }
 

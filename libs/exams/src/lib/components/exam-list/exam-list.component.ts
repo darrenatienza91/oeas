@@ -16,7 +16,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 export class ExamListComponent {
   public examList = input<Exam[]>();
   @Input() isStudent!: boolean;
-  @Output() deleteRecord = new EventEmitter<number>();
+  @Output() deleteRecord = new EventEmitter<number | null>();
   @Output() search = new EventEmitter<string>();
   @Output() changeStatus = new EventEmitter();
   searchText = '';
@@ -34,7 +34,7 @@ export class ExamListComponent {
   onSearchChange(criteria: string) {
     this.search.emit(criteria);
   }
-  onChangeStatus(id?: number, status?: boolean) {
+  onChangeStatus(id?: number | null, status?: boolean) {
     this.changeStatus.emit({ id, status });
   }
 }

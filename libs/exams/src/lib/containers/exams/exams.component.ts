@@ -62,8 +62,8 @@ export class ExamsComponent implements OnInit {
       });
   }
 
-  onDelete(id: number) {
-    this.examService.delete(id).subscribe(() => {
+  onDelete(id: number | null) {
+    this.examService.delete(id as number).subscribe(() => {
       this.modal.success({
         nzTitle: 'Delete Success',
         nzContent: `Record has been deleted`,

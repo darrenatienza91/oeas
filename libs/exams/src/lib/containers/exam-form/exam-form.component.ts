@@ -21,7 +21,9 @@ export class ExamFormComponent implements OnInit {
   private examService: ExamsService = inject(ExamsService);
   public sections = toSignal(this.sectionService.getAll());
   private id = Number(this.route.snapshot.paramMap.get('examId'));
-  public examDetail = this.id ? toSignal(this.examService.get(this.id)) : signal({} as Exam);
+  public examDetail = this.id
+    ? toSignal(this.examService.get(this.id), { initialValue: null })
+    : signal(null);
   userStore!: AuthPayload | null;
 
   constructor(
@@ -35,11 +37,16 @@ export class ExamFormComponent implements OnInit {
     this.getUser();
   }
 
-  onSave(val: any) {
+  onSave(val: Exam) {
     const date = new Date(val.startOn);
     if (this.examDetail()) {
       this.examService
-        .edit({ ...val, id: this.examDetail()?.id, startOn: date, instructions: val.instructions })
+        .edit({
+          ...val,
+          id: this.examDetail()?.id ?? null,
+          startOn: date.toISOString(),
+          instructions: val.instructions,
+        })
         .pipe(
           tap(() => {
             this.modal.success({
@@ -54,9 +61,8 @@ export class ExamFormComponent implements OnInit {
       this.examService
         .add({
           ...val,
-          startOn: date,
+          startOn: date?.toISOString(),
           isActive: true,
-          userDetailId: this.userStore?.user.userDetailId,
           instructions: val.instructions,
         })
         .pipe(

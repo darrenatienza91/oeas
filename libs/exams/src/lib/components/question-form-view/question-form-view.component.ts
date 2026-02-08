@@ -47,7 +47,7 @@ export class QuestionFormViewComponent implements OnInit, OnDestroy {
   public validateForm = this.fb.group({
     description: ['', [Validators.required]],
     correctAnswer: ['', [Validators.required]],
-    points: [60, [Validators.required]],
+    points: [1, [Validators.required]],
   });
 
   submitForm(): void {

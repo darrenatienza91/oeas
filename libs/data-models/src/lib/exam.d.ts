@@ -1,6 +1,6 @@
 export interface Exam {
   sectionId: number;
-  id: number;
+  id: number | null;
   name: string;
   subject: string;
   startOn: string;
