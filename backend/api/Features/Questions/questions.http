@@ -1,0 +1,44 @@
+### GetQuestionsByExamIdCriteria
+# @name GetQuestionsByExamIdCriteria
+# @import ../../http/users/auth.http
+# @ref login
+GET {{HOST}}/api/exams/10/questions?criteria= HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+
+### GetQuestionByExamIdAndId
+# @name GetQuestionByExamIdAndId
+# @import ../../http/users/auth.http
+# @ref login
+GET {{HOST}}/api/exams/100/questions/1 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+### EditQuestion
+# @name EditQuestion
+# @import ../../http/users/auth.http
+# @ref login
+PUT {{HOST}}/api/exams/10/questions/7 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+    "Description": "<p>Test</>",
+    "CorrectAnswer": "<p>Test</p>",
+    "Points": 1
+}
+
+### DeleteExam
+# @name DeleteExam
+# @import ../../http/users/auth.http
+# @ref login
+DELETE {{HOST}}/api/exams/10/questions/7 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+
+}

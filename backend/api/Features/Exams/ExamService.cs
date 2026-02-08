@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.Exceptions;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,12 +13,11 @@ namespace api.Services
   public interface IExamService
   {
     Task<Exam> AddExam(Exam exam);
+    Task RemoveExam(Exam exam);
+    Task<Exam> EditExam(Exam exam);
+    Task<Exam?> GetExamById(int id);
     Task<IEnumerable<Exam>> GetExamsBySectionAndStartOn(int sectionId, DateTimeOffset startOn);
-    Task<IEnumerable<Exam>> GetExamsBySectionIdUserDetailIdAndCriteriaAsync(
-      int sectionId,
-      int userDetailId,
-      string criteria
-    );
+    Task<IEnumerable<Exam>> GetExamsBySectionIdAndCriteriaAsync(int sectionId, string criteria);
   }
 
   public class ExamService(AppDbContext appDbContext) : IExamService
@@ -33,6 +33,27 @@ namespace api.Services
       return exam;
     }
 
+    public async Task RemoveExam(Exam exam)
+    {
+      appDbContext.Remove(exam);
+
+      await appDbContext.SaveChangesAsync();
+    }
+
+    public async Task<Exam> EditExam(Exam exam)
+    {
+      appDbContext.Exams.Update(exam);
+
+      await appDbContext.SaveChangesAsync();
+
+      return exam;
+    }
+
+    public async Task<Exam?> GetExamById(int id)
+    {
+      return await appDbContext.Exams.FindAsync(id);
+    }
+
     public async Task<IEnumerable<Exam>> GetExamsBySectionAndStartOn(
       int sectionId,
       DateTimeOffset startOn
@@ -43,16 +64,13 @@ namespace api.Services
         .ToListAsync();
     }
 
-    public async Task<IEnumerable<Exam>> GetExamsBySectionIdUserDetailIdAndCriteriaAsync(
+    public async Task<IEnumerable<Exam>> GetExamsBySectionIdAndCriteriaAsync(
       int sectionId,
-      int userDetailId,
       string criteria
     )
     {
       return await appDbContext
-        .Exams.Where(x =>
-          x.SectionId == sectionId && x.UserDetailId >= userDetailId && x.Name.Contains(criteria)
-        )
+        .Exams.Where(x => x.SectionId == sectionId && EF.Functions.Like(x.Name, $"%{criteria}%"))
         .ToListAsync();
     }
   }

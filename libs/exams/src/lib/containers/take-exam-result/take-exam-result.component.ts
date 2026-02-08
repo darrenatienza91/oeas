@@ -33,7 +33,7 @@ export class TakeExamResultComponent implements OnInit {
 
           this.questionService.getAllByExamId(this.examId).subscribe((val) => {
             val.map((val) => {
-              this.totalQuestionPoints = this.totalQuestionPoints + val.maxpoints;
+              this.totalQuestionPoints = this.totalQuestionPoints + val.points;
             });
             this.percentage = Math.round((this.totalPoints / this.totalQuestionPoints) * 100);
             this.scoreSummary = `${this.totalPoints} / ${this.totalQuestionPoints}`;

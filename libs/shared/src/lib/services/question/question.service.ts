@@ -10,40 +10,40 @@ import { map, Observable } from 'rxjs';
 export class QuestionService {
   getAllByExamId(examId: number): Observable<QuestionList[]> {
     return this.httpClient
-      .get<ResponseWrapper<QuestionList>>(
-        `${this.appConfig.API_URL}/records/questions?filter=examId,eq,${examId}`
-      )
+      .get<
+        ResponseWrapper<QuestionList>
+      >(`${this.appConfig.API_URL}/records/questions?filter=examId,eq,${examId}`)
       .pipe(map((res: ResponseWrapper<any>) => res.records));
   }
-  delete(id: number): Observable<number> {
-    return this.httpClient.delete<number>(
-      `${this.appConfig.API_URL}/records/questions/${id}`
+  public delete(id: number, examId: number): Observable<void> {
+    return this.httpClient.delete<void>(
+      `${this.appConfig.API_URL}/exams/${examId}/questions/${id}`,
     );
   }
-  getAll(examId : number, criteria: string): Observable<QuestionList[]> {
-    return this.httpClient
-      .get<ResponseWrapper<QuestionList>>(
-        `${this.appConfig.API_URL}/records/questions?filter=examId,cs,${examId}&filter=question,cs,${criteria}`
-      )
-      .pipe(map((res: ResponseWrapper<any>) => res.records));
+  public getAll(examId: number, criteria: string): Observable<QuestionList[]> {
+    return this.httpClient.get<QuestionList[]>(
+      `${this.appConfig.API_URL}/exams/${examId}/questions?criteria=${criteria}`,
+    );
   }
-  add(val: QuestionDetail): Observable<number> {
-    return this.httpClient
-      .post<number>(`${this.appConfig.API_URL}/records/questions`, val)
-      .pipe(map((res: number) => res));
+  public add(val: QuestionDetail): Observable<QuestionDetail> {
+    return this.httpClient.post<QuestionDetail>(
+      `${this.appConfig.API_URL}/exams/${val.examId}/questions`,
+      val,
+    );
   }
-  get(id: number): Observable<QuestionDetail> {
+  public get(id: number, examId: number): Observable<QuestionDetail> {
     return this.httpClient.get<QuestionDetail>(
-      `${this.appConfig.API_URL}/records/questions/${id}`
+      `${this.appConfig.API_URL}/exams/${examId}/questions/${id}`,
     );
   }
-  edit(val: QuestionDetail) : Observable<number> {
-    return this.httpClient
-      .put<number>(`${this.appConfig.API_URL}/records/questions/${val.id}`, val)
-      .pipe(map((res: number) => res));
+  public edit(val: QuestionDetail): Observable<number> {
+    return this.httpClient.put<number>(
+      `${this.appConfig.API_URL}/exams/${val.examId}/questions/${val.id}`,
+      val,
+    );
   }
   constructor(
     private httpClient: HttpClient,
-    @Inject(APP_CONFIG) private appConfig: any
+    @Inject(APP_CONFIG) private appConfig: any,
   ) {}
 }

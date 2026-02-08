@@ -14,7 +14,9 @@ namespace api.Services
 
     public async Task<User?> GetUsersAsync(string userName)
     {
-      return await appDbContext.Users.FirstOrDefaultAsync(x => x.UserName == userName);
+      return await appDbContext
+        .Users.Include(x => x.UserDetail)
+        .FirstOrDefaultAsync(x => x.UserName == userName);
     }
 
     public async Task<User> AddUserAsync(User user)

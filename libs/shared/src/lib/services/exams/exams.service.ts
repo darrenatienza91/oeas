@@ -17,12 +17,12 @@ import { map, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ExamsService {
-  changeStatus(id?: number, status?: boolean): Observable<number> {
-    return this.httpClient
-      .put<number>(`${this.appConfig.API_URL}/records/exams/${id}`, {
-        isActive: status,
-      })
-      .pipe(map((res: number) => res));
+  public activate(id?: number): Observable<void> {
+    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/exams/${id}/activate`, null);
+  }
+
+  public deActivate(id?: number): Observable<void> {
+    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/exams/${id}/de-activate`, null);
   }
   public getAllStartOn(date: string, sectionId: number | null): Observable<ExamCard[]> {
     return this.httpClient.get<ExamCard[]>(
@@ -62,28 +62,22 @@ export class ExamsService {
         }),
       );
   }
-  edit(val: Exam): Observable<number> {
-    return this.httpClient
-      .put<number>(`${this.appConfig.API_URL}/records/exams/${val.id}`, val)
-      .pipe(map((res: number) => res));
+  public edit(val: Exam): Observable<number> {
+    return this.httpClient.patch<number>(`${this.appConfig.API_URL}/exams/${val.id}`, val);
   }
   get(id: number): Observable<Exam> {
-    return this.httpClient.get<Exam>(`${this.appConfig.API_URL}/records/exams/${id}`);
+    return this.httpClient.get<Exam>(`${this.appConfig.API_URL}/exams/${id}`);
   }
   delete(id: number): Observable<number> {
-    return this.httpClient.delete<number>(`${this.appConfig.API_URL}/records/exams/${id}`);
+    return this.httpClient.delete<number>(`${this.appConfig.API_URL}/exams/${id}`);
   }
-  public add(val: Exam): Observable<number> {
-    return this.httpClient.post<number>(`${this.appConfig.API_URL}/exams`, val);
+  public add(val: Exam): Observable<Exam> {
+    return this.httpClient.post<Exam>(`${this.appConfig.API_URL}/exams`, val);
   }
 
-  public getAll(
-    criteria: string,
-    sectionId: number | null,
-    userDetailId: number | null,
-  ): Observable<Exam[]> {
+  public getAll(criteria: string, sectionId: number | null): Observable<Exam[]> {
     return this.httpClient.get<Exam[]>(
-      `${this.appConfig.API_URL}/user-details/${userDetailId}/sections/${sectionId}/exams?criteria=${criteria}`,
+      `${this.appConfig.API_URL}/sections/${sectionId}/exams?criteria=${criteria}`,
     );
   }
 

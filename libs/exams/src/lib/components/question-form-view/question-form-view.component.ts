@@ -1,24 +1,20 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  computed,
+  effect,
   EventEmitter,
-  Input,
-  OnChanges,
+  inject,
+  input,
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
+  Signal,
 } from '@angular/core';
-import {
-  FormsModule,
-  ReactiveFormsModule,
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { CommonModule, Location } from '@angular/common';
 import { QuestionDetail } from '@batstateu/data-models';
-import { Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
+import { Editor, NgxEditorModule, Toolbar, TOOLBAR_MINIMAL } from 'ngx-editor';
 import { RouterLink } from '@angular/router';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 @Component({
@@ -33,23 +29,26 @@ import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
   selector: 'batstateu-question-form-view',
   templateUrl: './question-form-view.component.html',
   styleUrls: ['./question-form-view.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class QuestionFormViewComponent implements OnInit, OnChanges, OnDestroy {
+export class QuestionFormViewComponent implements OnInit, OnDestroy {
+  private fb = inject(UntypedFormBuilder);
+  private location = inject(Location);
+
   editor!: Editor;
   editorAns!: Editor;
   @Output() save = new EventEmitter<QuestionDetail>();
-  @Input() questionDetail!: QuestionDetail;
-  validateForm!: UntypedFormGroup;
-  title = 'Add New';
-  toolbar: Toolbar = [
-    // default value
-    ['bold', 'italic'],
-    ['underline', 'strike'],
-    ['blockquote'],
-    ['ordered_list', 'bullet_list'],
-    [{ heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
-    ['align_left', 'align_center', 'align_right', 'align_justify'],
-  ];
+  public questionDetail = input<QuestionDetail>();
+  public title: Signal<'Edit' | 'Add New'> = computed(() =>
+    this.questionDetail()?.id ? 'Edit' : 'Add New',
+  );
+  toolbar: Toolbar = TOOLBAR_MINIMAL;
+
+  public validateForm = this.fb.group({
+    description: ['', [Validators.required]],
+    correctAnswer: ['', [Validators.required]],
+    points: [1, [Validators.required]],
+  });
 
   submitForm(): void {
     if (this.validateForm.valid) {
@@ -63,38 +62,30 @@ export class QuestionFormViewComponent implements OnInit, OnChanges, OnDestroy {
       });
     }
   }
-  setValue() {
-    this.validateForm.patchValue(this.questionDetail);
-  }
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['questionDetail']) {
-      if (this.questionDetail) {
-        this.setValue();
-        this.title = 'Edit';
-      }
-    }
-  }
+
   cancel() {
     this.location.back();
   }
 
-  constructor(
-    private fb: UntypedFormBuilder,
-    private modal: NzModalService,
-    private location: Location,
-  ) {}
+  constructor() {
+    this.editor = new Editor();
+    this.editorAns = new Editor();
+  }
   ngOnDestroy(): void {
     this.editor.destroy();
     this.editorAns.destroy();
   }
 
-  ngOnInit(): void {
-    this.editor = new Editor();
-    this.editorAns = new Editor();
-    this.validateForm = this.fb.group({
-      question: [null, [Validators.required]],
-      correctAnswer: [null, [Validators.required]],
-      maxpoints: [60, [Validators.required]],
+  private x = effect((y) => {
+    if (!this.questionDetail()?.id) {
+      return;
+    }
+    this.validateForm.patchValue({
+      description: this.questionDetail()?.description,
+      correctAnswer: this.questionDetail()?.correctAnswer,
+      points: this.questionDetail()?.points,
     });
-  }
+  });
+
+  ngOnInit(): void {}
 }

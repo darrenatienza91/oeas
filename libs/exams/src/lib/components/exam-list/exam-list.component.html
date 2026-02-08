@@ -1,28 +1,25 @@
 <div class="exam-list-container">
   <nz-page-header class="site-page-header" nzTitle="Exams">
     <nz-page-header-extra>
-      @if (!isStudent) {
-        <button style="width: 72px" nz-button nzType="primary" routerLink="form"> Add </button>
-      }
-
-      <nz-input-group style="width: 240px" [nzSuffix]="suffixIconSearch">
-        <input
-          id="search-box"
-          type="text"
-          nz-input
-          placeholder="Search"
-          [(ngModel)]="searchText"
-          (ngModelChange)="onSearchChange($event)"
-        />
-      </nz-input-group>
-
-      <ng-template #suffixIconSearch>
-        <i nz-icon nzType="search"></i>
-      </ng-template>
+      <nz-space-compact>
+        @if (!isStudent) {
+          <button nzInputAddonBefore nz-button nzType="primary" routerLink="form"> Add </button>
+        }
+        <nz-input-wrapper>
+          <nz-icon nzInputSuffix nzType="search" />
+          <input
+            nz-input
+            type="text"
+            placeholder="Search"
+            [(ngModel)]="searchText"
+            (ngModelChange)="onSearchChange($event)"
+          />
+        </nz-input-wrapper>
+      </nz-space-compact>
     </nz-page-header-extra>
   </nz-page-header>
 
-  <nz-table #basicTable nzBordered [nzData]="examList">
+  <nz-table #basicTable nzBordered [nzData]="examList() ?? []">
     <thead>
       <tr>
         <th>Name</th>
@@ -40,7 +37,7 @@
         <tr>
           <td>{{ data?.name }}</td>
           <td>{{ data?.subject }}</td>
-          <td>{{ data?.startOn }}</td>
+          <td>{{ data?.startOn | date: 'yyyy-mm-dd hh:mm' }}</td>
           <td>{{ data?.duration }} mins</td>
           <td>{{ data?.department }}</td>
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, input, OnInit, Output } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { QuestionList } from '@batstateu/data-models';
@@ -13,8 +13,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   styleUrls: ['./question-list.component.less'],
 })
 export class QuestionListComponent implements OnInit {
-  @Input() questionList: QuestionList[] = [];
-  @Output() deleteRecord = new EventEmitter<number>();
+  public questionList = input<QuestionList[]>();
+  @Output() deleteRecord = new EventEmitter<QuestionList>();
   @Output() search = new EventEmitter<string>();
   searchText = '';
   constructor(private modal: NzModalService) {}
@@ -24,9 +24,9 @@ export class QuestionListComponent implements OnInit {
   delete(questionListDetail: QuestionList) {
     this.modal.confirm({
       nzTitle: 'Delete Record',
-      nzContent: `Are you sure you want to delete question with name <b>${questionListDetail.question}</b>?`,
+      nzContent: `Are you sure you want to delete question with name <b>${questionListDetail.description}</b>?`,
       nzOnOk: () => {
-        this.deleteRecord.emit(questionListDetail.id);
+        this.deleteRecord.emit(questionListDetail);
       },
     });
   }
