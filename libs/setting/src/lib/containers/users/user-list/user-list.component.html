@@ -1,0 +1,91 @@
+<div class="user-list-container">
+  <nz-page-header class="site-page-header" nzTitle="Users">
+    <nz-page-header-extra>
+      <nz-input-group style="width: 240px" [nzSuffix]="suffixIconSearch">
+        <input
+          type="text"
+          nz-input
+          placeholder="Search"
+          [(ngModel)]="searchText"
+          id="search-box"
+          (ngModelChange)="onSearchChange($event)"
+        />
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </nz-page-header-extra>
+    <nz-breadcrumb nz-page-header-breadcrumb>
+      <nz-breadcrumb-item>Setting</nz-breadcrumb-item>
+      <nz-breadcrumb-item>Users</nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </nz-page-header>
+
+  <nz-table #basicTable [nzData]="userList()" nzBordered>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (data of basicTable.data; track data?.id) {
+        <tr>
+          <td>{{ data?.firstName }} {{ data?.lastName }}</td>
+          <td>{{ data?.departmentName }}</td>
+          <td>{{ data?.role }}</td>
+          <td>
+            @if (toggleIsActive()) {
+              <button
+                nz-button
+                nzType="default"
+                nzSize="small"
+                (click)="changeStatus.emit({ id: data.id, isActive: data.isActive })"
+              >
+                {{ data?.isActive ?? false | status }}
+              </button>
+            } @else {
+              <div>{{ data?.isActive ?? false | status }}</div>
+            }
+          </td>
+          <td>
+            <a
+              nz-button
+              nzType="text"
+              nz-tooltip
+              nzTooltipTitle="Edit"
+              [routerLink]="[data?.id, 'edit']"
+            >
+              <i nz-icon nzType="edit" nzTheme="twotone" nzTwotoneColor="#faad14"></i>
+            </a>
+
+            <button
+              nz-button
+              nzType="text"
+              nz-tooltip
+              nzTooltipTitle="Delete"
+              (click)="delete(data)"
+            >
+              <i nz-icon nzType="delete" nzTheme="twotone" nzTwotoneColor="#f5222d"></i>
+            </button>
+
+            @if (data?.isResetPassword) {
+              <button
+                nz-button
+                nzType="text"
+                nz-tooltip
+                nzTooltipTitle="Reset Password"
+                (click)="onResetPassword(data)"
+              >
+                <i nz-icon nzType="key" nzTheme="outline" style="color: #1890ff"></i>
+              </button>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+</div>

@@ -14,20 +14,17 @@ import { ExamListComponent } from '../../components/exam-list/exam-list.componen
   styleUrls: ['./exams.component.less'],
 })
 export class ExamsComponent implements OnInit {
+  private readonly examService = inject(ExamsService);
+  private readonly store = inject(Store<fromAuth.State>);
+  private readonly modal = inject(NzModalService);
+
   criteria = '';
   public examList = signal<Exam[]>([]);
   sectionId!: number | null;
-  userDetailId!: number | null;
-  private searchSubject$ = new BehaviorSubject<string>('');
+  private readonly searchSubject$ = new BehaviorSubject<string>('');
   isStudent!: boolean;
 
-  private destroyRef = inject(DestroyRef);
-
-  constructor(
-    private examService: ExamsService,
-    private store: Store<fromAuth.State>,
-    private modal: NzModalService,
-  ) {}
+  private readonly destroyRef = inject(DestroyRef);
 
   getAll(criteria: string) {
     this.examService
@@ -78,8 +75,8 @@ export class ExamsComponent implements OnInit {
   getUser() {
     this.store.select(fromAuth.getAuthSuccess).subscribe((val) => {
       this.sectionId = val?.user.sectionId ?? null;
-      this.userDetailId = val?.user.userDetailId || null;
-      this.isStudent = val?.user.userType === 'Student';
+      // this.userDetailId = val?.user.userDetailId || null;
+      this.isStudent = val?.user.role === 'Student';
     });
   }
 

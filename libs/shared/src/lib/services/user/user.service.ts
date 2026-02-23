@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { APP_CONFIG } from '@batstateu/app-config';
 import {
@@ -13,10 +13,19 @@ import { Store } from '@ngrx/store';
 import { map, Observable } from 'rxjs';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import * as fromAuth from '@batstateu/auth';
+import { Me, EditMeDto, EditUserDto } from 'libs/data-models/src/lib/user.model';
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
+  public activate(id: number): Observable<void> {
+    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/users/${id}/activate`, null);
+  }
+
+  public deActivate(id: number): Observable<void> {
+    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/users/${id}/deactivate`, null);
+  }
+
   updateResetPasswordDefaultStatus(id: number): Observable<number> {
     return this.httpClient
       .put<number>(`${this.appConfig.API_URL}/records/userDetails/${id}`, {
@@ -70,26 +79,17 @@ export class UserService {
         }),
       );
   }
-  save(userDetail: UserDetail): Observable<number> {
-    if (userDetail.id > 0) {
-      return this.httpClient
-        .put<number>(`${this.appConfig.API_URL}/records/userDetails/${userDetail.id}`, userDetail)
-        .pipe(
-          map((res: number) => {
-            return res;
-          }),
-        );
-    }
-    return this.httpClient
-      .post<number>(`${this.appConfig.API_URL}/records/userDetails`, userDetail)
-      .pipe(
-        map((res: number) => {
-          if (res === undefined) {
-            throw Error('User Detail not found!');
-          }
-          return res;
-        }),
-      );
+
+  save(id: number, user: EditUserDto): Observable<void> {
+    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/users/${id}`, user);
+  }
+
+  public editProfile(me: EditMeDto): Observable<void> {
+    return this.httpClient.put<void>(`${this.appConfig.API_URL}/me`, me);
+  }
+
+  public addProfile(id: number, user: EditMeDto): Observable<void> {
+    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/users/${id}`, user);
   }
 
   changePassword(username: string, oldPass: string, newPass: string): Observable<User> {
@@ -100,64 +100,18 @@ export class UserService {
     });
   }
 
-  get(userId: number | undefined): Observable<UserDetail> {
-    return this.httpClient
-      .get<
-        ResponseWrapper<UserDetail>
-      >(`${this.appConfig.API_URL}/records/userDetails?filter=user_id,eq,${userId}&join=users&join=user_types`)
-      .pipe(
-        map((res: ResponseWrapper<any>) => {
-          const user = res.records[0];
-          if (user === undefined) {
-            throw Error('User Detail not found!');
-          }
-          return {
-            ...user,
-            code: user.user_id.username,
-            userType: user.user_type_id.name,
-            userTypeId: user.user_type_id.id,
-          };
-        }),
-      );
+  public getCurrentUserProfile(): Observable<Me> {
+    return this.httpClient.get<Me>(`${this.appConfig.API_URL}/me`);
   }
-  getUserDetail(id: number): Observable<UserDetail> {
-    return this.httpClient
-      .get<UserDetail>(
-        `${this.appConfig.API_URL}/records/userDetails/${id}?join=users&join=user_types`,
-      )
-      .pipe(
-        map((val: any) => {
-          return {
-            ...val,
-            code: val.user_id.username,
-            userType: val.user_type_id.name,
-            userTypeId: val.user_type_id.id,
-          };
-        }),
-      );
+
+  public getUserDetail(id: number): Observable<User> {
+    return this.httpClient.get<User>(`${this.appConfig.API_URL}/users/${id}`);
   }
 
   getAll(criteria: string): Observable<UserDetail[]> {
-    const params = new HttpParams({
-      fromString: `join=departments&join=user_types&filter=user_id,neq,${this.userId}&filter1=firstName,cs,${criteria}&filter2=middleName,cs,${criteria}&filter3=lastName,cs,${criteria}`,
-    });
-    return this.httpClient
-      .get<ResponseWrapper<UserDetail>>(`${this.appConfig.API_URL}/records/userDetails`, {
-        params: params,
-      })
-      .pipe(
-        map((res: ResponseWrapper<any>) => {
-          const rec: UserDetail[] = [];
-          res.records.map((val) =>
-            rec.push({
-              ...val,
-              departmentName: val.departmentId.name,
-              userType: val.user_type_id.name,
-            }),
-          );
-          return rec;
-        }),
-      );
+    return this.httpClient.get<UserDetail[]>(
+      `${this.appConfig.API_URL}/users?criteria=${criteria}`,
+    );
   }
   getAllUserTypes(): Observable<UserType[]> {
     return this.httpClient
@@ -168,8 +122,8 @@ export class UserService {
         }),
       );
   }
-  deleteUser(user_id: number): Observable<number> {
-    return this.httpClient.delete<number>(`${this.appConfig.API_URL}/records/users/${user_id}`);
+  public deleteUser(user_id: number): Observable<number> {
+    return this.httpClient.delete<number>(`${this.appConfig.API_URL}/users/${user_id}`);
   }
 
   private getUserId() {

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using api.Auth;
 using api.Contracts;
+using api.Features.Users;
 using api.Models;
 using api.Services;
 using Microsoft.AspNetCore.Identity;
@@ -25,11 +26,11 @@ namespace api.Endpoints
     static async Task<IResult> Login(
       IConfiguration config,
       IPasswordHasher<User> passwordHasher,
-      UserService service,
+      IUserService service,
       LoginDto dto
     )
     {
-      var user = await service.GetUsersAsync(dto.UserName);
+      var user = await service.GetUserByUserNameAsync(dto.UserName);
       if (
         user is null
         || !user.IsActive
@@ -47,7 +48,7 @@ namespace api.Endpoints
     static async Task<IResult> Register(
       UserRegisterDto dto,
       IPasswordHasher<User> passwordHasher,
-      UserService service
+      IUserService service
     )
     {
       var user = new User { UserName = dto.UserName };

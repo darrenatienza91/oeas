@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, filter, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, exhaustMap, map, tap } from 'rxjs/operators';
 import { AuthActionTypes } from './auth.actions';
 import * as authActions from './auth.actions';
 import { AuthService } from './../services/auth/auth.service';
-import { forkJoin, of } from 'rxjs';
+import { of } from 'rxjs';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { UserService } from '@batstateu/account';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -26,11 +26,7 @@ export class AuthEffects {
       exhaustMap((action) => {
         const { payload } = action;
         return this.authService.login(payload).pipe(
-          switchMap((authSuccess) =>
-            forkJoin([this.userService.get(authSuccess.user.id), of(authSuccess)]),
-          ),
-          filter((userDetail) => !!userDetail),
-          map(([userDetail, authSuccess]) =>
+          map((authSuccess) =>
             authActions.loginSuccess({
               payload: {
                 token: authSuccess.token,
@@ -38,10 +34,9 @@ export class AuthEffects {
                   id: authSuccess.user.id,
                   isActive: authSuccess.user.isActive,
                   userName: authSuccess.user.userName,
-                  firstName: userDetail.firstName,
-                  userDetailId: userDetail.id,
-                  sectionId: userDetail.sectionId,
-                  userType: authSuccess.user.userType,
+                  firstName: authSuccess.user.firstName,
+                  sectionId: authSuccess.user.sectionId,
+                  role: authSuccess.user.role,
                 },
               },
             }),

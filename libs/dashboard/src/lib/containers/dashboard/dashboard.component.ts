@@ -30,7 +30,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {}
   public openExam(examId?: number) {
-    if (this.auth()?.user.userType == 'Student') {
+    if (this.auth()?.user.role == 'Student') {
       this.router.navigate([`exams/${examId}/take-exam`]);
     } else {
       this.router.navigate([`exams/${examId}/form`]);

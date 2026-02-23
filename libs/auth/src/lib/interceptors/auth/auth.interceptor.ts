@@ -46,6 +46,10 @@ export class AuthInterceptor implements HttpInterceptor {
           this.store.dispatch(authActions.logout());
         }
 
+        if (err.status === 404) {
+          this.showNotification('error', 'Not Found', 'Requested resource not found!');
+        }
+
         const error = err.error;
 
         if (error?.code === 1011) {

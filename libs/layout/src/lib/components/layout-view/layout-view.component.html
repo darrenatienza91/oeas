@@ -21,7 +21,7 @@
               <i nz-icon nzType="book"></i>
               <span>Exams</span>
             </li>
-            @if (authPayload.user.userType !== 'Student') {
+            @if (authPayload.user.role !== 'Student') {
               <li nz-submenu nzTitle="Settings" nzIcon="setting">
                 <ul>
                   <li routerLink="setting/users" nz-menu-item>
@@ -50,7 +50,7 @@
           [nzDropdownMenu]="menu"
           [nzPlacement]="'bottomRight'"
           nzSize="large"
-          nzText="{{ authPayload.user.firstName.substring(0, 1).toUpperCase() }}"
+          nzText="{{ authPayload.user.firstName?.substring(0, 1)?.toUpperCase() }}"
         ></nz-avatar>
       </nz-header>
     }

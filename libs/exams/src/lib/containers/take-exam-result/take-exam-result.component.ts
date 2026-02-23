@@ -20,28 +20,27 @@ export class TakeExamResultComponent implements OnInit {
   examTitle!: string;
   scoreSummary!: string;
   getExamResultPoints() {
-    this.examService
-      .getAllTakerAnswers(this.userStore?.user.userDetailId || 0, this.examId)
-      .subscribe((ans) => {
-        const hasPoints = ans.filter((x) => x.points && x.points > 0).length > 0;
-        if (hasPoints) {
-          ans.map((val2) => {
-            if (val2.points && val2.points >= 0) {
-              this.totalPoints = this.totalPoints + val2.points;
-            }
-          });
-
-          this.questionService.getAllByExamId(this.examId).subscribe((val) => {
-            val.map((val) => {
-              this.totalQuestionPoints = this.totalQuestionPoints + val.points;
-            });
-            this.percentage = Math.round((this.totalPoints / this.totalQuestionPoints) * 100);
-            this.scoreSummary = `${this.totalPoints} / ${this.totalQuestionPoints}`;
-          });
-        } else {
-          this.percentage = null;
-        }
-      });
+    // this.examService
+    //   .getAllTakerAnswers(this.userStore?.user.userDetailId || 0, this.examId)
+    //   .subscribe((ans) => {
+    //     const hasPoints = ans.filter((x) => x.points && x.points > 0).length > 0;
+    //     if (hasPoints) {
+    //       ans.map((val2) => {
+    //         if (val2.points && val2.points >= 0) {
+    //           this.totalPoints = this.totalPoints + val2.points;
+    //         }
+    //       });
+    //       this.questionService.getAllByExamId(this.examId).subscribe((val) => {
+    //         val.map((val) => {
+    //           this.totalQuestionPoints = this.totalQuestionPoints + val.points;
+    //         });
+    //         this.percentage = Math.round((this.totalPoints / this.totalQuestionPoints) * 100);
+    //         this.scoreSummary = `${this.totalPoints} / ${this.totalQuestionPoints}`;
+    //       });
+    //     } else {
+    //       this.percentage = null;
+    //     }
+    //   });
   }
   getExam() {
     this.examService.get(this.examId).subscribe((val) => (this.examTitle = val.name));

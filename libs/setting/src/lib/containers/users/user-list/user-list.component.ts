@@ -1,8 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input, Output
-} from '@angular/core';
+import { Component, EventEmitter, input, output, Output, signal } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { UserDetail } from '@batstateu/data-models';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -16,21 +12,23 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./user-list.component.less'],
 })
 export class UserListComponent {
-  @Input() userList!: UserDetail[];
-  @Output() deleteRecord = new EventEmitter<UserDetail>();
+  public userList = input<UserDetail[]>([]);
+  public deleteRecord = output<number>();
+  public toggleIsActive = input<boolean>();
   @Output() search = new EventEmitter<string>();
   @Output() resetPassword = new EventEmitter();
-  searchText = '';
+  public changeStatus = output<{ id: number; isActive: boolean }>();
+  public searchText = signal('');
 
-  constructor(private modal: NzModalService) { }
+  constructor(private modal: NzModalService) {}
 
-  delete(userdDetail: UserDetail) {
+  delete(userDetail: UserDetail) {
     this.modal.confirm({
       nzIconType: 'question-circle',
       nzTitle: 'Delete Record',
-      nzContent: `Are you sure you want to delete user with name <b>${userdDetail.firstName} ${userdDetail.lastName}</b>?`,
+      nzContent: `Are you sure you want to delete user with name <b>${userDetail.firstName} ${userDetail.lastName}</b>?`,
       nzOnOk: () => {
-        this.deleteRecord.emit(userdDetail);
+        this.deleteRecord.emit(userDetail.id);
       },
     });
   }

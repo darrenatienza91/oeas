@@ -1,6 +1,8 @@
 <batstateu-user-list
-  [userList]="userList"
+  [userList]="userList()"
   (deleteRecord)="onDelete($event)"
   (search)="onSearch($event)"
   (resetPassword)="onResetPassword($event)"
+  [toggleIsActive]="toggleIsActive()"
+  (changeStatus)="changeStatus($event)"
 ></batstateu-user-list>
