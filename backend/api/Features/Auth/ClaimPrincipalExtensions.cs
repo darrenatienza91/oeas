@@ -10,5 +10,8 @@ namespace api.Auth
   {
     public static int GetUserDetailId(this ClaimsPrincipal user) =>
       int.Parse(user.FindFirstValue("UserDetailId")!);
+
+    public static int GetCurrenUserId(this ClaimsPrincipal user) =>
+      int.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier)!);
   }
 }

@@ -1,6 +1,6 @@
 ### GetQuestionsByExamIdCriteria
 # @name GetQuestionsByExamIdCriteria
-# @import ../../http/users/auth.http
+# @import ../auth/auth.http
 # @ref login
 GET {{HOST}}/api/exams/10/questions?criteria= HTTP/1.1
 Authorization: Bearer {{login.token}}

@@ -1,0 +1,103 @@
+### GetUsers
+# @name GetUsers
+# @import ../auth/auth.http
+# @ref login
+GET {{HOST}}/api/users HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+### GetUser
+# @name GetUser
+# @import ../auth/auth.http
+# @ref login
+GET {{HOST}}/api/users/100 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+### GetUser
+# @name GetUser
+# @import ../auth/auth.http
+# @ref login
+GET {{HOST}}/api/me HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+### EditUser
+# @name EditUser
+# @import ../auth/auth.http
+# @ref login
+PATCH {{HOST}}/api/users/1 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+    "departmentId": 1,
+    "sectionId": null
+}
+
+### EditUser
+# @name EditUser
+# @import ../auth/auth.http
+# @ref login
+PATCH {{HOST}}/api/users/1 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+    "departmentId": 1,
+    "sectionId": null
+}
+
+### EditProfile
+# @name EditProfile
+# @import ../auth/auth.http
+# @ref login
+PUT {{HOST}}/api/me HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+    "firstName": "Admin3",
+    "middleName": "ADmin3",
+    "lastName": "TEst"
+}
+
+### GetProfile
+# @name GetUser
+# @import ../auth/auth.http
+# @ref login
+GET {{HOST}}/api/me HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+
+### DeleteUser
+# @name DeleteUser
+# @import ../auth/auth.http
+# @ref login
+DELETE {{HOST}}/api/users/2 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+### DeActivateUser
+# @name DeActivateUser
+# @import ../auth/auth.http
+# @ref login
+PATCH {{HOST}}/api/users/1/deactivate HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+### ActivateUser
+# @name ActivateUser
+# @import ../auth/auth.http
+# @ref login
+PATCH {{HOST}}/api/users/1/activate HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json

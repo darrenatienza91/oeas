@@ -5,6 +5,8 @@ using api.Auth;
 using api.Data;
 using api.Endpoints;
 using api.Exceptions;
+using api.Features.Departments;
+using api.Features.Users;
 using api.Models;
 using api.Services;
 using FluentValidation;
@@ -56,11 +58,11 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<UserDetailService>();
 builder.Services.AddScoped<IExamService, ExamService>();
 builder.Services.AddScoped<ISectionService, SectionService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
   options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -155,11 +157,11 @@ app.UseAuthorization();
 var api = app.MapGroup("/api");
 
 api.MapAuthEndpoints();
-api.MapUserDetailEndpoints();
 api.MapUserEndpoints();
 api.MapExamEndpoints();
 api.MapQuestionEndpoints();
 api.MapSectionEndpoints();
+api.MapDepartmentEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

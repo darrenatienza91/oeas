@@ -1,27 +1,11 @@
-<nz-page-header class="site-page-header" nzTitle="Profile">
-</nz-page-header>
-<form
-  nz-form
-  [formGroup]="validateForm"
-  (ngSubmit)="submitForm()"
-  [nzLayout]="'vertical'"
->
+<nz-page-header class="site-page-header" nzTitle="Profile"> </nz-page-header>
+<form nz-form [formGroup]="form" (ngSubmit)="submitForm()" [nzLayout]="'vertical'">
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="12">
       <nz-form-item>
-        <nz-form-label nzRequired nzFor="code"
-          >SR-Code / Faculty Code</nz-form-label
-        >
-        <nz-form-control nzErrorTip="The input is not valid Sr-Code!">
-          <input nz-input formControlName="code" id="code" />
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-    <div nz-col [nzSpan]="12">
-      <nz-form-item>
-        <nz-form-label nzRequired nzFor="email">Email</nz-form-label>
-        <nz-form-control nzErrorTip="The input is not valid E-mail!">
-          <input nz-input formControlName="email" id="email" />
+        <nz-form-label nzRequired nzFor="userName">User Name</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="userName" id="code" />
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -55,34 +39,25 @@
         </nz-form-control>
       </nz-form-item>
     </div>
-    <div nz-col [nzSpan]="12">
+    <!-- <div nz-col [nzSpan]="12">
       <nz-form-item>
-        <nz-form-label nzFor="contactNumber" nzRequired
-          >Contact Number</nz-form-label
-        >
+        <nz-form-label nzFor="contactNumber" nzRequired>Contact Number</nz-form-label>
         <nz-form-control
           [nzValidateStatus]="validateForm.controls['contactNumber']"
           nzErrorTip="Please input your phone number!"
         >
           <nz-input-group [nzAddOnBefore]="addOnBeforeTemplate">
             <ng-template #addOnBeforeTemplate>
-              <nz-select
-                formControlName="contactNumberPrefix"
-                class="phone-select"
-              >
+              <nz-select formControlName="contactNumberPrefix" class="phone-select">
                 <nz-option nzLabel="+63" nzValue="+63"></nz-option>
               </nz-select>
             </ng-template>
-            <input
-              formControlName="contactNumber"
-              id="'contactNumber'"
-              nz-input
-            />
+            <input formControlName="contactNumber" id="'contactNumber'" nz-input />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
-    </div>
-    <div nz-col [nzSpan]="12">
+    </div> -->
+    <!-- <div nz-col [nzSpan]="12">
       <nz-form-item>
         <nz-form-label nzFor="address" nzRequired>
           <span>Address</span>
@@ -91,12 +66,10 @@
           <input nz-input id="address" formControlName="address" />
         </nz-form-control>
       </nz-form-item>
-    </div>
-    <div nz-col [nzSpan]="12">
+    </div> -->
+    <!-- <div nz-col [nzSpan]="12">
       <nz-form-item>
-        <nz-form-label nzFor="departmentId" nzRequired
-          >Department</nz-form-label
-        >
+        <nz-form-label nzFor="departmentId" nzRequired>Department</nz-form-label>
         <nz-form-control nzErrorTip="Please input departmentId!">
           <nz-select
             id="departmentId"
@@ -108,33 +81,23 @@
           </nz-select>
         </nz-form-control>
       </nz-form-item>
-    </div>
-    <div nz-col [nzSpan]="12">
+    </div> -->
+    <!-- <div nz-col [nzSpan]="12">
       <nz-form-item>
         <nz-form-label nzFor="sectionId" nzRequired>Section</nz-form-label>
         <nz-form-control nzErrorTip="Please input departmentId!">
-          <nz-select
-            id="sectionId"
-            formControlName="sectionId"
-            nzPlaceHolder="Select sectionId"
-          >
+          <nz-select id="sectionId" formControlName="sectionId" nzPlaceHolder="Select sectionId">
             <nz-option [nzValue]="1" nzLabel="Grad-1101"></nz-option>
             <nz-option [nzValue]="2" nzLabel="Grad-1102"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>
-    </div>
-    <div nz-col [nzSpan]="12" style="display: flex; align-items: center">
-      <nz-form-item style="margin-bottom: 0">
-        <label nz-checkbox formControlName="isActive"> Active </label>
-      </nz-form-item>
-    </div>
+    </div> -->
     <div nz-col [nzSpan]="24" style="display: flex; justify-content: flex-end">
       <nz-space>
         <a nz-button *nzSpaceItem nzType="default" routerLink="/dashboard">Cancel</a>
         <button *nzSpaceItem nz-button nzType="primary">Save</button>
       </nz-space>
-      
     </div>
   </div>
 </form>

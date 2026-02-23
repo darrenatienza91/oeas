@@ -6,16 +6,10 @@
     (click)="onCollapsed()"
   ></i>
   <ul *ngIf="user$ | async as user" nz-menu nzTheme="dark" nzMode="horizontal">
-    <li *ngIf="(user$ | async)?.isActive" routerLink="dashboard" nz-menu-item>
-      Dashboard
-    </li>
-    <li routerLink="exams" *ngIf="(user$ | async)?.isActive" nz-menu-item>
-      Exams
-    </li>
+    <li *ngIf="(user$ | async)?.isActive" routerLink="dashboard" nz-menu-item> Dashboard </li>
+    <li routerLink="exams" *ngIf="(user$ | async)?.isActive" nz-menu-item> Exams </li>
     <li
-      *ngIf="
-        (user$ | async)?.isActive && (user$ | async)?.userType !== 'Student'
-      "
+      *ngIf="(user$ | async)?.isActive && (user$ | async)?.role !== 'Student'"
       nz-menu-item
       nz-dropdown
       [nzDropdownMenu]="settingMenu"
@@ -32,9 +26,7 @@
     >
       <nz-avatar
         nzSize="large"
-        nzText="{{
-          (user$ | async)?.firstName?.substring(0, 1)?.toUpperCase()
-        }}"
+        nzText="{{ (user$ | async)?.firstName?.substring(0, 1)?.toUpperCase() }}"
       ></nz-avatar>
     </li>
   </ul>

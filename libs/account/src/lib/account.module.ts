@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ProfileFormComponent } from './components/profile-form/profile-form.component';
+import { ProfileFormComponent } from './containers/profile/profile-form/profile-form.component';
 import { ProfileComponent } from './containers/profile/profile.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { ChangePasswordComponent } from './containers/change-password/change-password.component';
-import { ChangePasswordFormComponent } from './components/change-password-form/change-password-form.component';
+import { ChangePasswordFormComponent } from './containers/change-password/change-password-form/change-password-form.component';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { SharedModule } from '@batstateu/shared';
 
@@ -24,10 +24,13 @@ export { UserService } from './services/user/user.service';
     ChangePasswordFormComponent,
     RouterModule.forChild([
       { path: '', pathMatch: 'full', redirectTo: 'profile' },
-      { path: 'profile', component: ProfileComponent },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./containers/profile/profile.component').then((x) => x.ProfileComponent),
+      },
       { path: 'change-password', component: ChangePasswordComponent },
     ]),
   ],
-
 })
-export class AccountModule { }
+export class AccountModule {}

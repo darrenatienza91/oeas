@@ -10,7 +10,15 @@ namespace api.Contracts
 
   public record LoginDto(string UserName, string Password);
 
-  public record CurrentUserDTO(int Id, string UserName, string Role, bool IsActive);
+  public record CurrentUserDTO(
+    int Id,
+    string UserName,
+    string Role,
+    bool IsActive,
+    string? FirstName,
+    int? UserDetailId,
+    int? SectionId
+  );
 
   public record LoginResponseDto(string Token, CurrentUserDTO User);
 
@@ -18,7 +26,15 @@ namespace api.Contracts
   {
     public static CurrentUserDTO MapToCurrentUserDTO(User user)
     {
-      return new(Id: user.Id, UserName: user.UserName, Role: user.Role, IsActive: user.IsActive);
+      return new(
+        Id: user.Id,
+        UserName: user.UserName,
+        Role: user.Role,
+        IsActive: user.IsActive,
+        FirstName: user.UserDetail?.FirstName,
+        UserDetailId: user.UserDetail?.Id,
+        SectionId: user.UserDetail?.SectionId
+      );
     }
   }
 }

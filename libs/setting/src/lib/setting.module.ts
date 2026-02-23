@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsersComponent } from './containers/users/users.component';
-import { UserListComponent } from './components/user-list/user-list.component';
+import { UserListComponent } from './containers/users/user-list/user-list.component';
 
 import { UserFormComponent } from './containers/user-form/user-form.component';
 import { SharedModule } from '@batstateu/shared';
@@ -17,7 +17,9 @@ import { SharedModule } from '@batstateu/shared';
     FormsModule,
     NgZorroAntdModule,
     SharedModule,
-    UsersComponent, UserListComponent, UserFormComponent,
+    UsersComponent,
+    UserListComponent,
+    UserFormComponent,
     RouterModule.forChild([
       { path: '', pathMatch: 'full', redirectTo: 'users' },
       { path: 'users', component: UsersComponent },
@@ -25,4 +27,4 @@ import { SharedModule } from '@batstateu/shared';
     ]),
   ],
 })
-export class SettingModule { }
+export class SettingModule {}

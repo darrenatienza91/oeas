@@ -1,6 +1,6 @@
 ### GetExamsBySectionIdStartOn
 # @name GetExams
-# @import ../../http/users/auth.http
+# @import ../auth/auth.http
 # @ref login
 GET {{HOST}}/api/exams?sectionId=1&startOn=2025-01-31T10:15:00Z HTTP/1.1
 Authorization: Bearer {{login.token}}

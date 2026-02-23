@@ -300,9 +300,9 @@ export class TakeExamComponent implements OnInit {
     });
   }
   getUser() {
-    this.store.select(fromAuth.getAuthSuccess).subscribe((val) => {
-      this.userDetailId = val?.user.userDetailId || 0;
-    });
+    // this.store.select(fromAuth.getAuthSuccess).subscribe((val) => {
+    //   this.userDetailId = val?.user.userDetailId || 0;
+    // });
   }
   constructor(
     private location: Location,

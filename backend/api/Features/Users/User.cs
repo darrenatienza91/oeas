@@ -11,10 +11,20 @@ namespace api.Models
   {
     public string UserName { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
-    public bool IsActive { get; set; }
+    public bool IsActive { get; private set; }
     public bool IsResetPassword { get; set; }
     public string Role { get; set; } = Roles.Student;
     public UserDetail? UserDetail { get; set; }
+
+    internal void Activate()
+    {
+      this.IsActive = true;
+    }
+
+    internal void DeActivate()
+    {
+      this.IsActive = false;
+    }
   }
 
   public class UserConfiguration : IEntityTypeConfiguration<User>
