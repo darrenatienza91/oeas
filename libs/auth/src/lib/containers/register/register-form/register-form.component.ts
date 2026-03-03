@@ -6,12 +6,13 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { User } from '@batstateu/data-models';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
 
 @Component({
-  imports: [NgZorroAntdModule, ReactiveFormsModule],
+  imports: [NgZorroAntdModule, ReactiveFormsModule, RouterModule],
   selector: 'batstateu-register-form',
   templateUrl: './register-form.component.html',
   styleUrls: ['./register-form.component.less'],
@@ -44,7 +45,7 @@ export class RegisterFormComponent implements OnInit {
   updateConfirmValidator(): void {
     /** wait for refresh value */
     Promise.resolve().then(() =>
-      this.validateForm.controls['checkPassword'].updateValueAndValidity()
+      this.validateForm.controls['checkPassword'].updateValueAndValidity(),
     );
   }
 
@@ -61,7 +62,7 @@ export class RegisterFormComponent implements OnInit {
     e.preventDefault();
   }
 
-  constructor(private fb: UntypedFormBuilder) { }
+  constructor(private fb: UntypedFormBuilder) {}
 
   ngOnInit(): void {
     this.validateForm = this.fb.group({

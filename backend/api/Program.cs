@@ -133,6 +133,17 @@ app.UseExceptionHandler(errorApp =>
         context.Response.StatusCode = StatusCodes.Status404NotFound;
         break;
 
+      case InvalidPasswordException invalidPasswordEx:
+        problem = new ProblemDetails
+        {
+          Title = "Invalid Password",
+          Status = StatusCodes.Status400BadRequest,
+          Detail = invalidPasswordEx.Message,
+          Instance = context.Request.Path,
+        };
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        break;
+
       default:
         problem = new ProblemDetails
         {

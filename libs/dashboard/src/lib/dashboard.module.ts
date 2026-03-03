@@ -8,12 +8,12 @@ import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 
 @NgModule({
   imports: [
-    DashboardComponent, StatsComponent, HistoryComponent,
+    DashboardComponent,
+    StatsComponent,
+    HistoryComponent,
     CommonModule,
     NgZorroAntdModule,
-    RouterModule.forChild([
-      { path: '', component: DashboardComponent },
-    ]),
+    RouterModule.forChild([{ path: '', component: DashboardComponent }]),
   ],
 })
-export class DashboardModule { }
+export class DashboardModule {}

@@ -27,7 +27,10 @@ namespace api.Endpoints
         .RequireAuthorization(policy => policy.RequireRole(Roles.SuperAdmin));
 
       app.MapGet("/me", GetMe).RequireAuthorization();
+
       app.MapPut("/me", PutProfileDetail).RequireAuthorization();
+
+      app.MapPatch("/me/password", ChangePassword).RequireAuthorization();
 
       app.MapPatch("/users/{id}", PatchUser)
         .RequireAuthorization(policy => policy.RequireRole(Roles.SuperAdmin));
@@ -90,12 +93,39 @@ namespace api.Endpoints
     static async Task<IResult> GetMe(IUserService service, ICurrentUser currentUser)
     {
       var user =
-        await service.GetUserByIdAsync(currentUser.UserDetailId)
-        ?? throw new NotFoundException(
-          $"Your id with value {currentUser.UserDetailId}  was not found."
-        );
+        await service.GetUserByIdAsync(currentUser.Id)
+        ?? throw new NotFoundException($"Your id with value {currentUser.Id}  was not found.");
 
       return Results.Ok(UserMapper.MapUserToProfileDetailDto(user));
+    }
+
+    static async Task<IResult> ChangePassword(
+      IUserService service,
+      ICurrentUser currentUser,
+      [FromBody] ChangePasswordDto changePassworDto,
+      IPasswordHasher<User> passwordHasher,
+      IUserService userService
+    )
+    {
+      var user =
+        await service.GetUserByIdAsync(currentUser.Id)
+        ?? throw new NotFoundException($"Your id with value {currentUser.Id}  was not found.");
+      if (
+        passwordHasher.VerifyHashedPassword(
+          user,
+          user.PasswordHash,
+          changePassworDto.CurrentPassword
+        ) == PasswordVerificationResult.Failed
+      )
+      {
+        throw new InvalidPasswordException();
+      }
+
+      user.PasswordHash = passwordHasher.HashPassword(user, changePassworDto.NewPassword);
+
+      await userService.EditAsync(user);
+
+      return Results.NoContent();
     }
 
     static async Task<IResult> DeleteUser(IUserService service, [FromRoute] int id)

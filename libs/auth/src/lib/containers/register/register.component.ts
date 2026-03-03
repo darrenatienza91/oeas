@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { AuthService } from '../../services/auth/auth.service';
-import { RegisterFormComponent } from '../../components/register-form/register-form.component';
+import { RegisterFormComponent } from './register-form/register-form.component';
 
 @Component({
   imports: [RegisterFormComponent],
@@ -37,8 +37,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private modal: NzModalService,
     private authService: AuthService,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 }

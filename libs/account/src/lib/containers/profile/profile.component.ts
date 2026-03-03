@@ -14,8 +14,8 @@ import { ProfileFormComponent } from './profile-form/profile-form.component';
   styleUrls: ['./profile.component.less'],
 })
 export class ProfileComponent {
-  private userService = inject(UserService);
-  private modal = inject(NzModalService);
+  private readonly userService = inject(UserService);
+  private readonly modal = inject(NzModalService);
   public currentUser = toSignal(this.userService.getCurrentUserProfile());
 
   onSave(userDetail: EditMeDto) {

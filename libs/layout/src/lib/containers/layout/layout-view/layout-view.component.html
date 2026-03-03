@@ -2,17 +2,17 @@
   @if (user$ | async; as authPayload) {
     <nz-sider nzTheme="dark" nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
       <div style="position: relative; height: 100%; overflow: hidden">
-        <img class="sider-background" src="assets/images/sider-bg.jpg" />
+        <img class="sider-background" src="assets/shared/images/sider-bg.jpg" />
         <div class="logo-container">
           <div class="logo">
             @if (!isCollapsed) {
-              <img height="72px" src="assets/images/logo.png" />
+              <img height="72px" src="assets/shared/images/logo.png" />
             }
           </div>
         </div>
 
         <ul style="position: relative; z-index: 2; top: 0px" nz-menu nzTheme="dark" nzMode="inline">
-          @if (authPayload.user.isActive) {
+          @if (authPayload.user.isActive && authPayload.user.hasUserDetail) {
             <li nz-menu-item routerLink="dashboard">
               <i nz-icon nzType="appstore"></i>
               <span>Dashboard</span>
@@ -66,7 +66,7 @@
     </nz-content>
     <nz-footer style="background-color: #373737; padding: 8px 8px; text-align: left"
       ><div style="display: flex; flex-direction: row; align-items: center">
-        <img alt="bsu_logo" src="assets/images/logo.png" width="50" height="50" />
+        <img alt="bsu_logo" src="assets/shared/images/logo.png" width="50" height="50" />
         <div>
           <p style="color: #fff; margin: 0 8px">Batangas State University</p>
           <p style="font-size: small; color: #fff; margin: 0 8px"> Copyright © 2022 </p>

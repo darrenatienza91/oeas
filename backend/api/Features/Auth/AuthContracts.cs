@@ -10,21 +10,21 @@ namespace api.Contracts
 
   public record LoginDto(string UserName, string Password);
 
-  public record CurrentUserDTO(
+  public record CurrentUserDto(
     int Id,
     string UserName,
     string Role,
     bool IsActive,
     string? FirstName,
     int? UserDetailId,
-    int? SectionId
-  );
+    int? SectionId,
+    bool HasUserDetail);
 
-  public record LoginResponseDto(string Token, CurrentUserDTO User);
+  public record LoginResponseDto(string Token, CurrentUserDto User);
 
   public static class AuthMapper
   {
-    public static CurrentUserDTO MapToCurrentUserDTO(User user)
+    public static CurrentUserDto MapToCurrentUserDTO(User user)
     {
       return new(
         Id: user.Id,
@@ -33,7 +33,8 @@ namespace api.Contracts
         IsActive: user.IsActive,
         FirstName: user.UserDetail?.FirstName,
         UserDetailId: user.UserDetail?.Id,
-        SectionId: user.UserDetail?.SectionId
+        SectionId: user.UserDetail?.SectionId,
+        HasUserDetail: user.UserDetail is not null
       );
     }
   }

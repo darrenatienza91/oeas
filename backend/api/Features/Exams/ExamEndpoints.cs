@@ -19,13 +19,19 @@ namespace api.Endpoints
     public static void MapExamEndpoints(this IEndpointRouteBuilder app)
     {
       app.MapGet("/exams", GetExamsBySectionAndStartOn)
-        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
+        .RequireAuthorization(policy =>
+          policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
+        );
 
       app.MapGet("/exams/{id}", GetExamById)
-        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
+        .RequireAuthorization(policy =>
+          policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
+        );
 
       app.MapGet("/sections/{sectionId}/exams", GetExamsBySectionIdUserDetailIdAndCriteria)
-        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
+        .RequireAuthorization(policy =>
+          policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
+        );
 
       app.MapPost("/exams", Add)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin))
@@ -71,10 +77,7 @@ namespace api.Endpoints
       [FromQuery] string criteria
     )
     {
-      var exams = await service.GetExamsBySectionIdAndCriteriaAsync(
-        sectionId,
-        criteria
-      );
+      var exams = await service.GetExamsBySectionIdAndCriteriaAsync(sectionId, criteria);
 
       return Results.Ok(exams.Select(ExamMapper.MapToExamDto));
     }

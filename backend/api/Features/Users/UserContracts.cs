@@ -41,6 +41,8 @@ namespace api.Features.Users
     string? MiddleName
   );
 
+  public sealed record ChangePasswordDto(string CurrentPassword, string NewPassword);
+
   public record PatchUserDto(int? DepartmentId, int? SectionId);
 
   public static class UserMapper

@@ -8,11 +8,19 @@ export interface User {
   isActive: boolean;
   sectionId: number | null;
   role: string;
+  hasUserDetail: boolean;
 }
 
 export type EditUserDto = Omit<
   User,
-  'userName' | 'firstName' | 'middleName' | 'lastName' | 'id' | 'isActive' | 'userType'
+  | 'userName'
+  | 'firstName'
+  | 'middleName'
+  | 'lastName'
+  | 'id'
+  | 'isActive'
+  | 'userType'
+  | 'hasUserDetail'
 >;
 
 export interface EditMeDto {

@@ -1,15 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { ChangePassword } from '@batstateu/data-models';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { UserService } from '@batstateu/shared';
+import { confirmationValidator, UserService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { take } from 'rxjs';
 import { FormBuilder, Validators } from '@angular/forms';
-import { confirmationValidator } from './confimration-validator';
 import { ChangePasswordFormComponent } from './change-password-form/change-password-form.component';
+import { CommonModule } from '@angular/common';
 @Component({
-  imports: [ChangePasswordFormComponent],
+  imports: [ChangePasswordFormComponent, CommonModule],
   selector: 'batstateu-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.less'],
@@ -30,7 +30,7 @@ export class ChangePasswordComponent {
 
   onSave(changePassword: ChangePassword) {
     this.userService
-      .changePassword(changePassword.username || '', changePassword.oldPass, changePassword.newPass)
+      .changePassword(changePassword)
       .pipe(take(1))
       .subscribe(() =>
         this.modal.success({

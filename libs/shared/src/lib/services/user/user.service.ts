@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { APP_CONFIG } from '@batstateu/app-config';
 import {
   AuthPayload,
+  ChangePassword,
   ForgotPassword,
   ResponseWrapper,
   User,
@@ -92,12 +93,8 @@ export class UserService {
     return this.httpClient.patch<void>(`${this.appConfig.API_URL}/users/${id}`, user);
   }
 
-  changePassword(username: string, oldPass: string, newPass: string): Observable<User> {
-    return this.httpClient.post<User>(`${this.appConfig.API_URL}/password`, {
-      username: username,
-      password: oldPass,
-      newPassword: newPass,
-    });
+  public changePassword(changePassword: ChangePassword): Observable<void> {
+    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/me/password`, changePassword);
   }
 
   public getCurrentUserProfile(): Observable<Me> {
