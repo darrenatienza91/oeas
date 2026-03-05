@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, output } from '@angular/core';
-import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ChangePassword } from '@batstateu/data-models';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
@@ -19,8 +24,8 @@ export class ChangePasswordFormComponent {
 
   public save = output<ChangePassword>();
   public validateForm: UntypedFormGroup = this.fb.group({
-    currentPassword: [''],
-    newPassword: '',
+    currentPassword: ['', [Validators.required]],
+    newPassword: ['', [Validators.required]],
     checkPassword: ['', [this._confirmationValidator]],
   });
   captchaTooltipIcon: NzFormTooltipIcon = {

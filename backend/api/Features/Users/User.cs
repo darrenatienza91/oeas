@@ -15,7 +15,7 @@ namespace api.Models
     public bool IsResetPassword { get; set; }
     public string Role { get; set; } = Roles.Student;
     public UserDetail? UserDetail { get; set; }
-
+    public bool HasProfile => UserDetail != null;
     internal void Activate()
     {
       this.IsActive = true;

@@ -81,7 +81,7 @@ export class UserService {
       );
   }
 
-  save(id: number, user: EditUserDto): Observable<void> {
+  public save(id: number, user: EditUserDto): Observable<void> {
     return this.httpClient.patch<void>(`${this.appConfig.API_URL}/users/${id}`, user);
   }
 
@@ -89,8 +89,8 @@ export class UserService {
     return this.httpClient.put<void>(`${this.appConfig.API_URL}/me`, me);
   }
 
-  public addProfile(id: number, user: EditMeDto): Observable<void> {
-    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/users/${id}`, user);
+  public addProfile(me: EditMeDto): Observable<void> {
+    return this.httpClient.post<void>(`${this.appConfig.API_URL}/me`, me);
   }
 
   public changePassword(changePassword: ChangePassword): Observable<void> {

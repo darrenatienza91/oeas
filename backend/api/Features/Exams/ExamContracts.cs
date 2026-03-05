@@ -24,7 +24,8 @@ namespace api.Contracts
     bool IsActive,
     string Subject,
     string Instructions,
-    int SectionId
+    int SectionId,
+    string DepartmentName
   );
 
   public record AddExamDto(
@@ -58,7 +59,8 @@ namespace api.Contracts
         exam.IsActive,
         exam.Subject,
         exam.Instructions,
-        exam.SectionId
+        exam.SectionId,
+        exam.Section.Department.Name
       );
 
     public static Exam MapToExam(ExamWriteDto dto, int userDetailId)

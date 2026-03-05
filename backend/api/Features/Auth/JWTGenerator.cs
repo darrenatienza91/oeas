@@ -26,6 +26,7 @@ namespace api.Auth
         new Claim(ClaimTypes.Name, user.UserName),
         new Claim(ClaimTypes.Role, user.Role),
         new Claim("UserDetailId", user?.UserDetail?.Id.ToString() ?? ""),
+        new Claim("SectionId", user?.UserDetail?.SectionId.ToString() ?? ""),
       };
 
       var token = new JwtSecurityToken(

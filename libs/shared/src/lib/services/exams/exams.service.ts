@@ -25,9 +25,7 @@ export class ExamsService {
     return this.httpClient.patch<void>(`${this.appConfig.API_URL}/exams/${id}/de-activate`, null);
   }
   public getAllStartOn(date: string, sectionId: number | null): Observable<ExamCard[]> {
-    return this.httpClient.get<ExamCard[]>(
-      `${this.appConfig.API_URL}/exams?sectionId=${sectionId ?? 0}&startOn=${date}`,
-    );
+    return this.httpClient.get<ExamCard[]>(`${this.appConfig.API_URL}/exams?startOn=${date}`);
   }
   getExamTakerByExamIdTakerId(examId: number, takerId: number): Observable<ExamRecordViewModel> {
     return this.httpClient
@@ -75,10 +73,8 @@ export class ExamsService {
     return this.httpClient.post<Exam>(`${this.appConfig.API_URL}/exams`, val);
   }
 
-  public getAll(criteria: string, sectionId: number | null): Observable<Exam[]> {
-    return this.httpClient.get<Exam[]>(
-      `${this.appConfig.API_URL}/sections/${sectionId}/exams?criteria=${criteria}`,
-    );
+  public getAll(criteria: string): Observable<Exam[]> {
+    return this.httpClient.get<Exam[]>(`${this.appConfig.API_URL}/exams?criteria=${criteria}`);
   }
 
   getAllTakerAnswers(userDetailId: number, examId: number): Observable<ExamAnswer[]> {

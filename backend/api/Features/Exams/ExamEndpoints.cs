@@ -18,17 +18,12 @@ namespace api.Endpoints
   {
     public static void MapExamEndpoints(this IEndpointRouteBuilder app)
     {
-      app.MapGet("/exams", GetExamsBySectionAndStartOn)
+      app.MapGet("/exams", GetExams)
         .RequireAuthorization(policy =>
           policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
         );
 
       app.MapGet("/exams/{id}", GetExamById)
-        .RequireAuthorization(policy =>
-          policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
-        );
-
-      app.MapGet("/sections/{sectionId}/exams", GetExamsBySectionIdUserDetailIdAndCriteria)
         .RequireAuthorization(policy =>
           policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
         );
@@ -51,13 +46,13 @@ namespace api.Endpoints
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
     }
 
-    static async Task<IResult> GetExamsBySectionAndStartOn(
+    static async Task<IResult> GetExams(
       IExamService service,
-      [FromQuery] int sectionId,
-      [FromQuery] DateTime startOn
+      [FromQuery] DateTimeOffset? startOn,
+      [FromQuery] string? criteria
     )
     {
-      var exams = await service.GetExamsBySectionAndStartOn(sectionId, startOn);
+      var exams = await service.GetExamsAsync(startOn, criteria);
 
       return Results.Ok(exams.Select(ExamMapper.MapToExamDto));
     }
@@ -69,17 +64,6 @@ namespace api.Endpoints
         ?? throw new NotFoundException($"Exam with id {id}  was not found.");
 
       return Results.Ok(ExamMapper.MapToExamDto(exam));
-    }
-
-    static async Task<IResult> GetExamsBySectionIdUserDetailIdAndCriteria(
-      IExamService service,
-      [FromRoute] int sectionId,
-      [FromQuery] string criteria
-    )
-    {
-      var exams = await service.GetExamsBySectionIdAndCriteriaAsync(sectionId, criteria);
-
-      return Results.Ok(exams.Select(ExamMapper.MapToExamDto));
     }
 
     static async Task<IResult> Add(

@@ -1,3 +1,9 @@
 <div class="profile-container">
-  <batstateu-profile-form [me]="currentUser()" (save)="onSave($event)"></batstateu-profile-form>
+  <div>
+    @if (!currentUser()?.hasProfile) {
+      <nz-alert nzType="warning" nzMessage="Please complete your personal information here!" />
+    }
+
+    <batstateu-profile-form [me]="currentUser()" (save)="onSave($event)"></batstateu-profile-form>
+  </div>
 </div>

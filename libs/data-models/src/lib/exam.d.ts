@@ -6,7 +6,7 @@ export interface Exam {
   startOn: string;
   duration: number;
   passers: string;
-  department: string;
+  departmentName: string;
   isActive: boolean;
   instructions: string;
 }

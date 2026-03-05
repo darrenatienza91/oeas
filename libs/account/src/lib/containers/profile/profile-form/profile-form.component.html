@@ -21,7 +21,7 @@
     </div>
     <div nz-col [nzSpan]="12">
       <nz-form-item>
-        <nz-form-label nzFor="middleName" nzRequired>
+        <nz-form-label nzFor="middleName">
           <span>Middle Name</span>
         </nz-form-label>
         <nz-form-control nzErrorTip="Please input your middleName!">
@@ -39,25 +39,20 @@
         </nz-form-control>
       </nz-form-item>
     </div>
-    <!-- <div nz-col [nzSpan]="12">
+    <div nz-col [nzSpan]="12">
       <nz-form-item>
         <nz-form-label nzFor="contactNumber" nzRequired>Contact Number</nz-form-label>
-        <nz-form-control
-          [nzValidateStatus]="validateForm.controls['contactNumber']"
-          nzErrorTip="Please input your phone number!"
-        >
-          <nz-input-group [nzAddOnBefore]="addOnBeforeTemplate">
-            <ng-template #addOnBeforeTemplate>
-              <nz-select formControlName="contactNumberPrefix" class="phone-select">
-                <nz-option nzLabel="+63" nzValue="+63"></nz-option>
-              </nz-select>
-            </ng-template>
-            <input formControlName="contactNumber" id="'contactNumber'" nz-input />
-          </nz-input-group>
+        <nz-form-control nzErrorTip="Please input your phone number!">
+          <nz-space-compact>
+            <nz-input-wrapper>
+              <span nzInputAddonBefore>+63</span>
+              <input formControlName="contactNumber" id="'contactNumber'" nz-input />
+            </nz-input-wrapper>
+          </nz-space-compact>
         </nz-form-control>
       </nz-form-item>
-    </div> -->
-    <!-- <div nz-col [nzSpan]="12">
+    </div>
+    <div nz-col [nzSpan]="12">
       <nz-form-item>
         <nz-form-label nzFor="address" nzRequired>
           <span>Address</span>
@@ -66,7 +61,7 @@
           <input nz-input id="address" formControlName="address" />
         </nz-form-control>
       </nz-form-item>
-    </div> -->
+    </div>
     <!-- <div nz-col [nzSpan]="12">
       <nz-form-item>
         <nz-form-label nzFor="departmentId" nzRequired>Department</nz-form-label>

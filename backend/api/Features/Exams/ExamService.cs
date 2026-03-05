@@ -16,8 +16,7 @@ namespace api.Services
     Task RemoveExam(Exam exam);
     Task<Exam> EditExam(Exam exam);
     Task<Exam?> GetExamById(int id);
-    Task<IEnumerable<Exam>> GetExamsBySectionAndStartOn(int sectionId, DateTimeOffset startOn);
-    Task<IEnumerable<Exam>> GetExamsBySectionIdAndCriteriaAsync(int sectionId, string criteria);
+    Task<IEnumerable<Exam>> GetExamsAsync(DateTimeOffset? startOn, string? criteria);
   }
 
   public class ExamService(AppDbContext appDbContext) : IExamService
@@ -54,24 +53,18 @@ namespace api.Services
       return await appDbContext.Exams.FindAsync(id);
     }
 
-    public async Task<IEnumerable<Exam>> GetExamsBySectionAndStartOn(
-      int sectionId,
-      DateTimeOffset startOn
-    )
+    public async Task<IEnumerable<Exam>> GetExamsAsync(DateTimeOffset? startOn, string? criteria)
     {
-      return await appDbContext
-        .Exams.Where(x => x.SectionId == sectionId && x.StartOn >= startOn && x.IsActive)
-        .ToListAsync();
-    }
+      var query = appDbContext.Exams.Include(x => x.Section.Department).AsQueryable();
 
-    public async Task<IEnumerable<Exam>> GetExamsBySectionIdAndCriteriaAsync(
-      int sectionId,
-      string criteria
-    )
-    {
-      return await appDbContext
-        .Exams.Where(x => x.SectionId == sectionId && EF.Functions.Like(x.Name, $"%{criteria}%"))
-        .ToListAsync();
+      if (startOn.HasValue)
+      {
+        query = query.Where(x => x.StartOn >= startOn.Value);
+      }
+
+      query = query.Where(x => EF.Functions.Like(x.Name, $"%{criteria}%"));
+
+      return await query.ToListAsync();
     }
   }
 }

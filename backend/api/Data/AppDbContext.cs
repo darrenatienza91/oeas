@@ -30,7 +30,15 @@ namespace api.Data
       modelBuilder
         .Entity<Exam>()
         .HasQueryFilter(x =>
-          !currentUser.IsAuthenticated || x.UserDetailId == currentUser.UserDetailId
+          !currentUser.IsAuthenticated
+          || (
+            (currentUser.Role == Roles.Teacher && x.UserDetailId == currentUser.UserDetailId)
+            || (
+              currentUser.Role == Roles.Student
+              && x.SectionId == currentUser.SectionId
+              && x.IsActive
+            )
+          )
         );
 
       modelBuilder

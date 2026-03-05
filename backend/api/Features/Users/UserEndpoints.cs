@@ -30,6 +30,8 @@ namespace api.Endpoints
 
       app.MapPut("/me", PutProfileDetail).RequireAuthorization();
 
+      app.MapPost("/me", AddProfileDetail).RequireAuthorization();
+
       app.MapPatch("/me/password", ChangePassword).RequireAuthorization();
 
       app.MapPatch("/users/{id}", PatchUser)
@@ -176,6 +178,23 @@ namespace api.Endpoints
       }
 
       UserMapper.UpdateUserProfile(user, dto);
+
+      await userService.EditAsync(user);
+
+      return Results.NoContent();
+    }
+
+    static async Task<IResult> AddProfileDetail(
+      IUserService userService,
+      ICurrentUser currentUser,
+      [FromBody] AddProfileDetailDto dto
+    )
+    {
+      var user =
+        await userService.GetUserByIdAsync(currentUser.Id)
+        ?? throw new NotFoundException($"User with id {currentUser.Id}  was not found.");
+
+      UserMapper.AddUserProfile(user, dto);
 
       await userService.EditAsync(user);
 

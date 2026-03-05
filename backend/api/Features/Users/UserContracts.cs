@@ -32,13 +32,26 @@ namespace api.Features.Users
     string UserName,
     string FirstName,
     string LastName,
-    string? MiddleName
+    string? MiddleName,
+    string? Address,
+    string? ContactNumber,
+    bool HasProfile
   );
 
   public sealed record UpdateProfileDetailDto(
     string FirstName,
     string LastName,
-    string? MiddleName
+    string? MiddleName,
+    string ContactNumber,
+    string Address
+  );
+
+  public sealed record AddProfileDetailDto(
+    string FirstName,
+    string LastName,
+    string? MiddleName,
+    string Address,
+    string ContactNumber
   );
 
   public sealed record ChangePasswordDto(string CurrentPassword, string NewPassword);
@@ -81,7 +94,10 @@ namespace api.Features.Users
         UserName: user.UserName,
         FirstName: user.UserDetail?.FirstName ?? "",
         MiddleName: user.UserDetail?.MiddleName ?? "",
-        LastName: user.UserDetail?.LastName ?? ""
+        LastName: user.UserDetail?.LastName ?? "",
+        Address: user.UserDetail?.Address,
+        ContactNumber: user.UserDetail?.ContactNumber,
+        HasProfile: user.HasProfile
       );
     }
 
@@ -90,6 +106,20 @@ namespace api.Features.Users
       user.UserDetail?.FirstName = updatePRofileDetailDto.FirstName ?? "";
       user.UserDetail?.MiddleName = updatePRofileDetailDto.MiddleName ?? "";
       user.UserDetail?.LastName = updatePRofileDetailDto.LastName ?? "";
+      user.UserDetail?.ContactNumber = updatePRofileDetailDto.ContactNumber ?? "";
+      user.UserDetail?.Address = updatePRofileDetailDto.Address ?? "";
+    }
+
+    internal static void AddUserProfile(User user, AddProfileDetailDto addProfileDetailDto)
+    {
+      user.UserDetail = new()
+      {
+        FirstName = addProfileDetailDto.FirstName ?? "",
+        MiddleName = addProfileDetailDto.MiddleName ?? "",
+        LastName = addProfileDetailDto.LastName ?? "",
+        Address = addProfileDetailDto.Address ?? "",
+        ContactNumber = addProfileDetailDto.ContactNumber ?? "",
+      };
     }
 
     internal static void ApplyPatch(User user, PatchUserDto dto, HashSet<string> modified)

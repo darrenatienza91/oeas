@@ -22,11 +22,13 @@ export type EditUserDto = Omit<
   | 'userType'
   | 'hasUserDetail'
 >;
-
+// TODO: update UI for Address and contactNumber
 export interface EditMeDto {
   firstName: string;
   middleName?: string;
   lastName: string;
+  address: string;
+  contactNumber: string;
 }
 
 export interface AddProfileDto {

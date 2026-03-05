@@ -1,1 +1,7 @@
+@if (!auth()?.user?.sectionId) {
+  <nz-alert
+    nzType="warning"
+    nzMessage="Section is not yet set to your account Please contact your administrator!"
+  />
+}
 <batstateu-stats [upcomingExams]="upcomingExams()" (openExam)="openExam($event)"></batstateu-stats>
