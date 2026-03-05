@@ -5,15 +5,18 @@ import { DashboardComponent } from './containers/dashboard/dashboard.component';
 import { StatsComponent } from './components/stats/stats.component';
 import { HistoryComponent } from './components/history/history.component';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
+import { dashboardGuard } from './dashboard-guard';
 
 @NgModule({
   imports: [
-    DashboardComponent, StatsComponent, HistoryComponent,
+    DashboardComponent,
+    StatsComponent,
+    HistoryComponent,
     CommonModule,
     NgZorroAntdModule,
     RouterModule.forChild([
-      { path: '', component: DashboardComponent },
+      { path: '', component: DashboardComponent, canActivate: [dashboardGuard] },
     ]),
   ],
 })
-export class DashboardModule { }
+export class DashboardModule {}

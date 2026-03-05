@@ -4,7 +4,7 @@ import { AuthPayload } from '@batstateu/data-models';
 import { Observable } from 'rxjs';
 import { AuthService } from '@batstateu/auth';
 import { Store } from '@ngrx/store';
-import { LayoutViewComponent } from '../../components/layout-view/layout-view.component';
+import { LayoutViewComponent } from './layout-view/layout-view.component';
 
 @Component({
   imports: [LayoutViewComponent],
@@ -15,8 +15,8 @@ import { LayoutViewComponent } from '../../components/layout-view/layout-view.co
 export class LayoutComponent implements OnInit {
   user$!: Observable<AuthPayload | null>;
   isCollapsed = false;
-  private store = inject(Store<fromAuth.State>);
-  private authService = inject(AuthService);
+  private readonly store = inject(Store<fromAuth.State>);
+  private readonly authService = inject(AuthService);
 
   public onCollapsed(isCollapsed: boolean): void {
     this.isCollapsed = isCollapsed;

@@ -1,19 +1,33 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Component, inject, output } from '@angular/core';
+import {
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ChangePassword } from '@batstateu/data-models';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
+import { confirmationValidator } from '@batstateu/shared';
 import { NzFormTooltipIcon } from 'ng-zorro-antd/form';
-import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
-  imports: [NgZorroAntdModule, ReactiveFormsModule],
+  imports: [NgZorroAntdModule, ReactiveFormsModule, CommonModule, RouterModule],
   selector: 'batstateu-change-password-form',
   templateUrl: './change-password-form.component.html',
   styleUrls: ['./change-password-form.component.less'],
 })
 export class ChangePasswordFormComponent {
-  @Output() save = new EventEmitter<ChangePassword>();
-  validateForm!: UntypedFormGroup;
+  private readonly _confirmationValidator = confirmationValidator;
+  private readonly fb: UntypedFormBuilder = inject(UntypedFormBuilder);
+
+  public save = output<ChangePassword>();
+  public validateForm: UntypedFormGroup = this.fb.group({
+    currentPassword: ['', [Validators.required]],
+    newPassword: ['', [Validators.required]],
+    checkPassword: ['', [this._confirmationValidator]],
+  });
   captchaTooltipIcon: NzFormTooltipIcon = {
     type: 'info-circle',
     theme: 'twotone',
@@ -22,7 +36,7 @@ export class ChangePasswordFormComponent {
   submitForm(): void {
     if (this.validateForm.valid) {
       const formData = this.validateForm.value;
-      this.save.emit({ ...formData });
+      this.save.emit(this.validateForm.value);
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
         if (control.invalid) {
@@ -39,10 +53,4 @@ export class ChangePasswordFormComponent {
       this.validateForm.controls['checkPassword'].updateValueAndValidity(),
     );
   }
-
-  getCaptcha(e: MouseEvent): void {
-    e.preventDefault();
-  }
-
-  constructor(private fb: UntypedFormBuilder, private modal: NzModalService) { }
 }

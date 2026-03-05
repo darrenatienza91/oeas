@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {
   ReactiveFormsModule,
@@ -5,17 +6,18 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { Authenticate } from '@batstateu/data-models';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 
 @Component({
-  imports: [NgZorroAntdModule, ReactiveFormsModule],
+  imports: [NgZorroAntdModule, ReactiveFormsModule, CommonModule, RouterModule],
   selector: 'batstateu-login-form',
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.less'],
 })
 export class LoginFormComponent implements OnInit {
-  constructor(private fb: UntypedFormBuilder) { }
+  constructor(private fb: UntypedFormBuilder) {}
 
   @Output() submitForm = new EventEmitter<Authenticate>();
   passwordVisible = false;

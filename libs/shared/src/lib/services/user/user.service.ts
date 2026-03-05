@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { APP_CONFIG } from '@batstateu/app-config';
 import {
   AuthPayload,
+  ChangePassword,
   ForgotPassword,
   ResponseWrapper,
   User,
@@ -80,7 +81,7 @@ export class UserService {
       );
   }
 
-  save(id: number, user: EditUserDto): Observable<void> {
+  public save(id: number, user: EditUserDto): Observable<void> {
     return this.httpClient.patch<void>(`${this.appConfig.API_URL}/users/${id}`, user);
   }
 
@@ -88,16 +89,12 @@ export class UserService {
     return this.httpClient.put<void>(`${this.appConfig.API_URL}/me`, me);
   }
 
-  public addProfile(id: number, user: EditMeDto): Observable<void> {
-    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/users/${id}`, user);
+  public addProfile(me: EditMeDto): Observable<void> {
+    return this.httpClient.post<void>(`${this.appConfig.API_URL}/me`, me);
   }
 
-  changePassword(username: string, oldPass: string, newPass: string): Observable<User> {
-    return this.httpClient.post<User>(`${this.appConfig.API_URL}/password`, {
-      username: username,
-      password: oldPass,
-      newPassword: newPass,
-    });
+  public changePassword(changePassword: ChangePassword): Observable<void> {
+    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/me/password`, changePassword);
   }
 
   public getCurrentUserProfile(): Observable<Me> {

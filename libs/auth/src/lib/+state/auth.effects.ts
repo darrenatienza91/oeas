@@ -37,6 +37,7 @@ export class AuthEffects {
                   firstName: authSuccess.user.firstName,
                   sectionId: authSuccess.user.sectionId,
                   role: authSuccess.user.role,
+                  hasUserDetail: authSuccess.user.hasUserDetail,
                 },
               },
             }),

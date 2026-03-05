@@ -5,9 +5,14 @@ Authorization: Bearer 123
 Content-Type: application/json
 Accept: application/json
 
+// {
+//   "username": "admin",
+//   "password": "admin"
+// }
+
 {
-  "username": "admin",
-  "password": "admin"
+  "username": "s1",
+  "password": "s1"
 }
 
 ### Register

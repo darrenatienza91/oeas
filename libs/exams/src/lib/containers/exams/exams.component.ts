@@ -28,18 +28,18 @@ export class ExamsComponent implements OnInit {
 
   getAll(criteria: string) {
     this.examService
-      .getAll(criteria, this.sectionId)
+      .getAll(criteria)
       .pipe(take(1))
       .subscribe((val) => {
         this.examList.set([...val]);
       });
   }
   onChangeStatus(value: { id: number; status: boolean }) {
-    if (!!value.status) {
+    if (value.status) {
       this.examService
         .deActivate(value.id)
         .pipe(
-          switchMap(() => this.examService.getAll(this.criteria, this.sectionId)),
+          switchMap(() => this.examService.getAll(this.criteria)),
           takeUntilDestroyed(this.destroyRef),
         )
         .subscribe((val) => {
@@ -51,7 +51,7 @@ export class ExamsComponent implements OnInit {
     this.examService
       .activate(value.id)
       .pipe(
-        switchMap(() => this.examService.getAll(this.criteria, this.sectionId)),
+        switchMap(() => this.examService.getAll(this.criteria)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((val) => {
@@ -90,7 +90,7 @@ export class ExamsComponent implements OnInit {
         debounceTime(300),
         distinctUntilChanged(),
         switchMap((x) => {
-          return this.examService.getAll(x, this.sectionId);
+          return this.examService.getAll(x);
         }),
         takeUntilDestroyed(this.destroyRef),
       )

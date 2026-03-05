@@ -101,3 +101,16 @@ PATCH {{HOST}}/api/users/1/activate HTTP/1.1
 Authorization: Bearer {{login.token}}
 Content-Type: application/json
 Accept: application/json
+
+### ChangePassword
+# @name ChangePassword
+# @import ../auth/auth.http
+# @ref login
+PATCH {{HOST}}/api/me/password HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+    "newPassword": "admin2",
+    "currentPassword": "admin"
+}

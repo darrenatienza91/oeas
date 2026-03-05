@@ -37,9 +37,9 @@
         <tr>
           <td>{{ data?.name }}</td>
           <td>{{ data?.subject }}</td>
-          <td>{{ data?.startOn | date: 'yyyy-mm-dd hh:mm' }}</td>
+          <td>{{ data?.startOn | date: 'yyyy-MM-dd hh:mm' }}</td>
           <td>{{ data?.duration }} mins</td>
-          <td>{{ data?.department }}</td>
+          <td>{{ data?.departmentName }}</td>
 
           <td>
             @if (!isStudent) {

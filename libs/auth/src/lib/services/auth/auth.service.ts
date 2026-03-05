@@ -21,7 +21,10 @@ export class AuthService {
   }
 
   register(authenticate: any): Observable<Authenticate> {
-    return this.httpClient.post<Authenticate>(`${this.appConfig.API_URL}/register`, authenticate);
+    return this.httpClient.post<Authenticate>(
+      `${this.appConfig.API_URL}/auth/register`,
+      authenticate,
+    );
   }
 
   logout() {

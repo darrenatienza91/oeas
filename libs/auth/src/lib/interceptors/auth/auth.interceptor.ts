@@ -37,12 +37,13 @@ export class AuthInterceptor implements HttpInterceptor {
         return next.handle(authReq);
       }),
       catchError((err: HttpErrorResponse) => {
+        const error = err.error as { title: string; detail: string };
         if (err.status === 0) {
           this.showNotification('error', 'Error', `Can't connect to server!`);
         }
 
         if (err.status === 401) {
-          this.showNotification('error', 'Login', 'Token expired! Please login again.');
+          this.showNotification('error', 'Login', 'Authorization Failed!');
           this.store.dispatch(authActions.logout());
         }
 
@@ -50,34 +51,8 @@ export class AuthInterceptor implements HttpInterceptor {
           this.showNotification('error', 'Not Found', 'Requested resource not found!');
         }
 
-        const error = err.error;
-
-        if (error?.code === 1011) {
-          this.store.dispatch(authActions.logout());
-        }
-
-        if (
-          (this.router.url === '/auth/login' && error?.code === 1003) ||
-          (this.router.url === '/account/profile' && error?.code === 1003)
-        ) {
-          this.router.navigate(['/account/profile']);
-          this.showNotification(
-            'warning',
-            'Update your profile now!',
-            'Please update your profile now so administrator can review and activate it!',
-          );
-        }
-
-        if (error?.code === 1010) {
-          this.showNotification(
-            'error',
-            'Error',
-            'Record is related to other record. Cannot delete!',
-          );
-        }
-
-        if (error?.code === 1013) {
-          this.showNotification('error', 'Error', 'Invalid Input!');
+        if (err.status === 400) {
+          this.showNotification('error', error.title, `${error.detail}`);
         }
 
         return throwError(() => err);
