@@ -1,17 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, output, Output } from '@angular/core';
 import { ExamState, TakeExamControlState } from '@batstateu/data-models';
+import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
+  imports: [NgZorroAntdModule],
   selector: 'batstateu-take-exam-control',
   templateUrl: './take-exam-control.component.html',
-  styleUrls: ['./take-exam-control.component.less']
+  styleUrls: ['./take-exam-control.component.less'],
 })
 export class TakeExamControlComponent implements OnInit {
   @Input() isStartExam = false;
   @Input() enableNextButton = false;
   @Input() enablePreviousButton = false;
-  @Output() startRecord = new EventEmitter();
+  public startRecord = output();
   @Output() nextQuestion = new EventEmitter();
   @Output() prevQuestion = new EventEmitter();
   @Output() finishExam = new EventEmitter();
@@ -22,22 +24,20 @@ export class TakeExamControlComponent implements OnInit {
   onStartRecord() {
     this.startRecord.emit();
   }
-  onNexQuestion(){
+  onNexQuestion() {
     this.nextQuestion.emit();
   }
-  onPrevQuestion(){
+  onPrevQuestion() {
     this.prevQuestion.emit();
   }
-  onFinishExam(){
+  onFinishExam() {
     this.modal.confirm({
       nzTitle: 'Finish Examination',
       nzContent: 'Are you sure you want to finish this examination?',
-      nzOnOk: () => this.finishExam.emit()
+      nzOnOk: () => this.finishExam.emit(),
     });
   }
-  constructor( private modal: NzModalService) { }
+  constructor(private modal: NzModalService) {}
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

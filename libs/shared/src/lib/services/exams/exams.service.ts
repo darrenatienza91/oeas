@@ -63,7 +63,7 @@ export class ExamsService {
   public edit(val: Exam): Observable<number> {
     return this.httpClient.patch<number>(`${this.appConfig.API_URL}/exams/${val.id}`, val);
   }
-  get(id: number): Observable<Exam> {
+  public get(id: number): Observable<Exam> {
     return this.httpClient.get<Exam>(`${this.appConfig.API_URL}/exams/${id}`);
   }
   delete(id: number): Observable<number> {

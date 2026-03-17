@@ -3,9 +3,8 @@ import { Inject, Injectable } from '@angular/core';
 import { APP_CONFIG } from '@batstateu/app-config';
 import {
   ExamAnswer,
-  QuestionDetail,
   ResponseWrapper,
-  TakerExamDetail,
+  TakerExamDetail as ExamTakerDetail,
   TakerExamQuestion,
 } from '@batstateu/data-models';
 import { map, Observable } from 'rxjs';
@@ -14,58 +13,64 @@ import { map, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class TakeExamService {
-  addAnswer(val: ExamAnswer): Observable<number> {
-    return this.httpClient.post<number>(
-      `${this.appConfig.API_URL}/records/examAnswers`,
-      val
+  public movePreviousQuestion(takerExamId: number): Observable<{ isFirst: boolean }> {
+    return this.httpClient.post<{ isFirst: boolean }>(
+      `${this.appConfig.API_URL}/exam-attempts/${takerExamId}/previous-question`,
+      null,
     );
   }
-  getQuestions(
-    examId: number,
-    answerArr: any[]
-  ): Observable<TakerExamQuestion[]> {
-    return this.httpClient
-      .get<ResponseWrapper<TakerExamQuestion>>(
-        `${this.appConfig.API_URL}/records/questions?filter=examId,eq,${examId}&filter=id,nin,${answerArr}`
-      )
-      .pipe(map((res: ResponseWrapper<any>) => res.records));
-  }
-  getAnswers(userDetailId: number): Observable<ExamAnswer[]> {
-    return this.httpClient
-      .get<ResponseWrapper<ExamAnswer>>(
-        `${this.appConfig.API_URL}/records/examAnswers?filter=userDetailId,eq,${userDetailId}`
-      )
-      .pipe(map((res: ResponseWrapper<any>) => res.records));
-  }
-  getTakerExamByUserDetaiIdExamId(
-    userDetailId: number,
-    examId: number
-  ): Observable<TakerExamDetail> {
-    return this.httpClient
-      .get<ResponseWrapper<TakerExamDetail>>(
-        `${this.appConfig.API_URL}/records/takerExams?filter=userDetailId,eq,${userDetailId}&filter=examId,eq,${examId}`
-      )
-      .pipe(map((res: ResponseWrapper<any>) => res.records[0]));
-  }
-  get(takerExamId: number): Observable<TakerExamDetail> {
-    return this.httpClient.get<TakerExamDetail>(
-      `${this.appConfig.API_URL}/records/takerExams/${takerExamId}`
+  public moveNextQuestion(takerExamId: number): Observable<{ isLast: boolean }> {
+    return this.httpClient.post<{ isLast: boolean }>(
+      `${this.appConfig.API_URL}/exam-attempts/${takerExamId}/next-question`,
+      null,
     );
   }
 
-  addTakerExam(val: TakerExamDetail): Observable<number> {
-    return this.httpClient.post<number>(
-      `${this.appConfig.API_URL}/records/takerExams`,
-      val
+  addAnswer(attemptId: number, questionId: number, val: ExamAnswer): Observable<void> {
+    return this.httpClient.put<void>(
+      `${this.appConfig.API_URL}/exam-attempts/${attemptId}/questions/${questionId}/answer`,
+      val,
     );
   }
-  updateTakerExam(
-    takerExamId: number,
-    val: TakerExamDetail
-  ): Observable<number> {
+  public getCurrentQuestion(examAttemptId: number): Observable<TakerExamQuestion> {
+    return this.httpClient.get<TakerExamQuestion>(
+      `${this.appConfig.API_URL}/exam-attempts/${examAttemptId}/current-question`,
+    );
+  }
+
+  public getNextQuestion(examAttemptId: number): Observable<TakerExamQuestion> {
+    return this.httpClient.get<TakerExamQuestion>(
+      `${this.appConfig.API_URL}/exam-attempts/${examAttemptId}/current-question`,
+    );
+  }
+  getAnswers(userDetailId: number): Observable<ExamAnswer[]> {
+    return this.httpClient
+      .get<
+        ResponseWrapper<ExamAnswer>
+      >(`${this.appConfig.API_URL}/records/examAnswers?filter=userDetailId,eq,${userDetailId}`)
+      .pipe(map((res: ResponseWrapper<any>) => res.records));
+  }
+  getExamTakerByExamId(examId: number): Observable<ExamTakerDetail> {
+    return this.httpClient.get<ExamTakerDetail>(
+      `${this.appConfig.API_URL}/exams/${examId}/my-attempt`,
+    );
+  }
+  get(takerExamId: number): Observable<ExamTakerDetail> {
+    return this.httpClient.get<ExamTakerDetail>(
+      `${this.appConfig.API_URL}/records/takerExams/${takerExamId}`,
+    );
+  }
+
+  public addExamTaker(examId: number): Observable<ExamTakerDetail> {
+    return this.httpClient.post<ExamTakerDetail>(
+      `${this.appConfig.API_URL}/exams/${examId}/my-attempt`,
+      {},
+    );
+  }
+  updateTakerExam(takerExamId: number, val: ExamTakerDetail): Observable<number> {
     return this.httpClient.put<number>(
       `${this.appConfig.API_URL}/records/takerExams/${takerExamId}`,
-      val
+      val,
     );
   }
   upload(data: any): Observable<any> {
@@ -79,6 +84,6 @@ export class TakeExamService {
   }
   constructor(
     private httpClient: HttpClient,
-    @Inject(APP_CONFIG) private appConfig: any
+    @Inject(APP_CONFIG) private appConfig: any,
   ) {}
 }

@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace api.Models
 {
-  public class ExamTakerAnswer : BaseEntity<int>
+  public class ExamTakerAnswer : BaseEntity<int>, IHasCreateDate
   {
     public int? AnswerId { get; set; }
     public int ExamTakerId { get; set; }
@@ -16,7 +17,7 @@ namespace api.Models
     public ExamTaker ExamTaker { get; set; }
     public Question Question { get; set; }
     public Answer Answer { get; set; }
-    public DateTime CreateDate { get; set; }
+    public DateTimeOffset CreateDate { get; set; }
   }
 
   public class ExamTakerAnswerConfiguration : IEntityTypeConfiguration<ExamTakerAnswer>

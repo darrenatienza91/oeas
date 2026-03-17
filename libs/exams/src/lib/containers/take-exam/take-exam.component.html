@@ -1,9 +1,7 @@
 <div class="m-3">
   <nz-page-header
     (nzBack)="onBack()"
-    [nzBackIcon]="
-      takeExamState === TakeExamStateEnum.instructionView ? '' : null
-    "
+    [nzBackIcon]="takeExamState === TakeExamStateEnum.instructionView ? '' : null"
     nzTitle="{{ (examDetail$ | async)?.name }}"
     ><nz-page-header-extra>
       <!-- <cd-timer
@@ -22,16 +20,14 @@
     [hidden]="takeExamState !== TakeExamStateEnum.instructionView"
   ></batstateu-exam-instruction-view>
 
-  <div *ngIf="takeExamState === TakeExamStateEnum.takeExamQuestionView">
+  @if (takeExamState === TakeExamStateEnum.takeExamQuestionView) {
     <batstateu-take-exam-question-view
       [videoVisible$]="videoVisible$"
-      [currentQuestion]="currentQuestion"
-      [question]="question"
-      [currentQuestion$]="currentQuestion$"
+      [currentQuestion]="currentQuestion()"
       (save)="onSubmitAnswer($event)"
       [tabActive$]="tabActive$"
     ></batstateu-take-exam-question-view>
-  </div>
+  }
 
   <batstateu-take-exam-control
     [takeExamControlState]="takeExamControlState"
@@ -40,8 +36,8 @@
     [enableNextButton]="enableNextButton"
     [enablePreviousButton]="enablePreviousButton"
     (startRecord)="onStartRecord()"
-    (nextQuestion)="onNexQuestion()"
-    (prevQuestion)="onPrevQuestion()"
+    (nextQuestion)="onNextQuestion()"
+    (prevQuestion)="onPreviousQuestion()"
     (finishExam)="onFinishExamination()"
   ></batstateu-take-exam-control>
 

@@ -2,20 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace api.Models
 {
-  public class ExamTaker : BaseEntity<int>
+  public class ExamTaker : BaseEntity<int>, IUserOwned, IHasCreateDate
   {
     public int UserDetailId { get; set; }
     public int ExamId { get; set; }
     public string RecUrl { get; set; }
     public UserDetail UserDetail { get; set; }
     public Exam Exam { get; set; }
-    public DateTime CreateDate { get; set; }
     public ICollection<ExamTakerAnswer> ExamTakerAnswers { get; set; } = [];
+    public DateTimeOffset CreateDate { get; set; }
+    public int CurrentQuestionIndex { get; set; }
   }
 
   public class ExamTakerConfiguration : IEntityTypeConfiguration<ExamTaker>

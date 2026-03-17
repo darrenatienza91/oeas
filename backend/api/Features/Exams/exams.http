@@ -80,3 +80,13 @@ PATCH {{HOST}}/api/exams/10/activate HTTP/1.1
 Authorization: Bearer {{login.token}}
 Content-Type: application/json
 Accept: application/json
+
+
+### GetExamAttemp
+# @name GetExamAttemp
+# @import ../auth/auth.http
+# @ref login
+GET {{HOST}}/api/exams/10/my-attempt HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json

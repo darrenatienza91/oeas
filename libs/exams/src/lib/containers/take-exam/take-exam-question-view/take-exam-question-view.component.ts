@@ -1,11 +1,19 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  EventEmitter,
+  inject,
+  input,
+  Input,
+  Output,
+} from '@angular/core';
 import {
   FormsModule,
   ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormControl,
-  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { TakerExamQuestion } from '@batstateu/data-models';
@@ -27,17 +35,30 @@ import { TakeExamCameraViewComponent } from '../take-exam-camera-view/take-exam-
   selector: 'batstateu-take-exam-question-view',
   templateUrl: './take-exam-question-view.component.html',
   styleUrls: ['./take-exam-question-view.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TakeExamQuestionViewComponent implements OnInit {
-  @Input() currentQuestion!: TakerExamQuestion;
-  @Input() question = '';
-  @Input() currentQuestion$!: Observable<TakerExamQuestion | null>;
+export class TakeExamQuestionViewComponent {
+  private readonly fb: UntypedFormBuilder = inject(UntypedFormBuilder);
+  private readonly modal: NzModalService = inject(NzModalService);
+  private readonly location: Location = inject(Location);
+
+  public currentQuestion = input<TakerExamQuestion | null>(null);
   @Output() save = new EventEmitter();
   @Input() videoVisible$!: Observable<boolean>;
   @Input() tabActive$!: Observable<boolean | null>;
   limit = 60;
-  validateForm!: UntypedFormGroup;
-  editor!: Editor;
+
+  public validateForm = this.fb.group({
+    answer: ['', [Validators.required]],
+  });
+
+  private readonly _ = effect(() => {
+    if (this.currentQuestion()) {
+      this.validateForm.patchValue({ answer: this.currentQuestion()?.examTakerAnswerText });
+    }
+  });
+
+  public editor: Editor = new Editor();
 
   toolbar: Toolbar = [
     // default value
@@ -48,6 +69,7 @@ export class TakeExamQuestionViewComponent implements OnInit {
     [{ heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
     ['align_left', 'align_center', 'align_right', 'align_justify'],
   ];
+
   confirmationValidator = (control: UntypedFormControl): { [s: string]: boolean } => {
     if (!control.value) {
       return { required: true };
@@ -57,6 +79,7 @@ export class TakeExamQuestionViewComponent implements OnInit {
     }
     return {};
   };
+
   submitForm(): void {
     if (this.validateForm.valid) {
       this.modal.confirm({
@@ -78,26 +101,5 @@ export class TakeExamQuestionViewComponent implements OnInit {
   }
   cancel() {
     this.location.back();
-  }
-  setQuestion() {
-    this.currentQuestion$.subscribe((val) => {
-      if (val) {
-        this.question = val.question;
-        this.validateForm.patchValue({ answer: '' });
-      }
-    });
-  }
-  constructor(
-    private fb: UntypedFormBuilder,
-    private modal: NzModalService,
-    private location: Location,
-  ) {}
-
-  ngOnInit(): void {
-    this.editor = new Editor();
-    this.validateForm = this.fb.group({
-      answer: [null, [Validators.required]],
-    });
-    this.setQuestion();
   }
 }

@@ -19,7 +19,7 @@ export class TakeExamResultComponent implements OnInit {
   percentage!: number | null;
   examTitle!: string;
   scoreSummary!: string;
-  getExamResultPoints() {
+  private getExamResultPoints(): void {
     // this.examService
     //   .getAllTakerAnswers(this.userStore?.user.userDetailId || 0, this.examId)
     //   .subscribe((ans) => {

@@ -44,6 +44,19 @@ namespace api.Endpoints
 
       app.MapPatch("/exams/{id}/de-activate", Deactivate)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
+
+      app.MapGet("/exams/{id}/my-attempt", GetExamAttempt)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.Student));
+
+      app.MapPost("/exams/{id}/my-attempt", AddExamAttempt)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.Student));
+    }
+
+    static async Task<IResult> GetExamAttempt(IExamService service, [FromRoute] int id)
+    {
+      var examTaker = await service.GetAttempt(id);
+
+      return Results.Ok(ExamMapper.MapToExamTakerDto(examTaker));
     }
 
     static async Task<IResult> GetExams(
@@ -63,7 +76,7 @@ namespace api.Endpoints
         await service.GetExamById(id)
         ?? throw new NotFoundException($"Exam with id {id}  was not found.");
 
-      return Results.Ok(ExamMapper.MapToExamDto(exam));
+      return Results.Ok(exam.MapToExamDto());
     }
 
     static async Task<IResult> Add(
@@ -80,6 +93,13 @@ namespace api.Endpoints
       var response = ExamMapper.MapToExamDto(exam);
 
       return Results.Created($"{http.Request.Path}/{exam.Id}", response);
+    }
+
+    static async Task<IResult> AddExamAttempt(IExamService service, HttpContext http, int id)
+    {
+      var examTaker = await service.AddAttempt(new() { ExamId = id, RecUrl = "" });
+
+      return Results.Created($"{http.Request.Path}/{id}/my-attempt", examTaker);
     }
 
     static async Task<IResult> Edit(

@@ -17,8 +17,7 @@ import { Observable } from 'rxjs';
   templateUrl: './take-exam-recording.component.html',
   styleUrls: ['./take-exam-recording.component.less'],
 })
-export class TakeExamRecordingComponent
-  implements OnInit, OnDestroy, AfterViewInit {
+export class TakeExamRecordingComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() limit$!: Observable<number>;
   @Input() tabActive$!: Observable<boolean | null>;
   @Output() startExam = new EventEmitter();
@@ -46,7 +45,8 @@ export class TakeExamRecordingComponent
       }
     });
   }
-  onStartRecord() {
+
+  public onStartRecord() {
     this.player.record().getDevice();
   }
   onStopRecord() {
@@ -84,7 +84,7 @@ export class TakeExamRecordingComponent
       },
     };
   }
-  constructor() { }
+  constructor() {}
 
   ngOnDestroy(): void {
     if (this.player) {
@@ -98,23 +98,19 @@ export class TakeExamRecordingComponent
     const el = 'video_' + this.idx;
 
     // setup the player via the unique element ID
-    this.player = videojs(
-      document.getElementById(el) as HTMLVideoElement,
-      this.config,
-      () => {
-        console.log('player ready! id:', el);
+    this.player = videojs(document.getElementById(el) as HTMLVideoElement, this.config, () => {
+      console.log('player ready! id:', el);
 
-        // print version information at startup
-        const msg =
-          'Using video.js ' +
-          //videojs.VERSION +
-          ' with videojs-record ' +
-          videojs.getPluginVersion('record') +
-          ' and recordrtc ' +
-          RecordRTC.version;
-        videojs.log(msg);
-      }
-    );
+      // print version information at startup
+      const msg =
+        'Using video.js ' +
+        //videojs.VERSION +
+        ' with videojs-record ' +
+        videojs.getPluginVersion('record') +
+        ' and recordrtc ' +
+        RecordRTC.version;
+      videojs.log(msg);
+    });
 
     // device is ready
     this.player.on('deviceReady', () => {
@@ -179,6 +175,7 @@ export class TakeExamRecordingComponent
   }
 
   startTimerPauseRecording() {
+    //TODO: Fix this
     this.interval = setInterval(() => {
       if (this.timeLeft > 0) {
         this.timeLeft--;
@@ -192,5 +189,5 @@ export class TakeExamRecordingComponent
     }, 1000);
   }
 
-  ngAfterViewInit(): void { }
+  ngAfterViewInit(): void {}
 }

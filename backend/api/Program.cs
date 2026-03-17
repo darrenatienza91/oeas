@@ -6,6 +6,7 @@ using api.Data;
 using api.Endpoints;
 using api.Exceptions;
 using api.Features.Departments;
+using api.Features.ExamAttempts;
 using api.Features.Users;
 using api.Models;
 using api.Services;
@@ -63,6 +64,7 @@ builder.Services.AddScoped<ISectionService, SectionService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IExamAttemptService, ExamAttemptService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
   options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -170,6 +172,7 @@ var api = app.MapGroup("/api");
 api.MapAuthEndpoints();
 api.MapUserEndpoints();
 api.MapExamEndpoints();
+api.MapExamAttemptEndpoints();
 api.MapQuestionEndpoints();
 api.MapSectionEndpoints();
 api.MapDepartmentEndpoints();

@@ -19,19 +19,19 @@ import { QuestionsComponent } from './containers/questions/questions.component';
 import { QuestionFormComponent } from './containers/question-form/question-form.component';
 import { QuestionFormViewComponent } from './components/question-form-view/question-form-view.component';
 import { QuestionListComponent } from './components/question-list/question-list.component';
-import { ExamInstructionViewComponent } from './components/exam-instruction-view/exam-instruction-view.component';
+import { ExamInstructionViewComponent } from './containers/take-exam/exam-instruction-view/exam-instruction-view.component';
 import { TakeExamComponent } from './containers/take-exam/take-exam.component';
-import { TakeExamControlComponent } from './components/take-exam-control/take-exam-control.component';
-import { TakeExamRecordingComponent } from './containers/take-exam-recording/take-exam-recording.component';
+import { TakeExamControlComponent } from './containers/take-exam/take-exam-control/take-exam-control.component';
+import { TakeExamRecordingComponent } from './containers/take-exam/take-exam-recording/take-exam-recording.component';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { TakeExamQuestionViewComponent } from './components/take-exam-question-view/take-exam-question-view.component';
 import { DataModelsModule } from '@batstateu/data-models';
 import { TakeExamResultComponent } from './containers/take-exam-result/take-exam-result.component';
 import { TakeExamResultViewComponent } from './components/take-exam-result-view/take-exam-result-view.component';
 import { SharedModule } from '@batstateu/shared';
-import { TakeExamCameraViewComponent } from './components/take-exam-camera-view/take-exam-camera-view.component';
+import { TakeExamCameraViewComponent } from './containers/take-exam/take-exam-camera-view/take-exam-camera-view.component';
 import { NgxEditorModule } from 'ngx-editor';
 import { StatusPipe } from 'libs/shared/src/lib/pipes/status/status.pipe';
+import { TakeExamQuestionViewComponent } from './containers/take-exam/take-exam-question-view/take-exam-question-view.component';
 
 @NgModule({
   imports: [
@@ -89,14 +89,14 @@ import { StatusPipe } from 'libs/shared/src/lib/pipes/status/status.pipe';
       //   path: ':examId/takers/:takerId/recording',
       //   component: ExamRecordingComponent,
       // },
-      // { path: ':examId/take-exam', component: TakeExamComponent },
+      { path: ':examId/take-exam', component: TakeExamComponent },
       { path: ':examId/questions', component: QuestionsComponent },
       {
         path: ':examId/questions/:id/edit',
         component: QuestionFormComponent,
       },
       { path: ':examId/questions/add', component: QuestionFormComponent },
-      // { path: ':examId/result', component: TakeExamResultComponent },
+      { path: ':examId/result', component: TakeExamResultComponent },
     ]),
   ],
   providers: [provideHttpClient(withInterceptorsFromDi())],

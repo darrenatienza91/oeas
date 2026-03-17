@@ -1,0 +1,17 @@
+<div style="margin-top: 10px; display: flex; justify-content: center">
+  <div [hidden]="takeExamState === TakeExamStateEnum.takeExamQuestionView">
+    <button nz-button nzType="primary" (click)="onStartRecord()">Start Exam</button>
+  </div>
+  <div
+    [hidden]="takeExamState === TakeExamStateEnum.instructionView"
+    style="width: 100%; display: flex; justify-content: space-between"
+  >
+    <button nzType="primary" nz-button (click)="onPrevQuestion()" [disabled]="enablePreviousButton">
+      Prev
+    </button>
+    <button nz-button nzType="default" (click)="onFinishExam()"> Finish </button>
+    <button nz-button nzType="primary" [disabled]="enableNextButton" (click)="onNexQuestion()">
+      Next
+    </button>
+  </div>
+</div>

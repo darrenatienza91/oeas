@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Auth;
+using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,8 +45,45 @@ namespace api.Data
       modelBuilder
         .Entity<Question>()
         .HasQueryFilter(x =>
-          !currentUser.IsAuthenticated || x.Exam.UserDetailId == currentUser.UserDetailId
+          !currentUser.IsAuthenticated
+          || (
+            (currentUser.Role == Roles.Teacher && x.Exam.UserDetailId == currentUser.UserDetailId)
+            || (
+              currentUser.Role == Roles.Student
+              && x.Exam.SectionId == currentUser.SectionId
+              && x.Exam.IsActive
+            )
+          )
         );
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+      foreach (var entry in ChangeTracker.Entries<IUserOwned>())
+      {
+        if (entry.State == EntityState.Added)
+        {
+          entry.Entity.UserDetailId = currentUser.UserDetailId;
+        }
+      }
+
+      foreach (var entry in ChangeTracker.Entries<IOptionalUserOwned>())
+      {
+        if (entry.State == EntityState.Added && entry.Entity.UserDetailId != null)
+        {
+          entry.Entity.UserDetailId = currentUser.UserDetailId;
+        }
+      }
+
+      foreach (var entry in ChangeTracker.Entries<IHasCreateDate>())
+      {
+        if (entry.State == EntityState.Added)
+        {
+          entry.Entity.CreateDate = DateTimeOffset.UtcNow;
+        }
+      }
+
+      return await base.SaveChangesAsync(cancellationToken);
     }
   }
 }

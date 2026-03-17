@@ -17,6 +17,8 @@ namespace api.Services
     Task<Exam> EditExam(Exam exam);
     Task<Exam?> GetExamById(int id);
     Task<IEnumerable<Exam>> GetExamsAsync(DateTimeOffset? startOn, string? criteria);
+    Task<ExamTaker?> GetAttempt(int examId);
+    Task<ExamTaker?> AddAttempt(ExamTaker examTaker);
   }
 
   public class ExamService(AppDbContext appDbContext) : IExamService
@@ -50,7 +52,10 @@ namespace api.Services
 
     public async Task<Exam?> GetExamById(int id)
     {
-      return await appDbContext.Exams.FindAsync(id);
+      return await appDbContext
+        .Exams.Include(x => x.Section.Department)
+        .Include(x => x.Questions)
+        .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<IEnumerable<Exam>> GetExamsAsync(DateTimeOffset? startOn, string? criteria)
@@ -65,6 +70,20 @@ namespace api.Services
       query = query.Where(x => EF.Functions.Like(x.Name, $"%{criteria}%"));
 
       return await query.ToListAsync();
+    }
+
+    public async Task<ExamTaker?> GetAttempt(int examId)
+    {
+      return await appDbContext.ExamTakers.FirstOrDefaultAsync(x => x.ExamId == examId);
+    }
+
+    public async Task<ExamTaker?> AddAttempt(ExamTaker examTaker)
+    {
+      appDbContext.ExamTakers.Add(examTaker);
+
+      await appDbContext.SaveChangesAsync();
+
+      return examTaker;
     }
   }
 }

@@ -1,17 +1,10 @@
 <!--TODO: Add info about the taker of the exam ie. Name department, etc-->
 
-<form
-  nz-form
-  [formGroup]="validateForm"
-  nzLayout="vertical"
-  (ngSubmit)="submitForm()"
->
+<form nz-form [formGroup]="validateForm" nzLayout="vertical" (ngSubmit)="submitForm()">
   <div nz-row nzGutter="16">
     <div nz-col nzSpan="16">
-      <nz-form-item
-        style="padding: 16px; height: 100%; border: solid 1px #dddfe2"
-      >
-        <div [innerHTML]="question"></div>
+      <nz-form-item style="padding: 16px; height: 100%; border: solid 1px #dddfe2">
+        <div [innerHTML]="currentQuestion()?.questionText"></div>
       </nz-form-item>
     </div>
     <div
@@ -35,17 +28,14 @@
   <nz-form-item style="margin: 16px 0">
     <nz-form-control>
       <div style="display: flex; justify-content: flex-end">
-        <button nz-button nzType="primary" [disabled]="!validateForm.valid">
-          Submit
-        </button>
+        <button nz-button nzType="primary" [disabled]="!validateForm.valid"> Submit </button>
       </div>
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
     <nz-form-control nzErrorTip="Please input your answer!">
       <div class="NgxEditor__Wrapper">
-        <ngx-editor-menu [editor]="editor" [toolbar]="toolbar">
-        </ngx-editor-menu>
+        <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"> </ngx-editor-menu>
         <ngx-editor
           formControlName="answer"
           [editor]="editor"
