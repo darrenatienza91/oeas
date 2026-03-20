@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, input, Input, OnDestroy, OnInit } from '@angular/core';
 import videojs from 'video.js';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -11,20 +11,14 @@ import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
   styleUrls: ['./take-exam-camera-view.component.css'],
 })
 export class TakeExamCameraViewComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input() videoVisible$!: Observable<boolean>;
+  public videoVisible = input(true);
   @Input() tabActive$!: Observable<boolean | null>;
-  videoVisible!: boolean;
+
   private videoPlayer: any;
   private videoConf: any;
   idx2 = 'clip2';
   limit = 0;
-  setVideoVisible() {
-    this.videoVisible$.subscribe((val) => {
-      if (val) {
-        this.videoVisible = true;
-      }
-    });
-  }
+
   initCameraView() {
     // ID with which to access the template's video element
     const el = 'video_' + this.idx2;

@@ -1,29 +1,20 @@
 <!--TODO: Add info about the taker of the exam ie. Name department, etc-->
 
 <form nz-form [formGroup]="validateForm" nzLayout="vertical" (ngSubmit)="submitForm()">
-  <div nz-row nzGutter="16">
-    <div nz-col nzSpan="16">
+  <div nz-row nzGutter="16" style="flex: 0 0 auto">
+    <div nz-col [nzSpan]="questionSpan()">
       <nz-form-item style="padding: 16px; height: 100%; border: solid 1px #dddfe2">
         <div [innerHTML]="currentQuestion()?.questionText"></div>
       </nz-form-item>
     </div>
-    <div
-      nz-col
-      nzSpan="8"
-      style="
-        display: flex;
-        justify-content: center;
-        background-color: #dddfe2;
-        padding: 16px;
-        border-radius: 5px;
-      "
-    >
-      <batstateu-take-exam-camera-view
-        *ngIf="videoVisible$ | async"
-        [videoVisible$]="videoVisible$"
-        [tabActive$]="tabActive$"
-      ></batstateu-take-exam-camera-view>
-    </div>
+    @if (videoVisible()) {
+      <div nz-col nzSpan="8">
+        <batstateu-take-exam-camera-view
+          [videoVisible]="videoVisible()"
+          [tabActive$]="tabActive$"
+        ></batstateu-take-exam-camera-view>
+      </div>
+    }
   </div>
   <nz-form-item style="margin: 16px 0">
     <nz-form-control>

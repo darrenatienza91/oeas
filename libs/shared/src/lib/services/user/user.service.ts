@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { APP_CONFIG } from '@batstateu/app-config';
+import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
 import {
   AuthPayload,
   ChangePassword,
@@ -20,16 +20,16 @@ import { Me, EditMeDto, EditUserDto } from 'libs/data-models/src/lib/user.model'
 })
 export class UserService {
   public activate(id: number): Observable<void> {
-    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/users/${id}/activate`, null);
+    return this.httpClient.patch<void>(`${this.appConfig.apiUrl}/users/${id}/activate`, null);
   }
 
   public deActivate(id: number): Observable<void> {
-    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/users/${id}/deactivate`, null);
+    return this.httpClient.patch<void>(`${this.appConfig.apiUrl}/users/${id}/deactivate`, null);
   }
 
   updateResetPasswordDefaultStatus(id: number): Observable<number> {
     return this.httpClient
-      .put<number>(`${this.appConfig.API_URL}/records/userDetails/${id}`, {
+      .put<number>(`${this.appConfig.apiUrl}/records/userDetails/${id}`, {
         isResetPassword: 0,
         isActive: 1,
       })
@@ -41,7 +41,7 @@ export class UserService {
   }
   resetPassword(id: number): Observable<number> {
     return this.httpClient
-      .put<number>(`${this.appConfig.API_URL}/records/users/${id}`, {
+      .put<number>(`${this.appConfig.apiUrl}/records/users/${id}`, {
         password: 'abc123',
       })
       .pipe(
@@ -52,7 +52,7 @@ export class UserService {
   }
   requestReset(id: number): Observable<number> {
     return this.httpClient
-      .put<number>(`${this.appConfig.API_URL}/records/userDetails/${id}`, {
+      .put<number>(`${this.appConfig.apiUrl}/records/userDetails/${id}`, {
         isResetPassword: true,
         isActive: false,
       })
@@ -67,7 +67,7 @@ export class UserService {
     return this.httpClient
       .get<
         ResponseWrapper<UserDetail>
-      >(`${this.appConfig.API_URL}/records/userDetails?filter=email,eq,${forgotPassword.email}&join=users`)
+      >(`${this.appConfig.apiUrl}/records/userDetails?filter=email,eq,${forgotPassword.email}&join=users`)
       .pipe(
         map((res: ResponseWrapper<any>) => {
           const user = res.records[0];
@@ -82,37 +82,35 @@ export class UserService {
   }
 
   public save(id: number, user: EditUserDto): Observable<void> {
-    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/users/${id}`, user);
+    return this.httpClient.patch<void>(`${this.appConfig.apiUrl}/users/${id}`, user);
   }
 
   public editProfile(me: EditMeDto): Observable<void> {
-    return this.httpClient.put<void>(`${this.appConfig.API_URL}/me`, me);
+    return this.httpClient.put<void>(`${this.appConfig.apiUrl}/me`, me);
   }
 
   public addProfile(me: EditMeDto): Observable<void> {
-    return this.httpClient.post<void>(`${this.appConfig.API_URL}/me`, me);
+    return this.httpClient.post<void>(`${this.appConfig.apiUrl}/me`, me);
   }
 
   public changePassword(changePassword: ChangePassword): Observable<void> {
-    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/me/password`, changePassword);
+    return this.httpClient.patch<void>(`${this.appConfig.apiUrl}/me/password`, changePassword);
   }
 
   public getCurrentUserProfile(): Observable<Me> {
-    return this.httpClient.get<Me>(`${this.appConfig.API_URL}/me`);
+    return this.httpClient.get<Me>(`${this.appConfig.apiUrl}/me`);
   }
 
   public getUserDetail(id: number): Observable<User> {
-    return this.httpClient.get<User>(`${this.appConfig.API_URL}/users/${id}`);
+    return this.httpClient.get<User>(`${this.appConfig.apiUrl}/users/${id}`);
   }
 
   getAll(criteria: string): Observable<UserDetail[]> {
-    return this.httpClient.get<UserDetail[]>(
-      `${this.appConfig.API_URL}/users?criteria=${criteria}`,
-    );
+    return this.httpClient.get<UserDetail[]>(`${this.appConfig.apiUrl}/users?criteria=${criteria}`);
   }
   getAllUserTypes(): Observable<UserType[]> {
     return this.httpClient
-      .get<ResponseWrapper<UserType>>(`${this.appConfig.API_URL}/records/user_types`)
+      .get<ResponseWrapper<UserType>>(`${this.appConfig.apiUrl}/records/user_types`)
       .pipe(
         map((res: ResponseWrapper<UserType>) => {
           return res.records;
@@ -120,7 +118,7 @@ export class UserService {
       );
   }
   public deleteUser(user_id: number): Observable<number> {
-    return this.httpClient.delete<number>(`${this.appConfig.API_URL}/users/${user_id}`);
+    return this.httpClient.delete<number>(`${this.appConfig.apiUrl}/users/${user_id}`);
   }
 
   private getUserId() {
@@ -132,7 +130,7 @@ export class UserService {
 
   constructor(
     private httpClient: HttpClient,
-    @Inject(APP_CONFIG) private appConfig: any,
+    @Inject(APP_CONFIG) private appConfig: AppConfig,
     private store: Store<fromAuth.State>,
   ) {
     this.user$ = store.select(fromAuth.getAuthSuccess);

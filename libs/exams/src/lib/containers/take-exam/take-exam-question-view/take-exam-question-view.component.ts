@@ -2,6 +2,7 @@ import { CommonModule, Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   EventEmitter,
   inject,
@@ -44,7 +45,7 @@ export class TakeExamQuestionViewComponent {
 
   public currentQuestion = input<TakerExamQuestion | null>(null);
   @Output() save = new EventEmitter();
-  @Input() videoVisible$!: Observable<boolean>;
+  public videoVisible = input(true);
   @Input() tabActive$!: Observable<boolean | null>;
   limit = 60;
 
@@ -59,7 +60,7 @@ export class TakeExamQuestionViewComponent {
   });
 
   public editor: Editor = new Editor();
-
+  public questionSpan = computed(() => (this.videoVisible() ? 16 : 24));
   toolbar: Toolbar = [
     // default value
     ['bold', 'italic'],

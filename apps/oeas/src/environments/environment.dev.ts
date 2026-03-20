@@ -1,6 +1,10 @@
-export const environment = {
-  production: false,
-  API_URL: "http://localhost:5004/api",
-  UPLOAD_URL: "http://localhost:8081"
-};
+import { AppConfig } from '@batstateu/app-config';
 
+export const environment: AppConfig = {
+  production: false,
+  apiUrl: 'http://localhost:5004/api',
+  uploadUrl: 'http://localhost:8081',
+  allowRecording: false,
+  fetchPreviousExam: true,
+  inactiveTimeInSeconds: 30,
+};

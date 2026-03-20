@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { APP_CONFIG } from '@batstateu/app-config';
+import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
 import {
   AnswerFormModel,
   Exam,
@@ -18,20 +18,20 @@ import { map, Observable } from 'rxjs';
 })
 export class ExamsService {
   public activate(id?: number): Observable<void> {
-    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/exams/${id}/activate`, null);
+    return this.httpClient.patch<void>(`${this.appConfig.apiUrl}/exams/${id}/activate`, null);
   }
 
   public deActivate(id?: number): Observable<void> {
-    return this.httpClient.patch<void>(`${this.appConfig.API_URL}/exams/${id}/de-activate`, null);
+    return this.httpClient.patch<void>(`${this.appConfig.apiUrl}/exams/${id}/de-activate`, null);
   }
   public getAllStartOn(date: string, sectionId: number | null): Observable<ExamCard[]> {
-    return this.httpClient.get<ExamCard[]>(`${this.appConfig.API_URL}/exams?startOn=${date}`);
+    return this.httpClient.get<ExamCard[]>(`${this.appConfig.apiUrl}/exams?startOn=${date}`);
   }
   getExamTakerByExamIdTakerId(examId: number, takerId: number): Observable<ExamRecordViewModel> {
     return this.httpClient
       .get<
         ResponseWrapper<ExamRecordViewModel>
-      >(`${this.appConfig.API_URL}/records/takerExams?filter=userDetailId,eq,${takerId}&filter=examId,eq,${examId}`)
+      >(`${this.appConfig.apiUrl}/records/takerExams?filter=userDetailId,eq,${takerId}&filter=examId,eq,${examId}`)
       .pipe(
         map((res: ResponseWrapper<any>) => {
           return res.records[0];
@@ -40,14 +40,14 @@ export class ExamsService {
   }
   editAnswerPoints(id: number, points: number): Observable<number> {
     return this.httpClient
-      .put<number>(`${this.appConfig.API_URL}/records/examAnswers/${id}`, {
+      .put<number>(`${this.appConfig.apiUrl}/records/examAnswers/${id}`, {
         points: points,
       })
       .pipe(map((res: number) => res));
   }
   getExamAnswer(id: number) {
     return this.httpClient
-      .get<AnswerFormModel>(`${this.appConfig.API_URL}/records/examAnswers/${id}?join=questions`)
+      .get<AnswerFormModel>(`${this.appConfig.apiUrl}/records/examAnswers/${id}?join=questions`)
       .pipe(
         map((res: any) => {
           const rec: AnswerFormModel = {
@@ -61,27 +61,27 @@ export class ExamsService {
       );
   }
   public edit(val: Exam): Observable<number> {
-    return this.httpClient.patch<number>(`${this.appConfig.API_URL}/exams/${val.id}`, val);
+    return this.httpClient.patch<number>(`${this.appConfig.apiUrl}/exams/${val.id}`, val);
   }
   public get(id: number): Observable<Exam> {
-    return this.httpClient.get<Exam>(`${this.appConfig.API_URL}/exams/${id}`);
+    return this.httpClient.get<Exam>(`${this.appConfig.apiUrl}/exams/${id}`);
   }
   delete(id: number): Observable<number> {
-    return this.httpClient.delete<number>(`${this.appConfig.API_URL}/exams/${id}`);
+    return this.httpClient.delete<number>(`${this.appConfig.apiUrl}/exams/${id}`);
   }
   public add(val: Exam): Observable<Exam> {
-    return this.httpClient.post<Exam>(`${this.appConfig.API_URL}/exams`, val);
+    return this.httpClient.post<Exam>(`${this.appConfig.apiUrl}/exams`, val);
   }
 
   public getAll(criteria: string): Observable<Exam[]> {
-    return this.httpClient.get<Exam[]>(`${this.appConfig.API_URL}/exams?criteria=${criteria}`);
+    return this.httpClient.get<Exam[]>(`${this.appConfig.apiUrl}/exams?criteria=${criteria}`);
   }
 
   getAllTakerAnswers(userDetailId: number, examId: number): Observable<ExamAnswer[]> {
     return this.httpClient
       .get<
         ResponseWrapper<ExamAnswer>
-      >(`${this.appConfig.API_URL}/records/examAnswers?filter=userDetailId,eq,${userDetailId}&filter=examId,eq,${examId}`)
+      >(`${this.appConfig.apiUrl}/records/examAnswers?filter=userDetailId,eq,${userDetailId}&filter=examId,eq,${examId}`)
       .pipe(
         map((res: ResponseWrapper<any>) => {
           return res.records;
@@ -97,7 +97,7 @@ export class ExamsService {
     return this.httpClient
       .get<
         ResponseWrapper<ExamTakerResultList>
-      >(`${this.appConfig.API_URL}/records/examAnswers?join=questions&filter=userDetailId,eq,${userDetailId}&filter=examId,eq,${examId}`)
+      >(`${this.appConfig.apiUrl}/records/examAnswers?join=questions&filter=userDetailId,eq,${userDetailId}&filter=examId,eq,${examId}`)
       .pipe(
         map((res: ResponseWrapper<any>) => {
           const rec: ExamTakerResultList[] = [];
@@ -119,7 +119,7 @@ export class ExamsService {
     return this.httpClient
       .get<
         ResponseWrapper<ExamTakerList>
-      >(`${this.appConfig.API_URL}/records/takerExams?join=userDetails,departments&join=userDetails,sections&filter=examId,eq,${examId}`)
+      >(`${this.appConfig.apiUrl}/records/takerExams?join=userDetails,departments&join=userDetails,sections&filter=examId,eq,${examId}`)
       .pipe(
         map((res: ResponseWrapper<any>) => {
           const rec: ExamTakerList[] = [];
@@ -149,6 +149,6 @@ export class ExamsService {
 
   constructor(
     private httpClient: HttpClient,
-    @Inject(APP_CONFIG) private appConfig: any,
+    @Inject(APP_CONFIG) private appConfig: AppConfig,
   ) {}
 }

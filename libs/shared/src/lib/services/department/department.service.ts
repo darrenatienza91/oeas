@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { APP_CONFIG } from '@batstateu/app-config';
+import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
 import { Department } from '@batstateu/data-models';
 import { Observable } from 'rxjs';
 
@@ -9,11 +9,11 @@ import { Observable } from 'rxjs';
 })
 export class DepartmentService {
   public getAll(): Observable<Department[]> {
-    return this.httpClient.get<Department[]>(`${this.appConfig.API_URL}/departments`);
+    return this.httpClient.get<Department[]>(`${this.appConfig.apiUrl}/departments`);
   }
 
   constructor(
     private httpClient: HttpClient,
-    @Inject(APP_CONFIG) private appConfig: any,
+    @Inject(APP_CONFIG) private appConfig: AppConfig,
   ) {}
 }

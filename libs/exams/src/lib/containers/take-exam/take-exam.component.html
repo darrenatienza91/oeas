@@ -1,8 +1,8 @@
 <div class="m-3">
   <nz-page-header
     (nzBack)="onBack()"
-    [nzBackIcon]="takeExamState === TakeExamStateEnum.instructionView ? '' : null"
-    nzTitle="{{ (examDetail$ | async)?.name }}"
+    [nzBackIcon]="takeExamState() === TakeExamStateEnum.instructionView ? '' : null"
+    nzTitle="{{ examDetail()?.name }}"
     ><nz-page-header-extra>
       <!-- <cd-timer
         style="font-size: 24px"
@@ -16,13 +16,13 @@
     </nz-page-header-extra></nz-page-header
   >
   <batstateu-exam-instruction-view
-    [examDetail]="examDetail"
-    [hidden]="takeExamState !== TakeExamStateEnum.instructionView"
+    [examDetail]="examDetail()"
+    [hidden]="takeExamState() !== TakeExamStateEnum.instructionView"
   ></batstateu-exam-instruction-view>
 
-  @if (takeExamState === TakeExamStateEnum.takeExamQuestionView) {
+  @if (takeExamState() === TakeExamStateEnum.takeExamQuestionView) {
     <batstateu-take-exam-question-view
-      [videoVisible$]="videoVisible$"
+      [videoVisible]="videoVisible()"
       [currentQuestion]="currentQuestion()"
       (save)="onSubmitAnswer($event)"
       [tabActive$]="tabActive$"
@@ -31,7 +31,7 @@
 
   <batstateu-take-exam-control
     [takeExamControlState]="takeExamControlState"
-    [takeExamState]="takeExamState"
+    [takeExamState]="takeExamState()"
     [isStartExam]="isStartExam"
     [enableNextButton]="enableNextButton"
     [enablePreviousButton]="enablePreviousButton"

@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   ViewChild,
   NgZone,
-  HostListener,
   signal,
   inject,
 } from '@angular/core';
@@ -20,15 +19,17 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExamsService, TakeExamService, UserService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { APP_CONFIG } from '@batstateu/app-config';
+import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
 import {
   BehaviorSubject,
   catchError,
   EMPTY,
+  fromEvent,
   interval,
   map,
   merge,
   Observable,
+  startWith,
   Subject,
   switchMap,
   tap,
@@ -66,28 +67,24 @@ export class TakeExamComponent {
   private readonly examService: ExamsService = inject(ExamsService);
   private readonly modal: NzModalService = inject(NzModalService);
   private readonly takeExamService: TakeExamService = inject(TakeExamService);
-  private readonly appConfig = inject<{ UPLOAD_URL: string }>(APP_CONFIG);
+  private readonly appConfig = inject<AppConfig>(APP_CONFIG);
   private readonly store: Store<fromAuth.State> = inject(Store<fromAuth.State>);
   private readonly userService: UserService = inject(UserService);
   private readonly zone: NgZone = inject(NgZone);
-
   @ViewChild(TakeExamRecordingComponent)
   takeExamRecording!: TakeExamRecordingComponent;
   @ViewChild(TakeExamCameraViewComponent)
   takeExamCameraView!: TakeExamCameraViewComponent;
-  @ViewChild('cdTimer')
+  // @ViewChild('cdTimer')
   // cdTimer!: CdTimerComponent;
-  examDetail!: Exam;
-  examTitle = '';
   TakeExamStateEnum = ExamState;
   TakeExamControlStateEnum = TakeExamControlState;
-  takeExamState = ExamState.instructionView;
+  public takeExamState = signal<ExamState>(ExamState.instructionView);
   takeExamControlState = TakeExamControlState.startRecordView;
   isStartExam = false;
   enableNextButton = false;
   enablePreviousButton = false;
-  examDetailSubject$ = new BehaviorSubject<Exam | null>(null);
-  examDetail$ = this.examDetailSubject$.asObservable();
+  public examDetail = signal<Exam | null>(null);
   questions!: TakerExamQuestion[];
   public currentQuestion = signal<TakerExamQuestion | null>(null);
 
@@ -96,15 +93,15 @@ export class TakeExamComponent {
 
   startCdCount = 1;
   limitSubject$ = new BehaviorSubject<number>(0);
-  videoVisibleSubject$ = new BehaviorSubject<boolean>(false);
+
   limit$ = this.limitSubject$.asObservable();
-  videoVisible$ = this.videoVisibleSubject$.asObservable();
+  public videoVisible = signal(true);
   cameraVisible = false;
   hasInactiveStatus = false;
   tabActiveSubject$ = new BehaviorSubject<boolean | null>(null);
   tabActive$ = this.tabActiveSubject$.asObservable();
   takeExamInterval: any;
-  timeLeft = 30;
+  private timeLeft = this.appConfig.inactiveTimeInSeconds;
   initial = true;
   timerExitSource$ = interval(1000);
   timerExitSubcription$!: any;
@@ -119,21 +116,21 @@ export class TakeExamComponent {
   private readonly examFlow$ = merge(
     this.submitAnswer$.pipe(
       switchMap((answer) =>
-        this.takeExamService.addAnswer(this.takerExamId, this.currentQuestionId, {
+        this.takeExamService.addAnswer(this.examTakerId, this.currentQuestionId, {
           answerText: answer,
         }),
       ),
-      switchMap(() => this.takeExamService.moveNextQuestion(this.takerExamId)),
+      switchMap(() => this.takeExamService.moveNextQuestion(this.examTakerId)),
       this.handleQuestionNavigation('next'),
     ),
 
     this.nextQuestion$.pipe(
-      switchMap(() => this.takeExamService.moveNextQuestion(this.takerExamId)),
+      switchMap(() => this.takeExamService.moveNextQuestion(this.examTakerId)),
       this.handleQuestionNavigation('next'),
     ),
 
     this.previousQuestion$.pipe(
-      switchMap(() => this.takeExamService.movePreviousQuestion(this.takerExamId)),
+      switchMap(() => this.takeExamService.movePreviousQuestion(this.examTakerId)),
       this.handleQuestionNavigation('previous'),
     ),
   )
@@ -141,6 +138,21 @@ export class TakeExamComponent {
     .subscribe();
 
   private readonly initializedExam$ = this.initializedExam().pipe(takeUntilDestroyed()).subscribe();
+
+  private readonly browserTabVisibility = fromEvent(document, 'visibilitychange')
+    .pipe(
+      startWith(null), // trigger initial check
+      map(() => document.visibilityState),
+      tap((state) => {
+        if (state === 'hidden' && this.takeExamState() === ExamState.takeExamQuestionView) {
+          this.onTabHidden();
+        } else if (state === 'visible' && this.takeExamState() === ExamState.instructionView) {
+          this.onTabVisible();
+        }
+      }),
+      takeUntilDestroyed(),
+    )
+    .subscribe();
 
   startTimerExitExam() {
     this.timerExitSubcription$ = this.timerExitSource$.subscribe((val) => {
@@ -155,28 +167,29 @@ export class TakeExamComponent {
     });
   }
 
-  @HostListener('document:visibilitychange') documentVisibilityEvent() {
-    if (
-      document.visibilityState === 'hidden' &&
-      this.takeExamState == ExamState.takeExamQuestionView
-    ) {
-      this.tabActive = false;
-      console.log('start exit timer');
-      this.hasInactiveStatus = true;
-      this.startTimerExitExam();
+  private onTabHidden(): void {
+    this.tabActive = false;
+    console.log('start exit timer');
 
-      this.tabActiveSubject$.next(false);
-    } else if (this.takeExamState != ExamState.instructionView) {
-      this.tabActive = true;
-      console.log('stop exit timer');
-      setTimeout(() => this.timerExitSubcription$.unsubscribe(), 1000);
-      this.tabActiveSubject$.next(true);
-      if (this.timeLeft > 0) {
-        this.modal.warning({
-          nzTitle: 'Inactivity Limit',
-          nzContent: `You only have ${this.timeLeft} seconds to be inactive. Examination will exit automatically after limit has reach!`,
-        });
-      }
+    this.hasInactiveStatus = true;
+    this.startTimerExitExam();
+
+    this.tabActiveSubject$.next(false);
+  }
+
+  private onTabVisible(): void {
+    this.tabActive = true;
+    console.log('stop exit timer');
+
+    setTimeout(() => this.timerExitSubcription$.unsubscribe(), 1000);
+
+    this.tabActiveSubject$.next(true);
+
+    if (this.timeLeft > 0) {
+      this.modal.warning({
+        nzTitle: 'Inactivity Limit',
+        nzContent: `You only have ${this.timeLeft} seconds to be inactive. Examination will exit automatically after limit has reach!`,
+      });
     }
   }
 
@@ -193,9 +206,7 @@ export class TakeExamComponent {
       }),
 
       tap((exam) => {
-        this.examDetailSubject$.next(exam);
-        this.examDetail = exam;
-        this.examTitle = exam.name;
+        this.examDetail.set(exam);
         this.startCdCount = exam.duration * 60;
         this.limitSubject$.next(this.startCdCount);
       }),
@@ -203,9 +214,11 @@ export class TakeExamComponent {
       switchMap(() => this.takeExamService.getExamTakerByExamId(this.examId)),
 
       tap((record) => {
-        if (record) {
+        if (record && !this.appConfig.fetchPreviousExam) {
           throw new Error('EXAM_ALREADY_FINISHED');
         }
+
+        this.examTaker.set(record);
       }),
 
       map(() => void 0),
@@ -234,7 +247,9 @@ export class TakeExamComponent {
   public onStartRecord(): void {
     this.modal.confirm({
       nzTitle: 'Start Examination',
-      nzContent: `Starting the examination will record your screen. Do you want to continue?`,
+      nzContent: this.appConfig.fetchPreviousExam
+        ? 'Do you want to continue'
+        : `Starting the examination will record your screen. Do you want to continue?`,
       nzOnOk: () => {
         this.startExamAndLoadQuestion();
       },
@@ -246,12 +261,41 @@ export class TakeExamComponent {
   }
 
   private startExamAndLoadQuestion(): void {
+    if (this.appConfig.fetchPreviousExam) {
+      this.loadCurrentQuestion(this.examTakerId)
+        .pipe(
+          tap((question) => {
+            if (!question) {
+              throw new Error('NO_CURRENT_QUESTION');
+            }
+
+            this.currentQuestion.set(question);
+            this.onStartExam();
+          }),
+          catchError((err) => {
+            if (err.message === 'NO_CURRENT_QUESTION') {
+              this.modal.error({
+                nzTitle: 'Fetching questions',
+                nzContent: `No more questions available`,
+              });
+            }
+
+            return EMPTY;
+          }),
+        )
+        .subscribe();
+
+      return;
+    }
+
     this.takeExamService
       .addExamTaker(this.examId)
       .pipe(
         tap((val) => {
           this.examTaker.set(val);
-          this.takeExamRecording.onStartRecord();
+          if (this.appConfig.allowRecording) {
+            this.takeExamRecording.onStartRecord();
+          }
         }),
         map((val) => val.id),
         switchMap((id) => this.loadCurrentQuestion(id)),
@@ -277,13 +321,13 @@ export class TakeExamComponent {
   }
 
   onStartExam() {
-    this.cameraVisible = true;
-    this.videoVisibleSubject$.next(true);
+    this.cameraVisible = this.appConfig.allowRecording;
+    this.videoVisible.set(this.appConfig.allowRecording);
     // this.cdTimer.start();
-    this.takeExamState = ExamState.takeExamQuestionView;
+    this.takeExamState.set(ExamState.takeExamQuestionView);
   }
 
-  private get takerExamId(): number {
+  private get examTakerId(): number {
     return this.examTaker()?.id ?? 0;
   }
 
@@ -318,7 +362,7 @@ export class TakeExamComponent {
             return EMPTY;
           }
 
-          return this.loadCurrentQuestion(this.takerExamId);
+          return this.loadCurrentQuestion(this.examTakerId);
         }),
         tap((question) => {
           if (!question) {
@@ -367,7 +411,7 @@ export class TakeExamComponent {
             this.takeExamService
               .updateTakerExam(this.examTaker()?.id ?? 0, {
                 ...val,
-                recUrl: `${this.appConfig.UPLOAD_URL}/uploads/${data.name}`,
+                recUrl: `${this.appConfig.uploadUrl}/uploads/${data.name}`,
               })
               .subscribe((val) => {
                 this.goToResults();

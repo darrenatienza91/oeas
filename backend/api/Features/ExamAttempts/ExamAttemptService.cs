@@ -11,8 +11,8 @@ namespace api.Features.ExamAttempts;
 
 public interface IExamAttemptService
 {
-  Task<Models.Question?> GetCurrentExamAttemptQuestion(int attemptId);
-  Task<ExamAttemptQuestionDto?> GetExamAttemptQuestion(int attemptId, int questionId);
+  Task<ExamAttemptQuestionDto?> GetCurrentExamAttemptQuestion(int attemptId);
+  Task<Question?> GetExamAttemptQuestion(int attemptId, int questionId);
   Task SetAnswer(int attemptId, int questionId, string answerText);
   Task<MoveNextQuestionResult> MoveNextQuestion(int attemptId);
   Task<MovePreviousQuestionResult> MovePreviousQuestion(int attemptId);
@@ -20,18 +20,29 @@ public interface IExamAttemptService
 
 public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 {
-  public async Task<Question?> GetCurrentExamAttemptQuestion(int attemptId)
+  public async Task<ExamAttemptQuestionDto?> GetCurrentExamAttemptQuestion(int attemptId)
   {
-    var examTaker = await GetExamTaker(
-      attemptId,
-      query => query.Include(x => x.Exam.Questions).ThenInclude(q => q.ExamTakerAnswers)
-    );
+    var examTaker =
+      await appDbContext
+        .ExamTakers.AsNoTracking()
+        .Where(x => x.Id == attemptId)
+        .Select(x => new { x.ExamId, x.CurrentQuestionIndex })
+        .FirstOrDefaultAsync()
+      ?? throw new NotFoundException($"ExamTaker {attemptId} not found");
 
-    return examTaker
-      .Exam.Questions.Where(q => q.ExamId == examTaker.ExamId)
+    return await appDbContext
+      .Questions.Where(q => q.ExamId == examTaker.ExamId)
       .OrderBy(q => q.Id)
       .Skip(examTaker.CurrentQuestionIndex)
-      .FirstOrDefault();
+      .Select(q => new ExamAttemptQuestionDto(
+        q.Id,
+        q.Description,
+        q.ExamTakerAnswers.Where(a => a.ExamTakerId == attemptId)
+          .Select(a => a.AnswerText)
+          .FirstOrDefault()
+          ?? ""
+      ))
+      .FirstOrDefaultAsync();
   }
 
   public async Task<Models.Question?> GetExamAttemptQuestion(int attemptId, int questionId)

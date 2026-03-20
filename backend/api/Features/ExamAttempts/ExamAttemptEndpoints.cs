@@ -31,8 +31,8 @@ namespace api.Features.ExamAttempts
         .RequireAuthorization(policy =>
           policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
         );
-      
-       app.MapPost("/exam-attempts/{attemptId}/previous-question", MovePreviousQuestion)
+
+      app.MapPost("/exam-attempts/{attemptId}/previous-question", MovePreviousQuestion)
         .RequireAuthorization(policy =>
           policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
         );
@@ -58,9 +58,7 @@ namespace api.Features.ExamAttempts
     {
       var examAttemptQuestion = await service.GetCurrentExamAttemptQuestion(attemptId);
 
-      return examAttemptQuestion is null
-        ? Results.NotFound()
-        : Results.Ok(examAttemptQuestion.MapToExamAttemptQuestionDto());
+      return examAttemptQuestion is null ? Results.NotFound() : Results.Ok(examAttemptQuestion);
     }
 
     static async Task<IResult> SetAnswer(

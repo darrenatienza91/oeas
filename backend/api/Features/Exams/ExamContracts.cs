@@ -49,7 +49,7 @@ namespace api.Contracts
     bool? IsActive
   ) : ExamWriteDto(Name, Subject, StartOn, Duration, SectionId, Instructions, IsActive);
 
-  public record ExamAttempDto(string RecUrl, DateTimeOffset CreateDate);
+  public record ExamAttempDto(int Id, string RecUrl, DateTimeOffset CreateDate);
 
   public static class ExamMapper
   {
@@ -98,7 +98,7 @@ namespace api.Contracts
     {
       if (examTaker is not null)
       {
-        return new(examTaker.RecUrl, examTaker.CreateDate);
+        return new(examTaker.Id, examTaker.RecUrl, examTaker.CreateDate);
       }
 
       return null;
