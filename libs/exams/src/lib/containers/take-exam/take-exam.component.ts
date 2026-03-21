@@ -5,9 +5,11 @@ import {
   NgZone,
   signal,
   inject,
+  effect,
+  OnInit,
 } from '@angular/core';
 
-import { AsyncPipe, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { TakeExamRecordingComponent } from './take-exam-recording/take-exam-recording.component';
 import {
   Exam,
@@ -45,6 +47,7 @@ import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { TakeExamQuestionViewComponent } from './take-exam-question-view/take-exam-question-view.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { handleExamInitializationErrors } from './examination-initialization-error-handler copy';
+import { CountdownTimerService } from '../../countdown-timer/countdown-timer.service';
 
 @Component({
   imports: [
@@ -53,14 +56,14 @@ import { handleExamInitializationErrors } from './examination-initialization-err
     TakeExamQuestionViewComponent,
     TakeExamControlComponent,
     TakeExamRecordingComponent,
-    AsyncPipe,
   ],
+  providers: [CountdownTimerService],
   selector: 'batstateu-take-exam',
   templateUrl: './take-exam.component.html',
   styleUrls: ['./take-exam.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TakeExamComponent {
+export class TakeExamComponent implements OnInit {
   private readonly location: Location = inject(Location);
   private readonly router: Router = inject(Router);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
@@ -71,6 +74,7 @@ export class TakeExamComponent {
   private readonly store: Store<fromAuth.State> = inject(Store<fromAuth.State>);
   private readonly userService: UserService = inject(UserService);
   private readonly zone: NgZone = inject(NgZone);
+  private readonly countdownTimer = inject(CountdownTimerService);
   @ViewChild(TakeExamRecordingComponent)
   takeExamRecording!: TakeExamRecordingComponent;
   @ViewChild(TakeExamCameraViewComponent)
@@ -98,14 +102,10 @@ export class TakeExamComponent {
   public videoVisible = signal(true);
   cameraVisible = false;
   hasInactiveStatus = false;
-  tabActiveSubject$ = new BehaviorSubject<boolean | null>(null);
-  tabActive$ = this.tabActiveSubject$.asObservable();
   takeExamInterval: any;
   private timeLeft = this.appConfig.inactiveTimeInSeconds;
   initial = true;
   timerExitSource$ = interval(1000);
-  timerExitSubcription$!: any;
-  tabActive = true;
   private readonly examTaker = signal<TakerExamDetail | null>(null);
   private readonly examId = Number(this.route.snapshot.paramMap.get('examId'));
 
@@ -153,37 +153,30 @@ export class TakeExamComponent {
       takeUntilDestroyed(),
     )
     .subscribe();
-
-  startTimerExitExam() {
-    this.timerExitSubcription$ = this.timerExitSource$.subscribe((val) => {
-      console.log(val);
-      console.log(this.timeLeft);
-      if (this.timeLeft <= 0) {
-        this.onFinishExamination();
-        setTimeout(() => this.timerExitSubcription$.unsubscribe(), 100);
-      } else {
-        this.timeLeft--;
-      }
-    });
+  ngOnInit(): void {
+    this.countdownTimer.start(this.appConfig.inactiveTimeInSeconds);
+    this.countdownTimer.pause();
   }
 
   private onTabHidden(): void {
-    this.tabActive = false;
     console.log('start exit timer');
 
     this.hasInactiveStatus = true;
-    this.startTimerExitExam();
 
-    this.tabActiveSubject$.next(false);
+    this.countdownTimer.resume();
   }
 
-  private onTabVisible(): void {
-    this.tabActive = true;
+  private readonly countDownTimerEffect = effect(() => {
+    console.log(this.countdownTimer.time());
+
+    if (this.countdownTimer.time() <= 0) {
+      this.onFinishExamination();
+    }
+  });
+
+  onTabVisible(): void {
     console.log('stop exit timer');
-
-    setTimeout(() => this.timerExitSubcription$.unsubscribe(), 1000);
-
-    this.tabActiveSubject$.next(true);
+    this.countdownTimer.pause();
 
     if (this.timeLeft > 0) {
       this.modal.warning({
@@ -404,24 +397,24 @@ export class TakeExamComponent {
   }
 
   onUploadRecord(data: any) {
-    if (this.hasInactiveStatus) {
-      this.takeExamService.upload(data).subscribe({
-        next: (value) =>
-          this.takeExamService.get(this.examTaker()?.id ?? 0).subscribe((val) =>
-            this.takeExamService
-              .updateTakerExam(this.examTaker()?.id ?? 0, {
-                ...val,
-                recUrl: `${this.appConfig.uploadUrl}/uploads/${data.name}`,
-              })
-              .subscribe((val) => {
-                this.goToResults();
-              }),
-          ),
-        error: (err) => console.log(err),
-      });
-    } else {
-      this.goToResults();
-    }
+    // if (this.hasInactiveStatus) {
+    //   this.takeExamService.upload(data).subscribe({
+    //     next: (value) =>
+    //       this.takeExamService.get(this.examTaker()?.id ?? 0).subscribe((val) =>
+    //         this.takeExamService
+    //           .updateTakerExam(this.examTaker()?.id ?? 0, {
+    //             ...val,
+    //             recUrl: `${this.appConfig.uploadUrl}/uploads/${data.name}`,
+    //           })
+    //           .subscribe((val) => {
+    //             this.goToResults();
+    //           }),
+    //       ),
+    //     error: (err) => console.log(err),
+    //   });
+    // } else {
+    //   this.goToResults();
+    // }
   }
   private goToResults() {
     this.router.navigate([`exams/${this.examId}/result`]);

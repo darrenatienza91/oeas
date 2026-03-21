@@ -12,7 +12,6 @@ import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 })
 export class TakeExamCameraViewComponent implements OnInit, AfterViewInit, OnDestroy {
   public videoVisible = input(true);
-  @Input() tabActive$!: Observable<boolean | null>;
 
   private videoPlayer: any;
   private videoConf: any;

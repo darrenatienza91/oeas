@@ -46,7 +46,6 @@ export class TakeExamQuestionViewComponent {
   public currentQuestion = input<TakerExamQuestion | null>(null);
   @Output() save = new EventEmitter();
   public videoVisible = input(true);
-  @Input() tabActive$!: Observable<boolean | null>;
   limit = 60;
 
   public validateForm = this.fb.group({
