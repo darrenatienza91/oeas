@@ -1,0 +1,7 @@
+<video #target class="video-js"></video>
+
+<button (click)="facade.start()" [disabled]="!facade.isReady()"> Start </button>
+
+<button (click)="facade.stop()" [disabled]="!facade.isRecording()"> Stop </button>
+
+<p>State: {{ facade.state() }}</p>

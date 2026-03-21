@@ -39,7 +39,7 @@ export class TakeExamRecordingComponent implements OnInit, OnDestroy, AfterViewI
     const countdownTime = this.coundownTimerService.time();
     if (countdownTime <= 0) {
       if (this.tabActive()) {
-        this.player?.record().pause();
+        // this.player?.record().pause();
       }
       this.coundownTimerService.reset(10);
       return;
@@ -47,33 +47,33 @@ export class TakeExamRecordingComponent implements OnInit, OnDestroy, AfterViewI
   });
 
   onTabActive() {
-    this.tabActive$.subscribe((isActive) => {
-      this.isTabActive = isActive ?? true;
-      if (this.isRecording) {
-        if (isActive) {
-          this.coundownTimerService.resume();
-        } else {
-          this.player?.record().resume();
-        }
-      }
-    });
+    // this.tabActive$.subscribe((isActive) => {
+    //   this.isTabActive = isActive ?? true;
+    //   if (this.isRecording) {
+    //     if (isActive) {
+    //       this.coundownTimerService.resume();
+    //     } else {
+    //       this.player?.record().resume();
+    //     }
+    //   }
+    // });
   }
 
   public onStartRecord() {
-    this.player?.record().getDevice();
+    // this.player?.record().getDevice();
   }
   onStopRecord() {
-    this.player?.record().stopDevice();
+    // this.player?.record().stopDevice();
     clearInterval(this.interval);
   }
 
   constructor() {}
 
   ngOnDestroy(): void {
-    if (this.player) {
-      this.player.dispose();
-      this.player = null;
-    }
+    // if (this.player) {
+    //   this.player.dispose();
+    //   this.player = null;
+    // }
   }
 
   ngOnInit(): void {
@@ -81,14 +81,14 @@ export class TakeExamRecordingComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   setLimit() {
-    this.limit$.subscribe((val) => {
-      if (val > 0) {
-        this.limit = val;
-        this.init();
-        this.initScreenRecorder();
-        this.onTabActive();
-      }
-    });
+    // this.limit$.subscribe((val) => {
+    //   if (val > 0) {
+    //     this.limit = val;
+    //     this.init();
+    //     this.initScreenRecorder();
+    //     this.onTabActive();
+    //   }
+    // });
   }
 
   ngAfterViewInit(): void {}

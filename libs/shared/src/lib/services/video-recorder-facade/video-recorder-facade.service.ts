@@ -1,12 +1,14 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject, DestroyRef } from '@angular/core';
 import { merge } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromVideoJsEvent } from './from-video-js-event';
-import { VideoJsPlayerWithRecord } from '../videojs-media/videojs-with-record';
-
+import { Record } from '@batstateu/videojs-record';
+import { VideoJsPlayerWithRecord } from './videojs-with-record';
 @Injectable()
 export class VideoRecorderFacadeService {
+  private readonly destroyRef = inject(DestroyRef);
   private player!: VideoJsPlayerWithRecord;
+  private readonly plugin = Record;
 
   // 🔥 Signals
   readonly state = signal<RecordingState>('idle');
@@ -19,7 +21,7 @@ export class VideoRecorderFacadeService {
 
   init(player: VideoJsPlayerWithRecord) {
     this.player = player;
-
+    console.log(this.plugin.Record.VERSION);
     const deviceReady$ = fromVideoJsEvent(player, 'deviceReady');
     const start$ = fromVideoJsEvent(player, 'startRecord');
     const stop$ = fromVideoJsEvent(player, 'stopRecord');
@@ -29,29 +31,31 @@ export class VideoRecorderFacadeService {
 
     // Merge all events into a single stream
     merge(deviceReady$, start$, stop$, finish$, deviceError$, error$)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
         this.handleEvent(event);
       });
 
     // Individual handlers (cleaner for payloads)
-    deviceReady$.pipe(takeUntilDestroyed()).subscribe(() => this.state.set('ready'));
+    deviceReady$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.state.set('ready');
+    });
 
-    start$.pipe(takeUntilDestroyed()).subscribe(() => this.state.set('recording'));
+    start$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.state.set('recording'));
 
-    stop$.pipe(takeUntilDestroyed()).subscribe(() => this.state.set('stopped'));
+    stop$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.state.set('stopped'));
 
-    finish$.pipe(takeUntilDestroyed()).subscribe((blob) => {
+    finish$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((blob) => {
       this.recordedBlob.set(blob);
       this.state.set('finished');
     });
 
-    deviceError$.pipe(takeUntilDestroyed()).subscribe((err) => {
+    deviceError$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((err) => {
       this.error.set(err);
       this.state.set('error');
     });
 
-    error$.pipe(takeUntilDestroyed()).subscribe((err) => {
+    error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((err) => {
       this.error.set(err);
       this.state.set('error');
     });
