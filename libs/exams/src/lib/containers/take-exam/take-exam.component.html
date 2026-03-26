@@ -26,6 +26,14 @@
       [currentQuestion]="currentQuestion()"
       (save)="onSubmitAnswer($event)"
     ></batstateu-take-exam-question-view>
+
+    @if (appConfig.allowRecording) {
+      <batstateu-take-exam-screen-recording
+        #takeExamScreenRecorder
+        (startExam)="onStartExam()"
+        (uploadRecord)="onUploadRecord($event)"
+      ></batstateu-take-exam-screen-recording>
+    }
   }
 
   <batstateu-take-exam-control
@@ -39,10 +47,4 @@
     (prevQuestion)="onPreviousQuestion()"
     (finishExam)="onFinishExamination()"
   ></batstateu-take-exam-control>
-
-  <batstateu-take-exam-recording
-    [limit$]="limit$"
-    (startExam)="onStartExam()"
-    (uploadRecord)="onUploadRecord($event)"
-  ></batstateu-take-exam-recording>
 </div>

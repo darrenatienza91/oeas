@@ -1,11 +1,12 @@
-import { AfterViewInit, Component, input, Input, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, input, OnDestroy, OnInit } from '@angular/core';
 import videojs from 'video.js';
-import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
+import { VideoRecorderFacadeService } from '@batstateu/shared';
 @Component({
   imports: [ReactiveFormsModule, FormsModule, NgZorroAntdModule, CommonModule],
+  providers: [VideoRecorderFacadeService],
   selector: 'batstateu-take-exam-camera-view',
   templateUrl: './take-exam-camera-view.component.html',
   styleUrls: ['./take-exam-camera-view.component.css'],

@@ -4,7 +4,9 @@ export const environment: AppConfig = {
   production: false,
   apiUrl: 'http://localhost:5004/api',
   uploadUrl: 'http://localhost:8081',
-  allowRecording: false,
+  allowRecording: true,
   fetchPreviousExam: true,
-  inactiveTimeInSeconds: 30,
+  inactiveTimeInSeconds: 300,
+  recordingToPauseTimeInSeconds: 10,
+  allowInactiveTimePenalty: true,
 };

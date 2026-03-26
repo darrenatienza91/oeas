@@ -1,7 +1,36 @@
-<video #target class="video-js"></video>
+<div class="container">
+  <div>
+    <video #recorder class="video-js vjs-recording"></video>
+    <div>
+      <button (click)="screenRecorderFacade.start()" [disabled]="!screenRecorderFacade.isReady()">
+        Start
+      </button>
 
-<button (click)="facade.start()" [disabled]="!facade.isReady()"> Start </button>
+      <button
+        (click)="screenRecorderFacade.stop()"
+        [disabled]="!screenRecorderFacade.isRecording()"
+      >
+        Stop
+      </button>
 
-<button (click)="facade.stop()" [disabled]="!facade.isRecording()"> Stop </button>
+      <p>State: {{ screenRecorderFacade.state() }}</p>
+    </div>
+  </div>
+  <div>
+    <video #camera class="video-js vjs-recording"></video>
+    <div>
+      <button (click)="cameraRecorderFacade.start()" [disabled]="!cameraRecorderFacade.isReady()">
+        Start
+      </button>
 
-<p>State: {{ facade.state() }}</p>
+      <button
+        (click)="cameraRecorderFacade.stop()"
+        [disabled]="!cameraRecorderFacade.isRecording()"
+      >
+        Stop
+      </button>
+
+      <p>State: {{ cameraRecorderFacade.state() }}</p>
+    </div>
+  </div>
+</div>

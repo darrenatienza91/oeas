@@ -11,6 +11,8 @@ export const environment: AppConfig = {
   allowRecording: false,
   fetchPreviousExam: false,
   inactiveTimeInSeconds: 0,
+  recordingToPauseTimeInSeconds: 10,
+  allowInactiveTimePenalty: false,
 };
 
 /*

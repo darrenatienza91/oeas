@@ -7,6 +7,8 @@ export interface AppConfig {
   allowRecording: boolean;
   fetchPreviousExam: boolean;
   inactiveTimeInSeconds: number;
+  recordingToPauseTimeInSeconds: number;
+  allowInactiveTimePenalty: boolean;
 }
 
 export const APP_CONFIG = new InjectionToken<AppConfig>('Application config');

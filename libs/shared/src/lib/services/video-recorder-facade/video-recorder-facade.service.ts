@@ -19,7 +19,7 @@ export class VideoRecorderFacadeService {
   readonly isRecording = computed(() => this.state() === 'recording');
   readonly isReady = computed(() => this.state() === 'ready');
 
-  init(player: VideoJsPlayerWithRecord) {
+  init(player: VideoJsPlayerWithRecord, isGetDevice: boolean = false) {
     this.player = player;
     console.log(this.plugin.Record.VERSION);
     const deviceReady$ = fromVideoJsEvent(player, 'deviceReady');
@@ -43,7 +43,10 @@ export class VideoRecorderFacadeService {
 
     start$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.state.set('recording'));
 
-    stop$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.state.set('stopped'));
+    stop$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.closeScreenSharingBottomBar();
+      this.state.set('stopped');
+    });
 
     finish$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((blob) => {
       this.recordedBlob.set(blob);
@@ -59,26 +62,39 @@ export class VideoRecorderFacadeService {
       this.error.set(err);
       this.state.set('error');
     });
+
+    if (isGetDevice) {
+      this.player.record().getDevice();
+    }
   }
 
   // 🎮 Controls
-  start() {
+  public start(): void {
     this.player.record().start();
   }
 
-  stop() {
+  public stop(): void {
     this.player.record().stop();
   }
 
-  reset() {
+  public reset(): void {
     this.recordedBlob.set(null);
     this.error.set(null);
     this.state.set('idle');
   }
 
+  public pause(): void {
+    this.player.record().pause();
+  }
+
   // Optional centralized handler
   private handleEvent(_: unknown) {
     // useful for logging / analytics
+  }
+
+  private closeScreenSharingBottomBar(): void {
+    const stream = this.player.record().stream as MediaStream;
+    stream?.getTracks().forEach((track) => track.stop());
   }
 }
 

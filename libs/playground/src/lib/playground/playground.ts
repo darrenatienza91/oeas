@@ -1,25 +1,38 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { VideoJsPlayerWithRecord, VideoRecorderFacadeService } from '@batstateu/shared';
+import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
+import {
+  CAMERA_RECORDER,
+  SCREEN_RECORDER,
+  VideoJsPlayerWithRecord,
+  VideoRecorderFacadeService,
+} from '@batstateu/shared';
 import videojs from 'video.js';
 import * as RecordRTC from 'recordrtc';
 @Component({
   selector: 'lib-playground',
-  providers: [VideoRecorderFacadeService],
+  providers: [
+    { provide: CAMERA_RECORDER, useClass: VideoRecorderFacadeService },
+    { provide: SCREEN_RECORDER, useClass: VideoRecorderFacadeService },
+  ],
   imports: [],
   templateUrl: './playground.html',
   styleUrl: './playground.css',
 })
 export class Playground implements AfterViewInit {
-  @ViewChild('target', { static: true })
-  target!: ElementRef<HTMLVideoElement>;
+  public readonly cameraRecorderFacade = inject(CAMERA_RECORDER);
+  public readonly screenRecorderFacade = inject(SCREEN_RECORDER);
 
-  private player!: VideoJsPlayerWithRecord;
+  @ViewChild('recorder', { static: true })
+  recorder!: ElementRef<HTMLVideoElement>;
 
-  constructor(public facade: VideoRecorderFacadeService) {}
+  @ViewChild('camera', { static: true })
+  camera!: ElementRef<HTMLVideoElement>;
+
+  private playerRecorder!: VideoJsPlayerWithRecord;
+  private cameraRecorder!: VideoJsPlayerWithRecord;
 
   ngAfterViewInit() {
-    this.player = videojs(
-      this.target.nativeElement,
+    this.playerRecorder = videojs(
+      this.recorder.nativeElement,
       {
         controls: true,
         plugins: {
@@ -27,11 +40,12 @@ export class Playground implements AfterViewInit {
             audio: true,
             video: false,
             screen: true,
+            maxLength: 50,
           },
         },
       },
       () => {
-        console.log('player ready! id:', this.target.nativeElement.id);
+        console.log('player ready! id:', this.recorder.nativeElement.id);
 
         // print version information at startup
         const msg =
@@ -45,6 +59,35 @@ export class Playground implements AfterViewInit {
       },
     ) as VideoJsPlayerWithRecord;
 
-    this.facade.init(this.player);
+    this.screenRecorderFacade.init(this.playerRecorder);
+
+    this.cameraRecorder = videojs(
+      this.camera.nativeElement,
+      {
+        controls: true,
+        plugins: {
+          record: {
+            audio: true,
+            video: true,
+            screen: false,
+          },
+        },
+      },
+      () => {
+        console.log('player ready! id:', this.recorder.nativeElement.id);
+
+        // print version information at startup
+        const msg =
+          'Using video.js ' +
+          //videojs.VERSION +
+          ' with videojs-record ' +
+          videojs.getPluginVersion('record') +
+          ' and recordrtc ' +
+          RecordRTC.version;
+        videojs.log(msg);
+      },
+    ) as VideoJsPlayerWithRecord;
+
+    this.cameraRecorderFacade.init(this.cameraRecorder);
   }
 }

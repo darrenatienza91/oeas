@@ -2,6 +2,7 @@ import Player from 'video.js/dist/types/player';
 
 export type VideoJsPlayerWithRecord = Player & {
   record: () => {
+    stream: MediaStream;
     resume(): void;
     stopDevice(): void;
     start: () => void;

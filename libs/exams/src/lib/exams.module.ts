@@ -22,7 +22,7 @@ import { QuestionListComponent } from './components/question-list/question-list.
 import { ExamInstructionViewComponent } from './containers/take-exam/exam-instruction-view/exam-instruction-view.component';
 import { TakeExamComponent } from './containers/take-exam/take-exam.component';
 import { TakeExamControlComponent } from './containers/take-exam/take-exam-control/take-exam-control.component';
-import { TakeExamRecordingComponent } from './containers/take-exam/take-exam-recording/take-exam-recording.component';
+import { TakeExamScreenRecordingComponent } from './containers/take-exam/take-exam-screen-recording/take-exam-screen-recording.component';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { DataModelsModule } from '@batstateu/data-models';
 import { TakeExamResultComponent } from './containers/take-exam-result/take-exam-result.component';
@@ -54,7 +54,7 @@ import { TakeExamQuestionViewComponent } from './containers/take-exam/take-exam-
     QuestionListComponent,
     ExamInstructionViewComponent,
     TakeExamComponent,
-    TakeExamRecordingComponent,
+    TakeExamScreenRecordingComponent,
     TakeExamControlComponent,
     TakeExamQuestionViewComponent,
     TakeExamResultComponent,
