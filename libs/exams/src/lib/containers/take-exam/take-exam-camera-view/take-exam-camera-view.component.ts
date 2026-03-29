@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, input, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, input, OnDestroy } from '@angular/core';
 import videojs from 'video.js';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { VideoRecorderFacadeService } from '@batstateu/shared';
   templateUrl: './take-exam-camera-view.component.html',
   styleUrls: ['./take-exam-camera-view.component.css'],
 })
-export class TakeExamCameraViewComponent implements OnInit, AfterViewInit, OnDestroy {
+export class TakeExamCameraViewComponent implements AfterViewInit, OnDestroy {
   public videoVisible = input(true);
 
   private videoPlayer: any;
@@ -43,6 +43,7 @@ export class TakeExamCameraViewComponent implements OnInit, AfterViewInit, OnDes
     });
     this.videoPlayer.record().getDevice();
   }
+
   constructor() {
     // video.js configuration
     this.videoConf = {
@@ -63,11 +64,10 @@ export class TakeExamCameraViewComponent implements OnInit, AfterViewInit, OnDes
       },
     };
   }
+
   ngAfterViewInit(): void {
     this.initCameraView();
   }
-
-  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     if (this.videoPlayer) {

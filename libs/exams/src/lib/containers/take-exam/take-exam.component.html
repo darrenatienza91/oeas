@@ -4,15 +4,9 @@
     [nzBackIcon]="takeExamState() === TakeExamStateEnum.instructionView ? '' : null"
     nzTitle="{{ examDetail()?.name }}"
     ><nz-page-header-extra>
-      <!-- <cd-timer
-        style="font-size: 24px"
-        #cdTimer
-        [autoStart]="false"
-        format="hms"
-        [countdown]="true"
-        [startTime]="startCdCount"
-        (onComplete)="onCompleteTimer()"
-      ></cd-timer> -->
+      @if (takeExamState() === TakeExamStateEnum.takeExamQuestionView) {
+        <p>{{ examinationDurationRemaining() }}</p>
+      }
     </nz-page-header-extra></nz-page-header
   >
   <batstateu-exam-instruction-view

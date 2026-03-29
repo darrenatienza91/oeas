@@ -5,3 +5,6 @@ export const RECORDING_COUNTDOWN_TO_PAUSE = new InjectionToken<CountdownTimerSer
   'RECORDING_COUNTDOWN_TO_PAUSE',
 );
 export const INACTIVE_COUNTDOWN = new InjectionToken<CountdownTimerService>('INACTIVE_COUNTDOWN');
+export const EXAMINATION_DURATION_COUNTDOWN = new InjectionToken<CountdownTimerService>(
+  'EXAMINATION_DURATION_COUNTDOWN',
+);
