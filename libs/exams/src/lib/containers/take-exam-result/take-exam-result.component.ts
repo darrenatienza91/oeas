@@ -1,5 +1,4 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AuthPayload } from '@batstateu/data-models';
 import { ExamsService, TakeExamService } from '@batstateu/shared';
 import { ActivatedRoute } from '@angular/router';
 import { TakeExamResultViewComponent } from './take-exam-result-view/take-exam-result-view.component';
@@ -16,10 +15,7 @@ export class TakeExamResultComponent implements OnInit {
   private readonly takeExamService = inject(TakeExamService);
   public examId = Number(this.route.snapshot.paramMap.get('examId'));
   public readonly examResult = toSignal(this.takeExamService.getTakeExamResult());
-  userStore!: AuthPayload | null;
-  examId!: number;
-  totalPoints = 0;
-  totalQuestionPoints = 0;
+
   percentage!: number | null;
   examTitle!: string;
   scoreSummary!: string;

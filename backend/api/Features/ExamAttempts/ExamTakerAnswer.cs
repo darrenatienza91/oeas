@@ -13,7 +13,8 @@ namespace api.Models
     public int? AnswerId { get; set; }
     public int ExamTakerId { get; set; }
     public int QuestionId { get; set; }
-    public string AnswerText { get; set; }
+    public int AcquiredPoints { get; set; }
+    public string AnswerText { get; set; } = "";
     public ExamTaker ExamTaker { get; set; }
     public Question Question { get; set; }
     public Answer Answer { get; set; }
