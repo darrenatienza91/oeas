@@ -6,7 +6,7 @@ export const environment: AppConfig = {
   uploadUrl: 'http://localhost:8081',
   allowRecording: true,
   fetchPreviousExam: true,
-  inactiveTimeInSeconds: 300,
-  recordingToPauseTimeInSeconds: 10,
+  inactiveTimeInSeconds: 30,
+  recordingToPauseTimeInSeconds: 5,
   allowInactiveTimePenalty: true,
 };

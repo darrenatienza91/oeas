@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AuthPayload } from '@batstateu/data-models';
-import { ExamsService, QuestionService } from '@batstateu/shared';
-import { Store } from '@ngrx/store';
-import * as fromAuth from '@batstateu/auth';
+import { ExamsService, TakeExamService } from '@batstateu/shared';
 import { ActivatedRoute } from '@angular/router';
-import { TakeExamResultViewComponent } from '../../components/take-exam-result-view/take-exam-result-view.component';
+import { TakeExamResultViewComponent } from './take-exam-result-view/take-exam-result-view.component';
+import { toSignal } from '@angular/core/rxjs-interop';
 @Component({
   imports: [TakeExamResultViewComponent],
   selector: 'batstateu-take-exam-result',
@@ -12,6 +11,11 @@ import { TakeExamResultViewComponent } from '../../components/take-exam-result-v
   styleUrls: ['./take-exam-result.component.less'],
 })
 export class TakeExamResultComponent implements OnInit {
+  private readonly examService: ExamsService = inject(ExamsService);
+  private readonly route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly takeExamService = inject(TakeExamService);
+  public examId = Number(this.route.snapshot.paramMap.get('examId'));
+  public readonly examResult = toSignal(this.takeExamService.getTakeExamResult());
   userStore!: AuthPayload | null;
   examId!: number;
   totalPoints = 0;
@@ -19,6 +23,7 @@ export class TakeExamResultComponent implements OnInit {
   percentage!: number | null;
   examTitle!: string;
   scoreSummary!: string;
+
   private getExamResultPoints(): void {
     // this.examService
     //   .getAllTakerAnswers(this.userStore?.user.userDetailId || 0, this.examId)
@@ -42,25 +47,13 @@ export class TakeExamResultComponent implements OnInit {
     //     }
     //   });
   }
+
   getExam() {
     this.examService.get(this.examId).subscribe((val) => (this.examTitle = val.name));
   }
-  getUser() {
-    this.store.select(fromAuth.getAuthSuccess).subscribe((val) => {
-      this.userStore = val;
-    });
-  }
-  constructor(
-    private examService: ExamsService,
-    private questionService: QuestionService,
-    private store: Store<fromAuth.State>,
-    private route: ActivatedRoute,
-  ) {}
 
   ngOnInit(): void {
-    this.examId = Number(this.route.snapshot.paramMap.get('examId'));
     this.getExam();
-    this.getUser();
     this.getExamResultPoints();
   }
 }

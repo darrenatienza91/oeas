@@ -4,5 +4,6 @@ export type VideoJsRecordEvents = {
   stopRecord: void;
   finishRecord: Blob; // we’ll map this
   deviceError: string;
+  pauseRecord: void;
   error: string | null;
 };

@@ -38,6 +38,7 @@ export class ExamsService {
         }),
       );
   }
+
   editAnswerPoints(id: number, points: number): Observable<number> {
     return this.httpClient
       .put<number>(`${this.appConfig.apiUrl}/records/examAnswers/${id}`, {
@@ -45,6 +46,7 @@ export class ExamsService {
       })
       .pipe(map((res: number) => res));
   }
+
   getExamAnswer(id: number) {
     return this.httpClient
       .get<AnswerFormModel>(`${this.appConfig.apiUrl}/records/examAnswers/${id}?join=questions`)
@@ -60,15 +62,19 @@ export class ExamsService {
         }),
       );
   }
+
   public edit(val: Exam): Observable<number> {
     return this.httpClient.patch<number>(`${this.appConfig.apiUrl}/exams/${val.id}`, val);
   }
+
   public get(id: number): Observable<Exam> {
     return this.httpClient.get<Exam>(`${this.appConfig.apiUrl}/exams/${id}`);
   }
+
   delete(id: number): Observable<number> {
     return this.httpClient.delete<number>(`${this.appConfig.apiUrl}/exams/${id}`);
   }
+
   public add(val: Exam): Observable<Exam> {
     return this.httpClient.post<Exam>(`${this.appConfig.apiUrl}/exams`, val);
   }

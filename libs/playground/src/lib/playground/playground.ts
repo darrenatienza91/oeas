@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, effect, ElementRef, inject, ViewChild } from '@angular/core';
 import {
   CAMERA_RECORDER,
   SCREEN_RECORDER,
@@ -26,6 +26,14 @@ export class Playground implements AfterViewInit {
 
   @ViewChild('camera', { static: true })
   camera!: ElementRef<HTMLVideoElement>;
+
+  private myEffect = effect(() => {
+    if (this.screenRecorderFacade.isStarted()) {
+      this.screenRecorderFacade.pause();
+      this.myEffect.destroy();
+    }
+  });
+  constructor() {}
 
   private playerRecorder!: VideoJsPlayerWithRecord;
   private cameraRecorder!: VideoJsPlayerWithRecord;

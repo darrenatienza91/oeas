@@ -26,7 +26,7 @@ import { TakeExamScreenRecordingComponent } from './containers/take-exam/take-ex
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { DataModelsModule } from '@batstateu/data-models';
 import { TakeExamResultComponent } from './containers/take-exam-result/take-exam-result.component';
-import { TakeExamResultViewComponent } from './components/take-exam-result-view/take-exam-result-view.component';
+import { TakeExamResultViewComponent } from './containers/take-exam-result/take-exam-result-view/take-exam-result-view.component';
 import { SharedModule } from '@batstateu/shared';
 import { TakeExamCameraViewComponent } from './containers/take-exam/take-exam-camera-view/take-exam-camera-view.component';
 import { NgxEditorModule } from 'ngx-editor';

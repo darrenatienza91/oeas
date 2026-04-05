@@ -10,6 +10,8 @@ namespace api.Features.ExamAttempts
 
   public record SetAnswerDto(string AnswerText);
 
+  public record RecordingUploadDto(string SessionId, string FileName, int TotalChunks);
+
   public static class ExamAttemptMapper
   {
     public static ExamAttemptQuestionDto MapToExamAttemptQuestionDto(this Question question)

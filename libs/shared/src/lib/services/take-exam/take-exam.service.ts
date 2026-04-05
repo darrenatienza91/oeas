@@ -82,6 +82,9 @@ export class TakeExamService {
 
     return this.httpClient.post<any>(serverUrl, formData);
   }
+  public getTakeExamResult(
+    examAttemptId: number,
+  ): Observable<{ isPass: boolean; percentage: number }> {}
   constructor(
     private httpClient: HttpClient,
     @Inject(APP_CONFIG) private appConfig: AppConfig,

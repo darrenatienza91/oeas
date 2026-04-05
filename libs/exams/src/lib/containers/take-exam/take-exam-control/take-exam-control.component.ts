@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, output, Output } from '@angular/core';
 import { ExamState, TakeExamControlState } from '@batstateu/data-models';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
+import { ExamView } from 'libs/data-models/src/lib/exam-state';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
@@ -18,7 +19,7 @@ export class TakeExamControlComponent implements OnInit {
   @Output() prevQuestion = new EventEmitter();
   @Output() finishExam = new EventEmitter();
   @Input() takeExamControlState = TakeExamControlState.startRecordView;
-  @Input() takeExamState = ExamState.instructionView;
+  @Input() takeExamState = ExamView.instructionView;
   TakeExamControlStateEnum = TakeExamControlState;
   TakeExamStateEnum = ExamState;
   onStartRecord() {

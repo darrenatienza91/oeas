@@ -1,20 +1,25 @@
 <div class="m-3">
   <nz-page-header
     (nzBack)="onBack()"
-    [nzBackIcon]="takeExamState() === TakeExamStateEnum.instructionView ? '' : null"
+    [nzBackIcon]="takeExamView() === TakeExamViewEnum.instructionView ? '' : null"
     nzTitle="{{ examDetail()?.name }}"
     ><nz-page-header-extra>
-      @if (takeExamState() === TakeExamStateEnum.takeExamQuestionView) {
-        <p>{{ examinationDurationRemaining() }}</p>
-      }
+      <div class="recording-timer-container">
+        @if (takeExamView() === TakeExamViewEnum.takeExamQuestionView) {
+          @if (this.isScreenRecording()) {
+            <p class="recording">Recording</p>
+          }
+          <p>{{ examinationDurationRemaining() }}</p>
+        }
+      </div>
     </nz-page-header-extra></nz-page-header
   >
   <batstateu-exam-instruction-view
     [examDetail]="examDetail()"
-    [hidden]="takeExamState() !== TakeExamStateEnum.instructionView"
+    [hidden]="takeExamView() !== TakeExamViewEnum.instructionView"
   ></batstateu-exam-instruction-view>
 
-  @if (takeExamState() === TakeExamStateEnum.takeExamQuestionView) {
+  @if (takeExamView() === TakeExamViewEnum.takeExamQuestionView) {
     <batstateu-take-exam-question-view
       [videoVisible]="videoVisible()"
       [currentQuestion]="currentQuestion()"
@@ -25,14 +30,13 @@
       <batstateu-take-exam-screen-recording
         #takeExamScreenRecorder
         (startExam)="onStartExam()"
-        (uploadRecord)="onUploadRecord($event)"
       ></batstateu-take-exam-screen-recording>
     }
   }
 
   <batstateu-take-exam-control
     [takeExamControlState]="takeExamControlState"
-    [takeExamState]="takeExamState()"
+    [takeExamState]="takeExamView()"
     [isStartExam]="isStartExam"
     [enableNextButton]="enableNextButton"
     [enablePreviousButton]="enablePreviousButton"

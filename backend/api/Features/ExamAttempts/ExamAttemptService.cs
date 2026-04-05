@@ -16,6 +16,7 @@ public interface IExamAttemptService
   Task SetAnswer(int attemptId, int questionId, string answerText);
   Task<MoveNextQuestionResult> MoveNextQuestion(int attemptId);
   Task<MovePreviousQuestionResult> MovePreviousQuestion(int attemptId);
+  Task<bool>  HasExamAttempt(int attemptId);
 }
 
 public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
@@ -137,5 +138,10 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
     await appDbContext.SaveChangesAsync();
 
     return MovePreviousQuestionResult.Moved;
+  }
+
+  public async Task<bool> HasExamAttempt(int attemptId)
+  {
+   return await GetExamTaker(attemptId) is not null;
   }
 }

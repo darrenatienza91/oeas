@@ -1,12 +1,9 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  ViewChild,
-  NgZone,
   signal,
   inject,
   effect,
-  OnInit,
   untracked,
   viewChild,
   computed,
@@ -16,20 +13,13 @@ import { Location } from '@angular/common';
 import { TakeExamScreenRecordingComponent } from './take-exam-screen-recording/take-exam-screen-recording.component';
 import {
   Exam,
-  ExamState,
+  ExamState as ExamView,
   TakeExamControlState,
   TakerExamDetail,
   TakerExamQuestion,
 } from '@batstateu/data-models';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  ExamsService,
-  TakeExamService,
-  UploadService,
-  UserService,
-  VideoJsPlayerWithRecord,
-  VideoRecorderFacadeService,
-} from '@batstateu/shared';
+import { ExamsService, TakeExamService, VideoRecorderFacadeService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
 import {
@@ -38,7 +28,6 @@ import {
   EMPTY,
   filter,
   fromEvent,
-  interval,
   map,
   merge,
   Observable,
@@ -48,9 +37,6 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { Store } from '@ngrx/store';
-import * as fromAuth from '@batstateu/auth';
-import { TakeExamCameraViewComponent } from './take-exam-camera-view/take-exam-camera-view.component';
 import { ExamInstructionViewComponent } from './exam-instruction-view/exam-instruction-view.component';
 
 import { TakeExamControlComponent } from './take-exam-control/take-exam-control.component';
@@ -65,10 +51,11 @@ import {
   INACTIVE_COUNTDOWN,
   RECORDING_COUNTDOWN_TO_PAUSE,
 } from './countdown-timer-injection-token';
-import videojs from 'video.js';
-import RecordRTC from 'recordrtc';
 import { toSeconds } from './to-seconds';
 import { toTimeFormatFromSeconds } from './to-time-format-from-seconds';
+import { ExamTakerRecordingUploadService } from '../../services/exam-taker-recording-upload/exam-taker-recording-upload.service';
+import { TakeExamState } from './take-exam-state';
+import { screenRecorderSetup } from './screen-recorder-setup';
 
 @Component({
   imports: [
@@ -89,7 +76,7 @@ import { toTimeFormatFromSeconds } from './to-time-format-from-seconds';
   styleUrls: ['./take-exam.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TakeExamComponent implements OnInit {
+export class TakeExamComponent {
   private readonly location: Location = inject(Location);
   private readonly router: Router = inject(Router);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
@@ -97,10 +84,10 @@ export class TakeExamComponent implements OnInit {
   private readonly modal: NzModalService = inject(NzModalService);
   private readonly takeExamService: TakeExamService = inject(TakeExamService);
   public readonly appConfig = inject<AppConfig>(APP_CONFIG);
-  private readonly store: Store<fromAuth.State> = inject(Store<fromAuth.State>);
-  private readonly userService: UserService = inject(UserService);
-  private readonly uploadService: UploadService = inject(UploadService);
-  private readonly zone: NgZone = inject(NgZone);
+  private readonly uploadService: ExamTakerRecordingUploadService = inject(
+    ExamTakerRecordingUploadService,
+  );
+
   private readonly inActiveTabCountdownTimer = inject<CountdownTimerService>(INACTIVE_COUNTDOWN);
   public readonly examinationDurationCountdownTimer = inject<CountdownTimerService>(
     EXAMINATION_DURATION_COUNTDOWN,
@@ -113,11 +100,11 @@ export class TakeExamComponent implements OnInit {
   public readonly takeExamRecording =
     viewChild<TakeExamScreenRecordingComponent>('takeExamScreenRecorder');
 
-  @ViewChild(TakeExamCameraViewComponent)
-  takeExamCameraView!: TakeExamCameraViewComponent;
-  TakeExamStateEnum = ExamState;
+  TakeExamViewEnum = ExamView;
   TakeExamControlStateEnum = TakeExamControlState;
-  public takeExamState = signal<ExamState>(ExamState.instructionView);
+  public takeExamView = signal<ExamView>(ExamView.instructionView);
+  public takeExamState = signal<TakeExamState>(TakeExamState.Ready);
+
   takeExamControlState = TakeExamControlState.startRecordView;
   isStartExam = false;
   enableNextButton = false;
@@ -127,18 +114,12 @@ export class TakeExamComponent implements OnInit {
   public currentQuestion = signal<TakerExamQuestion | null>(null);
   public tabActive = signal<boolean>(false);
 
-  questionCount = 1;
-  questionIdx = 0;
-
   public examinationDurationInSeconds = signal<number>(0);
 
   public videoVisible = signal(true);
-  cameraVisible = false;
-  hasInactiveStatus = false;
-  takeExamInterval: any;
+  public cameraVisible = false;
+  public hasInactiveStatus = false;
   private readonly timeLeft = this.appConfig.inactiveTimeInSeconds;
-  initial = true;
-  timerExitSource$ = interval(1000);
   private readonly examTaker = signal<TakerExamDetail | null>(null);
   private readonly examId = Number(this.route.snapshot.paramMap.get('examId'));
 
@@ -149,6 +130,10 @@ export class TakeExamComponent implements OnInit {
   public examinationDurationRemaining = computed(() => {
     return `Time Remaining: ${toTimeFormatFromSeconds(this.examinationDurationCountdownTimer.timeRemaining)}`;
   });
+
+  public isScreenRecording = computed(() => this.screenRecorderFacadeService.isRecording());
+
+  private readonly initializedExam$ = this.initializedExam().pipe(takeUntilDestroyed()).subscribe();
 
   private readonly examFlow$ = merge(
     this.submitAnswer$.pipe(
@@ -174,21 +159,22 @@ export class TakeExamComponent implements OnInit {
     .pipe(takeUntilDestroyed())
     .subscribe();
 
-  private readonly initializedExam$ = this.initializedExam().pipe(takeUntilDestroyed()).subscribe();
-
-  private readonly browserTabVisibility = merge(
+  private readonly browserTabVisibility$ = merge(
     fromEvent(document, 'visibilitychange').pipe(map(() => document.visibilityState === 'visible')),
     fromEvent(globalThis, 'focus').pipe(map(() => true)),
     fromEvent(globalThis, 'blur').pipe(map(() => false)),
   )
     .pipe(
-      filter(() => this.appConfig.allowInactiveTimePenalty),
+      filter(
+        () =>
+          this.appConfig.allowInactiveTimePenalty && this.takeExamState() === TakeExamState.Ongoing,
+      ),
       startWith(document.visibilityState === 'visible' && document.hasFocus()),
       distinctUntilChanged(),
       skip(6),
       tap((isActive) => {
         this.tabActive.set(isActive);
-        if (this.takeExamState() != ExamState.takeExamQuestionView) {
+        if (this.takeExamView() != ExamView.takeExamQuestionView) {
           return;
         }
 
@@ -203,10 +189,17 @@ export class TakeExamComponent implements OnInit {
     )
     .subscribe();
 
-  public readonly recorderReadyEffect = effect(() => {
+  private readonly screenRecorderReadyEffect = effect(() => {
     if (this.screenRecorderFacadeService.isReady()) {
-      this.recorderReadyEffect.destroy();
+      this.screenRecorderReadyEffect.destroy();
       this.screenRecorderFacadeService.start();
+    }
+  });
+
+  private readonly screenRecorderStartedEffect = effect(() => {
+    if (this.screenRecorderFacadeService.isStarted()) {
+      this.screenRecorderFacadeService.pause();
+      this.screenRecorderStartedEffect.destroy();
     }
   });
 
@@ -217,49 +210,21 @@ export class TakeExamComponent implements OnInit {
       return;
     }
 
-    const playerRecorder = videojs(
-      screenRecorder?.nativeElement as HTMLVideoElement,
-      {
-        controls: true,
-        plugins: {
-          record: {
-            audio: true,
-            video: false,
-            screen: true,
-            maxLength: this.examinationDurationInSeconds(),
-            mediaRecorderOptions: {
-              mimeType: 'video/webm;codecs=vp8,opus',
-            },
-          },
-        },
-      },
-      () => {
-        console.log(
-          'player ready! id:',
-          this.takeExamRecording()?.screenRecorder().nativeElement.id,
-        );
+    const screenRecorderInstance = screenRecorderSetup(
+      screenRecorder.nativeElement,
+      this.examinationDurationInSeconds(),
+      this.takeExamRecording()?.screenRecorder().nativeElement.id,
+    );
 
-        // print version information at startup
-        const msg =
-          'Using video.js ' +
-          //videojs.VERSION +
-          ' with videojs-record ' +
-          videojs.getPluginVersion('record') +
-          ' and recordrtc ' +
-          RecordRTC.version;
-        videojs.log(msg);
-      },
-    ) as VideoJsPlayerWithRecord;
-
-    this.screenRecorderFacadeService.init(playerRecorder, true);
+    this.screenRecorderFacadeService.init(screenRecorderInstance, true);
     this.screenRecorderInitializationEffect.destroy();
   });
 
-  public readonly screenRecordingToPauseCountdownTimerEffect = effect(() => {
+  public readonly countdownTimerToPauseScreenRecordingEffect = effect(() => {
     const timeRemaining = this.recordingToPauseCountdownTimer.timeRemaining;
     console.log('Time Remaining to pause Recording', timeRemaining);
     if (!this.appConfig.allowRecording) {
-      this.screenRecordingToPauseCountdownTimerEffect.destroy();
+      this.countdownTimerToPauseScreenRecordingEffect.destroy();
       return;
     }
 
@@ -275,12 +240,48 @@ export class TakeExamComponent implements OnInit {
     }
   });
 
-  ngOnInit(): void {
-    this.inActiveTabCountdownTimer.start(this.appConfig.inactiveTimeInSeconds);
-    this.inActiveTabCountdownTimer.pause();
-    this.recordingToPauseCountdownTimer.start(this.appConfig.recordingToPauseTimeInSeconds);
-    this.recordingToPauseCountdownTimer.pause();
-  }
+  public startCountdownTimerWhenExaminationBeginsEffect = effect(() => {
+    if (this.takeExamView() === this.TakeExamViewEnum.takeExamQuestionView) {
+      this.examinationDurationCountdownTimer.start(this.examinationDurationInSeconds());
+      this.startCountdownTimerWhenExaminationBeginsEffect.destroy();
+    }
+  });
+
+  public logScreenRecordingStateEffect = effect(() => {
+    console.log('Screen Recording State:', this.screenRecorderFacadeService.state());
+    console.log('Is currently recording screen? ', this.screenRecorderFacadeService.isRecording());
+  });
+
+  private readonly countDownTimerWhenTabIsNotActiveEffect = effect(() => {
+    console.log(this.inActiveTabCountdownTimer.timeRemaining);
+
+    if (this.inActiveTabCountdownTimer.timeRemaining <= 0) {
+      this.onFinishExamination();
+    }
+  });
+
+  public readonly finishExaminationThenUploadRecordingEffect = effect(() => {
+    if (!this.screenRecorderFacadeService.isFinished()) {
+      return;
+    }
+
+    const blob = untracked(() => this.screenRecorderFacadeService.recordedBlob());
+
+    if (!blob?.size) {
+      this.goToResults();
+      return;
+    }
+
+    this.finishExaminationThenUploadRecordingEffect.destroy();
+
+    const file = new File([blob], `${this.examTakerId}-recording.webm`, {
+      type: blob.type,
+    });
+
+    console.log('Blob', this.screenRecorderFacadeService.recordedBlob());
+
+    this.uploadService.uploadRecording(file, this.examTakerId).subscribe(() => this.goToResults());
+  });
 
   private onTabHidden(): void {
     console.log('start exit timer');
@@ -288,6 +289,7 @@ export class TakeExamComponent implements OnInit {
     this.hasInactiveStatus = true;
 
     this.inActiveTabCountdownTimer.resume();
+    this.screenRecorderFacadeService.resume();
   }
 
   private onTabVisible(): void {
@@ -301,26 +303,6 @@ export class TakeExamComponent implements OnInit {
       );
     }
   }
-
-  public takeExaminationStateEffect = effect(() => {
-    if (this.takeExamState() === this.TakeExamStateEnum.takeExamQuestionView) {
-      this.examinationDurationCountdownTimer.start(this.examinationDurationInSeconds());
-      this.takeExaminationStateEffect.destroy();
-    }
-  });
-
-  public recordingStateEffect = effect(() => {
-    console.log(this.screenRecorderFacadeService.state());
-    console.log('is Record', this.screenRecorderFacadeService.isRecording());
-  });
-
-  private readonly inActiveTabCountdownTimerEffect = effect(() => {
-    console.log(this.inActiveTabCountdownTimer.timeRemaining);
-
-    if (this.inActiveTabCountdownTimer.timeRemaining <= 0) {
-      this.onFinishExamination();
-    }
-  });
 
   private initializedExam(): Observable<void> {
     return this.examService.get(this.examId).pipe(
@@ -345,7 +327,11 @@ export class TakeExamComponent implements OnInit {
         if (record && !this.appConfig.fetchPreviousExam) {
           throw new Error('EXAM_ALREADY_FINISHED');
         }
-
+        this.inActiveTabCountdownTimer.start(this.appConfig.inactiveTimeInSeconds);
+        this.inActiveTabCountdownTimer.pause();
+        this.recordingToPauseCountdownTimer.start(this.appConfig.recordingToPauseTimeInSeconds);
+        this.recordingToPauseCountdownTimer.pause();
+        this.takeExamState.set(TakeExamState.Ongoing);
         this.examTaker.set(record);
       }),
 
@@ -446,7 +432,7 @@ export class TakeExamComponent implements OnInit {
   onStartExam() {
     this.cameraVisible = this.appConfig.allowRecording;
     this.videoVisible.set(this.appConfig.allowRecording);
-    this.takeExamState.set(ExamState.takeExamQuestionView);
+    this.takeExamView.set(ExamView.takeExamQuestionView);
   }
 
   private get examTakerId(): number {
@@ -508,69 +494,18 @@ export class TakeExamComponent implements OnInit {
     });
   }
 
-  onBack() {
+  public onBack(): void {
     this.location.back();
   }
 
   public onFinishExamination(): void {
-    if (this.screenRecorderFacadeService.isRecording()) {
-      this.screenRecorderFacadeService.stop();
-      return;
-    }
-
-    this.goToResults();
+    this.takeExamState.set(TakeExamState.Finished);
+    this.recordingToPauseCountdownTimer.pause();
+    this.inActiveTabCountdownTimer.pause();
+    this.examinationDurationCountdownTimer.pause();
+    this.screenRecorderFacadeService.stop();
   }
 
-  public readonly finishExaminationWithScreenRecordingEffect = effect(() => {
-    if (this.screenRecorderFacadeService.state() !== 'finished') {
-      return;
-    }
-
-    console.log('Blob', this.screenRecorderFacadeService.recordedBlob());
-
-    const sessionId = crypto.randomUUID();
-
-    this.uploadService
-      .uploadFile(
-        this.screenRecorderFacadeService.recordedBlob() as Blob,
-        'recording.webm',
-        sessionId,
-      )
-      .pipe(
-        switchMap(() => this.uploadService.finalizeUpload(sessionId, 'recording.webm')),
-        tap(() => {
-          this.goToResults();
-        }),
-
-        catchError(() => {
-          return EMPTY;
-        }),
-      )
-      .subscribe();
-
-    this.finishExaminationWithScreenRecordingEffect.destroy();
-  });
-
-  onUploadRecord(data: any) {
-    // if (this.hasInactiveStatus) {
-    //   this.takeExamService.upload(data).subscribe({
-    //     next: (value) =>
-    //       this.takeExamService.get(this.examTaker()?.id ?? 0).subscribe((val) =>
-    //         this.takeExamService
-    //           .updateTakerExam(this.examTaker()?.id ?? 0, {
-    //             ...val,
-    //             recUrl: `${this.appConfig.uploadUrl}/uploads/${data.name}`,
-    //           })
-    //           .subscribe((val) => {
-    //             this.goToResults();
-    //           }),
-    //       ),
-    //     error: (err) => console.log(err),
-    //   });
-    // } else {
-    //   this.goToResults();
-    // }
-  }
   private goToResults() {
     this.router.navigate([`exams/${this.examId}/result`]);
   }

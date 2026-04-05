@@ -45,3 +45,26 @@ POST {{HOST}}/api/exam-attempts/28/previous-question HTTP/1.1
 Authorization: Bearer {{login.token}}
 Content-Type: application/json
 Accept: application/json
+
+### InitializedExamAttempUploadRecording
+# @name InitializedExamAttempUploadRecording
+# @import ../auth/auth.http
+# @ref login
+POST {{HOST}}/api/exam-attempts/52/recording/init HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+### FinalizedUploadRecording
+# @name FinalizedUploadRecording
+# @import ../auth/auth.http
+# @ref login
+POST {{HOST}}/api/exam-attempts/52/recording/finalize HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+    "sessionId": "attempt-52",
+    "fileName": "52-recording.webm",
+    "totalChunks":3
+}

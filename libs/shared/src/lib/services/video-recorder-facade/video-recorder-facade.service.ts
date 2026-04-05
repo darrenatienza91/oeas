@@ -14,14 +14,17 @@ export class VideoRecorderFacadeService {
   readonly state = signal<RecordingState>('idle');
   readonly recordedBlob = signal<Blob | null>(null);
   readonly error = signal<string | null>(null);
+  readonly isStarted = signal<boolean>(false);
 
   // Derived state
   readonly isRecording = computed(() => this.state() === 'recording');
   readonly isReady = computed(() => this.state() === 'ready');
+  readonly isFinished = computed(() => this.state() === 'finished');
 
   init(player: VideoJsPlayerWithRecord, isGetDevice: boolean = false) {
     this.player = player;
     console.log(this.plugin.Record.VERSION);
+
     const deviceReady$ = fromVideoJsEvent(player, 'deviceReady');
     const start$ = fromVideoJsEvent(player, 'startRecord');
     const stop$ = fromVideoJsEvent(player, 'stopRecord');
@@ -39,18 +42,24 @@ export class VideoRecorderFacadeService {
     // Individual handlers (cleaner for payloads)
     deviceReady$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.state.set('ready');
+      this.player.on('pauseRecord', () => {
+        console.log('Recording paused');
+      });
     });
 
-    start$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.state.set('recording'));
-
+    start$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.isStarted.set(true);
+      this.state.set('recording');
+    });
     stop$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.closeScreenSharingBottomBar();
       this.state.set('stopped');
     });
 
     finish$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((blob) => {
       this.recordedBlob.set(blob);
       this.state.set('finished');
+
+      this.closeScreenSharingBottomBar();
     });
 
     deviceError$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((err) => {
@@ -77,6 +86,11 @@ export class VideoRecorderFacadeService {
     this.player.record().stop();
   }
 
+  public resume() {
+    this.player.record().resume();
+    this.state.set('recording');
+  }
+
   public reset(): void {
     this.recordedBlob.set(null);
     this.error.set(null);
@@ -85,6 +99,7 @@ export class VideoRecorderFacadeService {
 
   public pause(): void {
     this.player.record().pause();
+    this.state.set('pause');
   }
 
   // Optional centralized handler
@@ -93,9 +108,9 @@ export class VideoRecorderFacadeService {
   }
 
   private closeScreenSharingBottomBar(): void {
-    const stream = this.player.record().stream as MediaStream;
+    const stream = this.player.record().stream;
     stream?.getTracks().forEach((track) => track.stop());
   }
 }
 
-type RecordingState = 'idle' | 'ready' | 'recording' | 'stopped' | 'finished' | 'error';
+type RecordingState = 'idle' | 'ready' | 'recording' | 'stopped' | 'finished' | 'error' | 'pause';

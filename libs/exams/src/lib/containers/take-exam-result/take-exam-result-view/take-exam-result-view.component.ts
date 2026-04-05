@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
@@ -10,11 +10,8 @@ import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
   templateUrl: './take-exam-result-view.component.html',
   styleUrls: ['./take-exam-result-view.component.less'],
 })
-export class TakeExamResultViewComponent implements OnInit {
+export class TakeExamResultViewComponent {
   @Input() percentage!: number | null;
   @Input() examTitle!: string;
   @Input() scoreSummary!: string;
-  constructor() {}
-
-  ngOnInit(): void {}
 }

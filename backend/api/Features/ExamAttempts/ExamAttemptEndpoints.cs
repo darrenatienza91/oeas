@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Exceptions;
+using api.Features.Exams;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +37,51 @@ namespace api.Features.ExamAttempts
         .RequireAuthorization(policy =>
           policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
         );
+      app.MapPost("/exam-attempts/{attemptId}/recording/init", InitializeUploadRecording)
+        .RequireAuthorization(policy =>
+          policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
+        );
+
+      app.MapPost("/exam-attempts/{attemptId}/recording/chunk", UploadChunkRecordings)
+        .RequireAuthorization(policy =>
+          policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
+        )
+        .DisableAntiforgery();
+
+      app.MapPost("/exam-attempts/{attemptId}/recording/finalize", FinalizeRecordingUpload);
+    }
+
+    static async Task<IResult> FinalizeRecordingUpload(
+      int attemptId,
+      RecordingUploadDto dto,
+      IExamAttemptRecordingService service,
+      CancellationToken ct
+    )
+    {
+      var path = await service.FinalizeRecordingAsync(
+        attemptId,
+        dto.SessionId,
+        dto.TotalChunks,
+        dto.FileName,
+        ct
+      );
+
+      return Results.Ok(new { path });
+    }
+
+    static async Task<IResult> UploadChunkRecordings(
+      [FromForm] IFormFile file,
+      [FromForm] int index,
+      [FromForm] int total,
+      [FromForm] string sessionId,
+      [FromRoute] int attemptId,
+      IExamAttemptRecordingService service,
+      CancellationToken ct
+    )
+    {
+      await service.UploadChunkAsync(attemptId, total, file.OpenReadStream(), index, sessionId, ct);
+
+      return Results.Ok();
     }
 
     static async Task<IResult> GetExamAttemptQuestion(
@@ -85,6 +131,18 @@ namespace api.Features.ExamAttempts
         MoveNextQuestionResult.Last => Results.Ok(new { IsLast = true }),
         _ => Results.NoContent(),
       };
+    }
+
+    static async Task<IResult> InitializeUploadRecording(
+      IExamAttemptService service,
+      [FromRoute] int attemptId
+    )
+    {
+      return Results.Ok(
+        await service.HasExamAttempt(attemptId)
+          ? new { sessionId = $"attempt-{attemptId}" }
+          : new { sessionId = "" }
+      );
     }
 
     static async Task<IResult> MovePreviousQuestion(
