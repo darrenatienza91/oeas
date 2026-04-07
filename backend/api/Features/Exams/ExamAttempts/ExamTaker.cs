@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Features.Exams;
 using api.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -18,6 +19,7 @@ namespace api.Models
     public ICollection<ExamTakerAnswer> ExamTakerAnswers { get; set; } = [];
     public DateTimeOffset CreateDate { get; set; }
     public int CurrentQuestionIndex { get; set; }
+    public ExamAttemptCheckingStatus CheckingStatus { get; set; }
   }
 
   public class ExamTakerConfiguration : IEntityTypeConfiguration<ExamTaker>

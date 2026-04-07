@@ -1,20 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TakeExamService {
-  constructor(private httpClient: HttpClient) {}
-
-  upload(data: any): Observable<any> {
-    const serverUrl = 'http://localhost:8081/file-upload';
-    const formData = new FormData();
-    formData.append('file', data, data.name);
-
-    console.log('uploading recording:', data.name);
-
-    return this.httpClient.post<any>(serverUrl,formData);
-  }
+  private readonly httpClient: HttpClient = inject(HttpClient);
+  private readonly appConfig: AppConfig = inject(APP_CONFIG);
 }

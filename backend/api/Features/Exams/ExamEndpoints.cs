@@ -50,6 +50,25 @@ namespace api.Endpoints
 
       app.MapPost("/exams/{id}/my-attempt", AddExamAttempt)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.Student));
+
+      app.MapGet("/exams/{id}/my-result", GetResult)
+        .RequireAuthorization(policy =>
+          policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
+        );
+    }
+
+    static async Task<IResult> GetResult(IExamService service, [FromRoute] int id)
+    {
+      var examTaker = await service.GetResult(id);
+
+      return Results.Ok(
+        new
+        {
+          examTaker.checkingStatus,
+          examTaker.result,
+          examTaker.percentage,
+        }
+      );
     }
 
     static async Task<IResult> GetExamAttempt(IExamService service, [FromRoute] int id)

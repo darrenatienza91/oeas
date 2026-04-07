@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 using api.Auth;
 using api.Data;
 using api.Endpoints;
@@ -26,6 +27,11 @@ var builder = WebApplication.CreateBuilder(args);
 // JWT config values
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+  options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 // Add Authentication
 builder
@@ -59,7 +65,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = long.MaxValue;
+  options.MultipartBodyLengthLimit = long.MaxValue;
 });
 
 // Add services to the container.

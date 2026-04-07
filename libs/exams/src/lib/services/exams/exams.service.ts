@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
 import {
   AnswerFormModel,
@@ -17,6 +17,9 @@ import { map, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ExamsService {
+  private readonly httpClient: HttpClient = inject(HttpClient);
+  private readonly appConfig: AppConfig = inject(APP_CONFIG);
+
   public activate(id?: number): Observable<void> {
     return this.httpClient.patch<void>(`${this.appConfig.apiUrl}/exams/${id}/activate`, null);
   }
@@ -153,8 +156,25 @@ export class ExamsService {
       );
   }
 
-  constructor(
-    private httpClient: HttpClient,
-    @Inject(APP_CONFIG) private appConfig: AppConfig,
-  ) {}
+  public getExamResult(examId: number): Observable<{
+    checkingStatus: ExamCheckingStatus;
+    result: ExamResultStatus;
+    percentage: number;
+  }> {
+    return this.httpClient
+      .get<{
+        checkingStatus: TakeExamCheckingStatus;
+        result: TakeExamResultStatus;
+        percentage: number;
+      }>(`${this.appConfig.apiUrl}/exams/${examId}/my-result`)
+      .pipe(
+        map((examResult) => ({
+          ...examResult,
+          checkingStatus: isTakeExamCheckingStatus(examResult.checkingStatus)
+            ? examResult.checkingStatus
+            : 'Unknown',
+          result: isTakeExamResultStatus(examResult.result) ? examResult.result : 'Unknown',
+        })),
+      );
+  }
 }

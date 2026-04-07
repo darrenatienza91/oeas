@@ -68,12 +68,3 @@ Accept: application/json
     "fileName": "52-recording.webm",
     "totalChunks":3
 }
-
-### FinalizedUploadRecording
-# @name FinalizedUploadRecording
-# @import ../../auth/auth.http
-# @ref login
-GET {{HOST}}/api/exam-attempts/52/my-result HTTP/1.1
-Authorization: Bearer {{login.token}}
-Content-Type: application/json
-Accept: application/json

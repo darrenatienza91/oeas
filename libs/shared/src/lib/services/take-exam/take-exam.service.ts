@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
 import {
   ExamAnswer,
@@ -13,6 +13,9 @@ import { map, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class TakeExamService {
+  private httpClient: HttpClient = inject(HttpClient);
+  private appConfig: AppConfig = inject(APP_CONFIG);
+
   public movePreviousQuestion(takerExamId: number): Observable<{ isFirst: boolean }> {
     return this.httpClient.post<{ isFirst: boolean }>(
       `${this.appConfig.apiUrl}/exam-attempts/${takerExamId}/previous-question`,
@@ -67,26 +70,11 @@ export class TakeExamService {
       {},
     );
   }
+
   updateTakerExam(takerExamId: number, val: ExamTakerDetail): Observable<number> {
     return this.httpClient.put<number>(
       `${this.appConfig.apiUrl}/records/takerExams/${takerExamId}`,
       val,
     );
   }
-  upload(data: any): Observable<any> {
-    const serverUrl = `${this.appConfig.apiUrl}/file-upload`;
-    const formData = new FormData();
-    formData.append('file', data, data.name);
-
-    console.log('uploading recording:', data.name);
-
-    return this.httpClient.post<any>(serverUrl, formData);
-  }
-  public getTakeExamResult(
-    examAttemptId: number,
-  ): Observable<{ isPass: boolean; percentage: number }> {}
-  constructor(
-    private httpClient: HttpClient,
-    @Inject(APP_CONFIG) private appConfig: AppConfig,
-  ) {}
 }

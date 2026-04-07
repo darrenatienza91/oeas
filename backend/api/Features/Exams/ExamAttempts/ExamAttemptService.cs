@@ -17,8 +17,6 @@ public interface IExamAttemptService
   Task<MoveNextQuestionResult> MoveNextQuestion(int attemptId);
   Task<MovePreviousQuestionResult> MovePreviousQuestion(int attemptId);
   Task<bool> HasExamAttempt(int attemptId);
-
-  Task<(bool isPassed, double percentage)> GetResult(int id);
 }
 
 public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
@@ -147,32 +145,5 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
     return await GetExamTaker(attemptId) is not null;
   }
 
-  public async Task<(bool isPassed, double percentage)> GetResult(int attemptId)
-  {
-    var examTakerPoints = await appDbContext
-      .ExamTakers.Select(x => new
-      {
-        x.Id,
-        Points = x.ExamTakerAnswers.Select(ans => new
-        {
-          ans.AcquiredPoints,
-          QuestionPoints = ans.Question.Points,
-        }),
-      })
-      .FirstOrDefaultAsync(x => x.Id == attemptId);
-
-    var percentagePerQuestions = examTakerPoints?.Points.Select(x => new
-    {
-      PercentagePerQuestion = (double)x.AcquiredPoints / x.QuestionPoints,
-    });
-
-    double totalAcquired = examTakerPoints?.Points.Sum(x => x.AcquiredPoints) ?? 0;
-    double totalPossible = examTakerPoints?.Points.Sum(x => x.QuestionPoints) ?? 0;
-
-    double totalPercentage = totalPossible == 0 ? 0 : totalAcquired / totalPossible * 100;
-
-    bool isPassed = totalPercentage >= 75;
-
-    return (isPassed, totalPercentage);
-  }
+  
 }

@@ -7,11 +7,11 @@ import { ExamResultListComponent } from '../../components/exam-result-list/exam-
 
 @Component({
   imports: [ExamResultListComponent],
-  selector: 'batstateu-exam-result',
-  templateUrl: './exam-result.component.html',
-  styleUrls: ['./exam-result.component.less'],
+  selector: 'batstateu-exam-results',
+  templateUrl: './exam-results.component.html',
+  styleUrls: ['./exam-results.component.less'],
 })
-export class ExamResultComponent implements OnInit {
+export class ExamResultsComponent implements OnInit {
   examId!: number;
   userDetailId!: number;
   examTakerResultList!: ExamTakerResultList[];

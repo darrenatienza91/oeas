@@ -1,20 +1,20 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ExamsService, TakeExamService } from '@batstateu/shared';
+import { ExamsService } from '@batstateu/shared';
 import { ActivatedRoute } from '@angular/router';
 import { TakeExamResultViewComponent } from './take-exam-result-view/take-exam-result-view.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 @Component({
   imports: [TakeExamResultViewComponent],
-  selector: 'batstateu-take-exam-result',
-  templateUrl: './take-exam-result.component.html',
-  styleUrls: ['./take-exam-result.component.less'],
+  selector: 'batstateu-exam-result-page',
+  templateUrl: './exam-result-page.component.html',
+  styleUrls: ['./exam-result-page.component.less'],
 })
-export class TakeExamResultComponent implements OnInit {
+export class ExamResultPageComponent implements OnInit {
   private readonly examService: ExamsService = inject(ExamsService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
-  private readonly takeExamService = inject(TakeExamService);
+  private readonly takeExamService = inject(ExamsService);
   public examId = Number(this.route.snapshot.paramMap.get('examId'));
-  public readonly examResult = toSignal(this.takeExamService.getTakeExamResult());
+  public readonly examResult = toSignal(this.takeExamService.getTakeExamResult(this.examId));
 
   percentage!: number | null;
   examTitle!: string;
