@@ -20,11 +20,7 @@ namespace api.Services
     Task<IEnumerable<Exam>> GetExamsAsync(DateTimeOffset? startOn, string? criteria);
     Task<ExamTaker?> GetAttempt(int examId);
     Task<ExamTaker?> AddAttempt(ExamTaker examTaker);
-    Task<(
-      ExamAttemptCheckingStatus checkingStatus,
-      ExamAttemptResult result,
-      double percentage
-    )> GetResult(int id);
+   
   }
 
   public class ExamService(AppDbContext appDbContext) : IExamService
@@ -90,37 +86,6 @@ namespace api.Services
       await appDbContext.SaveChangesAsync();
 
       return examTaker;
-    }
-
-    public async Task<(
-      ExamAttemptCheckingStatus checkingStatus,
-      ExamAttemptResult result,
-      double percentage
-    )> GetResult(int id)
-    {
-      var examTakerResult = await appDbContext
-        .ExamTakers.Select(x => new
-        {
-          x.Id,
-          x.CheckingStatus,
-          Points = x.ExamTakerAnswers.Select(ans => new
-          {
-            ans.AcquiredPoints,
-            QuestionPoints = ans.Question.Points,
-          }),
-        })
-        .FirstOrDefaultAsync(x => x.Id == id);
-
-      var checkingStatus = examTakerResult?.CheckingStatus ?? 0;
-
-      double totalAcquired = examTakerResult?.Points.Sum(x => x.AcquiredPoints) ?? 0;
-      double totalPossible = examTakerResult?.Points.Sum(x => x.QuestionPoints) ?? 0;
-
-      double totalPercentage = totalPossible is 0 ? 0 : totalAcquired / totalPossible * 100;
-
-      var result = totalPercentage >= 75 ? ExamAttemptResult.Pass : ExamAttemptResult.Failed;
-
-      return (checkingStatus, result, totalPercentage);
     }
   }
 }

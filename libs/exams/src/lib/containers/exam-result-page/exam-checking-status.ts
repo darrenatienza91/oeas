@@ -5,8 +5,8 @@ export const validExamCheckingStatuses = [
   'Unknown',
 ] as const;
 
-export type TakeExamCheckingStatus = (typeof validExamCheckingStatuses)[number];
+export type ExamCheckingStatus = (typeof validExamCheckingStatuses)[number];
 
-export const isTakeExamCheckingStatus = (value: string): value is TakeExamCheckingStatus => {
-  return validExamCheckingStatuses.includes(value as TakeExamCheckingStatus);
+export const isTakeExamCheckingStatus = (value: string): value is ExamCheckingStatus => {
+  return validExamCheckingStatuses.includes(value as ExamCheckingStatus);
 };

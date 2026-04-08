@@ -1,4 +1,4 @@
-namespace api.Features.Exams
+namespace api.Features.Exams.ExamAttempts
 {
   public enum ExamAttemptCheckingStatus
   {

@@ -155,26 +155,4 @@ export class ExamsService {
         }),
       );
   }
-
-  public getExamResult(examId: number): Observable<{
-    checkingStatus: ExamCheckingStatus;
-    result: ExamResultStatus;
-    percentage: number;
-  }> {
-    return this.httpClient
-      .get<{
-        checkingStatus: TakeExamCheckingStatus;
-        result: TakeExamResultStatus;
-        percentage: number;
-      }>(`${this.appConfig.apiUrl}/exams/${examId}/my-result`)
-      .pipe(
-        map((examResult) => ({
-          ...examResult,
-          checkingStatus: isTakeExamCheckingStatus(examResult.checkingStatus)
-            ? examResult.checkingStatus
-            : 'Unknown',
-          result: isTakeExamResultStatus(examResult.result) ? examResult.result : 'Unknown',
-        })),
-      );
-  }
 }

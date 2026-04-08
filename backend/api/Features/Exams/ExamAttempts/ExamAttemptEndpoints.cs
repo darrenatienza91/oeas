@@ -50,10 +50,26 @@ namespace api.Features.ExamAttempts
 
       app.MapPost("/exam-attempts/{attemptId}/recording/finalize", FinalizeRecordingUpload);
 
-      
+      app.MapGet("/exams/{id}/my-result", GetResult)
+        .RequireAuthorization(policy =>
+          policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
+        );
     }
 
-  
+    static async Task<IResult> GetResult(IExamAttemptService service, [FromRoute] int id)
+    {
+      var examTaker = await service.GetResult(id);
+
+      return Results.Ok(
+        new
+        {
+          examTaker.checkingStatus,
+          examTaker.result,
+          examTaker.percentage,
+        }
+      );
+    }
+
     static async Task<IResult> FinalizeRecordingUpload(
       int attemptId,
       RecordingUploadDto dto,

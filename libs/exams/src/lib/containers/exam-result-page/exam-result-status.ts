@@ -1,7 +1,7 @@
 export const validExamResultStatuses = ['Pass', 'Failed', 'Unknown'] as const;
 
-export type TakeExamResultStatus = (typeof validExamResultStatuses)[number];
+export type ExamResultStatus = (typeof validExamResultStatuses)[number];
 
-export const isTakeExamResultStatus = (value: string): value is TakeExamResultStatus => {
-  return validExamResultStatuses.includes(value as TakeExamResultStatus);
+export const isTakeExamResultStatus = (value: string): value is ExamResultStatus => {
+  return validExamResultStatuses.includes(value as ExamResultStatus);
 };

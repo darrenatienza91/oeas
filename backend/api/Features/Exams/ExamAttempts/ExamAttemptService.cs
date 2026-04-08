@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
 using api.Exceptions;
+using api.Features.Exams.ExamAttempts;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,10 +18,46 @@ public interface IExamAttemptService
   Task<MoveNextQuestionResult> MoveNextQuestion(int attemptId);
   Task<MovePreviousQuestionResult> MovePreviousQuestion(int attemptId);
   Task<bool> HasExamAttempt(int attemptId);
+  Task<(
+    ExamAttemptCheckingStatus checkingStatus,
+    ExamAttemptResult result,
+    double percentage
+  )> GetResult(int id);
 }
 
 public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 {
+  public async Task<(
+    ExamAttemptCheckingStatus checkingStatus,
+    ExamAttemptResult result,
+    double percentage
+  )> GetResult(int id)
+  {
+    var examTakerResult = await appDbContext
+      .ExamTakers.Select(x => new
+      {
+        x.Id,
+        x.CheckingStatus,
+        Points = x.ExamTakerAnswers.Select(ans => new
+        {
+          ans.AcquiredPoints,
+          QuestionPoints = ans.Question.Points,
+        }),
+      })
+      .FirstOrDefaultAsync(x => x.Id == id);
+
+    var checkingStatus = examTakerResult?.CheckingStatus ?? 0;
+
+    double totalAcquired = examTakerResult?.Points.Sum(x => x.AcquiredPoints) ?? 0;
+    double totalPossible = examTakerResult?.Points.Sum(x => x.QuestionPoints) ?? 0;
+
+    double totalPercentage = totalPossible is 0 ? 0 : totalAcquired / totalPossible * 100;
+
+    var result = totalPercentage >= 75 ? ExamAttemptResult.Pass : ExamAttemptResult.Failed;
+
+    return (checkingStatus, result, totalPercentage);
+  }
+
   public async Task<ExamAttemptQuestionDto?> GetCurrentExamAttemptQuestion(int attemptId)
   {
     var examTaker =
@@ -144,6 +181,4 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
   {
     return await GetExamTaker(attemptId) is not null;
   }
-
-  
 }

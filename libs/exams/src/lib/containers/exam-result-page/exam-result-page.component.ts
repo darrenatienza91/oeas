@@ -3,6 +3,7 @@ import { ExamsService } from '@batstateu/shared';
 import { ActivatedRoute } from '@angular/router';
 import { TakeExamResultViewComponent } from './take-exam-result-view/take-exam-result-view.component';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { ExamResultService } from './services/exam-result/exam-result.service';
 @Component({
   imports: [TakeExamResultViewComponent],
   selector: 'batstateu-exam-result-page',
@@ -12,9 +13,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class ExamResultPageComponent implements OnInit {
   private readonly examService: ExamsService = inject(ExamsService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
-  private readonly takeExamService = inject(ExamsService);
+  private readonly examResultService = inject(ExamResultService);
   public examId = Number(this.route.snapshot.paramMap.get('examId'));
-  public readonly examResult = toSignal(this.takeExamService.getTakeExamResult(this.examId));
+  public readonly examResult = toSignal(this.examResultService.getExamResult(this.examId));
 
   percentage!: number | null;
   examTitle!: string;
