@@ -7,9 +7,11 @@ export interface User {
   id: number;
   isActive: boolean;
   sectionId: number | null;
-  role: string;
+  role: Role;
   hasUserDetail: boolean;
 }
+
+export type Role = 'Student' | 'Teacher' | 'SuperAdmin';
 
 export type EditUserDto = Omit<
   User,

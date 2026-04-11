@@ -19,7 +19,7 @@ import {
   TakerExamQuestion,
 } from '@batstateu/data-models';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ExamsService, TakeExamService, VideoRecorderFacadeService } from '@batstateu/shared';
+import { ExamsService, VideoRecorderFacadeService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
 import {
@@ -56,6 +56,7 @@ import { toTimeFormatFromSeconds } from './to-time-format-from-seconds';
 import { ExamTakerRecordingUploadService } from '../../services/exam-taker-recording-upload/exam-taker-recording-upload.service';
 import { TakeExamState } from './take-exam-state';
 import { screenRecorderSetup } from './screen-recorder-setup';
+import { TakeExamService } from '../../services/take-exam/take-exam.service';
 
 @Component({
   imports: [
@@ -321,7 +322,7 @@ export class TakeExamComponent {
         this.examinationDurationInSeconds.set(toSeconds(exam.duration, 'min'));
       }),
 
-      switchMap(() => this.takeExamService.getExamTakerByExamId(this.examId)),
+      switchMap(() => this.takeExamService.getExamAttemptByExamId(this.examId)),
 
       tap((record) => {
         if (record && !this.appConfig.fetchPreviousExam) {

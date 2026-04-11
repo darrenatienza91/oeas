@@ -51,6 +51,14 @@ namespace api.Contracts
 
   public record ExamAttempDto(int Id, string RecUrl, DateTimeOffset CreateDate);
 
+  public record ExamAttemptDetailDto(
+    int Id,
+    string RecUrl,
+    DateTimeOffset CreateDate,
+    bool IsSubmitted,
+    int ExamId
+  );
+
   public static class ExamMapper
   {
     public static ExamDto MapToExamDto(this Exam exam) =>

@@ -30,8 +30,9 @@ import { TakeExamCameraViewComponent } from './containers/take-exam/take-exam-ca
 import { NgxEditorModule } from 'ngx-editor';
 import { StatusPipe } from 'libs/shared/src/lib/pipes/status/status.pipe';
 import { TakeExamQuestionViewComponent } from './containers/take-exam/take-exam-question-view/take-exam-question-view.component';
-import { ExamResultPageComponent } from './containers/exam-result-page/exam-result-page.component';
-import { TakeExamResultViewComponent } from './containers/exam-result-page/take-exam-result-view/take-exam-result-view.component';
+import { takeExamGuard } from './containers/take-exam/guards/take-exam/take-exam.guard';
+import { ExamAttemptResultPageComponent } from './containers/take-exam/exam-attempt-result-page/exam-attempt-result-page.component';
+import { TakeExamResultViewComponent } from './containers/take-exam/exam-attempt-result-page/take-exam-result-view/take-exam-result-view.component';
 
 @NgModule({
   imports: [
@@ -57,7 +58,7 @@ import { TakeExamResultViewComponent } from './containers/exam-result-page/take-
     TakeExamScreenRecordingComponent,
     TakeExamControlComponent,
     TakeExamQuestionViewComponent,
-    ExamResultPageComponent,
+    ExamAttemptResultPageComponent,
     TakeExamResultViewComponent,
     TakeExamCameraViewComponent,
     CommonModule,
@@ -89,14 +90,14 @@ import { TakeExamResultViewComponent } from './containers/exam-result-page/take-
       //   path: ':examId/takers/:takerId/recording',
       //   component: ExamRecordingComponent,
       // },
-      { path: ':examId/take-exam', component: TakeExamComponent },
+      { path: ':examId/take-exam', component: TakeExamComponent, canActivate: [takeExamGuard] },
       { path: ':examId/questions', component: QuestionsComponent },
       {
         path: ':examId/questions/:id/edit',
         component: QuestionFormComponent,
       },
       { path: ':examId/questions/add', component: QuestionFormComponent },
-      { path: ':examId/result', component: ExamResultPageComponent },
+      { path: ':examId/result', component: ExamAttemptResultPageComponent },
     ]),
   ],
   providers: [provideHttpClient(withInterceptorsFromDi())],

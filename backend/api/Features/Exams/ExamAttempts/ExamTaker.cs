@@ -20,6 +20,7 @@ namespace api.Models
     public DateTimeOffset CreateDate { get; set; }
     public int CurrentQuestionIndex { get; set; }
     public ExamAttemptCheckingStatus CheckingStatus { get; set; }
+    public bool IsAttemptSubmitted { get; set; }
   }
 
   public class ExamTakerConfiguration : IEntityTypeConfiguration<ExamTaker>

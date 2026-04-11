@@ -60,14 +60,7 @@ namespace api.Features.ExamAttempts
     {
       var examTaker = await service.GetResult(id);
 
-      return Results.Ok(
-        new
-        {
-          examTaker.checkingStatus,
-          examTaker.result,
-          examTaker.percentage,
-        }
-      );
+      return Results.Ok(examTaker);
     }
 
     static async Task<IResult> FinalizeRecordingUpload(

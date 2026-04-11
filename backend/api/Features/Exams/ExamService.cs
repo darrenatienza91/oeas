@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Contracts;
 using api.Data;
 using api.Exceptions;
 using api.Features.Exams;
@@ -19,8 +20,8 @@ namespace api.Services
     Task<Exam?> GetExamById(int id);
     Task<IEnumerable<Exam>> GetExamsAsync(DateTimeOffset? startOn, string? criteria);
     Task<ExamTaker?> GetAttempt(int examId);
+    Task<ExamAttemptDetailDto?> GetAttemptDetails(int examId);
     Task<ExamTaker?> AddAttempt(ExamTaker examTaker);
-   
   }
 
   public class ExamService(AppDbContext appDbContext) : IExamService
@@ -86,6 +87,20 @@ namespace api.Services
       await appDbContext.SaveChangesAsync();
 
       return examTaker;
+    }
+
+    public async Task<ExamAttemptDetailDto?> GetAttemptDetails(int examId)
+    {
+      return await appDbContext
+        .ExamTakers.Where(x => x.ExamId == examId)
+        .Select(x => new ExamAttemptDetailDto(
+          Id: x.Id,
+          RecUrl: x.RecUrl,
+          CreateDate: x.CreateDate,
+          IsSubmitted: x.IsAttemptSubmitted,
+          ExamId: x.ExamId
+        ))
+        .FirstOrDefaultAsync();
     }
   }
 }

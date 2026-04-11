@@ -54,9 +54,9 @@ namespace api.Endpoints
 
     static async Task<IResult> GetExamAttempt(IExamService service, [FromRoute] int id)
     {
-      var examTaker = await service.GetAttempt(id);
+      var examTaker = await service.GetAttemptDetails(id);
 
-      return Results.Ok(ExamMapper.MapToExamTakerDto(examTaker));
+      return Results.Ok(examTaker);
     }
 
     static async Task<IResult> GetExams(

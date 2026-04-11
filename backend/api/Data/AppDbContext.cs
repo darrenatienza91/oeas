@@ -43,6 +43,17 @@ namespace api.Data
         );
 
       modelBuilder
+        .Entity<ExamTaker>()
+        .HasQueryFilter(x =>
+          !currentUser.IsAuthenticated
+          || (
+            currentUser.Role == Roles.Student
+            && x.Exam.SectionId == currentUser.SectionId
+            && x.Exam.IsActive
+          )
+        );
+
+      modelBuilder
         .Entity<Question>()
         .HasQueryFilter(x =>
           !currentUser.IsAuthenticated

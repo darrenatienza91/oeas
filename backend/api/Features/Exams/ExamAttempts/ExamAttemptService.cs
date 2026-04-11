@@ -18,44 +18,64 @@ public interface IExamAttemptService
   Task<MoveNextQuestionResult> MoveNextQuestion(int attemptId);
   Task<MovePreviousQuestionResult> MovePreviousQuestion(int attemptId);
   Task<bool> HasExamAttempt(int attemptId);
-  Task<(
-    ExamAttemptCheckingStatus checkingStatus,
-    ExamAttemptResult result,
-    double percentage
-  )> GetResult(int id);
+  Task<ExamAttemptResultDto> GetResult(int id);
 }
 
 public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 {
-  public async Task<(
-    ExamAttemptCheckingStatus checkingStatus,
-    ExamAttemptResult result,
-    double percentage
-  )> GetResult(int id)
+  public async Task<ExamAttemptResultDto> GetResult(int id)
   {
-    var examTakerResult = await appDbContext
-      .ExamTakers.Select(x => new
-      {
-        x.Id,
-        x.CheckingStatus,
-        Points = x.ExamTakerAnswers.Select(ans => new
+    var examTakerResult =
+      await appDbContext
+        .ExamTakers.Select(x => new
         {
-          ans.AcquiredPoints,
-          QuestionPoints = ans.Question.Points,
-        }),
-      })
-      .FirstOrDefaultAsync(x => x.Id == id);
+          ExamId = x.ExamId,
+          x.CheckingStatus,
+          Points = x.ExamTakerAnswers.Select(ans => new
+          {
+            ans.AcquiredPoints,
+            QuestionPoints = ans.Question.Points,
+          }),
+        })
+        .FirstOrDefaultAsync(x => x.ExamId == id)
+      ?? throw new NotFoundException($"Exam Taker with exam id {id} not found");
 
     var checkingStatus = examTakerResult?.CheckingStatus ?? 0;
 
-    double totalAcquired = examTakerResult?.Points.Sum(x => x.AcquiredPoints) ?? 0;
-    double totalPossible = examTakerResult?.Points.Sum(x => x.QuestionPoints) ?? 0;
+    if (checkingStatus == ExamAttemptCheckingStatus.NotYetChecked)
+    {
+      return new ExamAttemptResultDto(
+        CheckingStatus: checkingStatus,
+        Result: ExamAttemptResult.Waiting,
+        Percentage: 0,
+        TotalPossible: 0,
+        TotalAcquired: 0
+      );
+    }
 
-    double totalPercentage = totalPossible is 0 ? 0 : totalAcquired / totalPossible * 100;
+    double totalPercentage = 0;
 
-    var result = totalPercentage >= 75 ? ExamAttemptResult.Pass : ExamAttemptResult.Failed;
+    var result = ExamAttemptResult.Waiting;
 
-    return (checkingStatus, result, totalPercentage);
+    double totalAcquired = 0;
+    double totalPossible = 0;
+
+    if (examTakerResult?.CheckingStatus == ExamAttemptCheckingStatus.Done)
+    {
+      totalAcquired = examTakerResult?.Points.Sum(x => x.AcquiredPoints) ?? 0;
+      totalPossible = examTakerResult?.Points.Sum(x => x.QuestionPoints) ?? 0;
+
+      totalPercentage = totalPossible is 0 ? 0 : totalAcquired / totalPossible * 100;
+      result = totalPercentage >= 75 ? ExamAttemptResult.Pass : ExamAttemptResult.Failed;
+    }
+
+    return new ExamAttemptResultDto(
+      CheckingStatus: checkingStatus,
+      Result: result,
+      Percentage: totalPercentage,
+      TotalPossible: totalPossible,
+      TotalAcquired: totalAcquired
+    );
   }
 
   public async Task<ExamAttemptQuestionDto?> GetCurrentExamAttemptQuestion(int attemptId)

@@ -1,0 +1,13 @@
+<nz-result [nzStatus]="status()" [nzTitle]="'Examination Result'" [nzSubTitle]="subTitle()">
+  @if (this.examAttemptResult()?.percentage) {
+    <div nz-result-content style="text-align: center">
+      <h1 nz-title style="margin-top: 0; margin-bottom: 0"
+        >{{ this.examAttemptResult()?.percentage }} %</h1
+      >
+      <p nz-title style="margin-top: 0; margin-bottom: 0">{{ overAllPoints() }}</p>
+    </div>
+  }
+  <div nz-result-extra>
+    <a nz-button routerLink="../..">Back</a>
+  </div>
+</nz-result>
