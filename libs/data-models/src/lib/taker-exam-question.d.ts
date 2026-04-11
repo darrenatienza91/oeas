@@ -1,4 +1,5 @@
-export interface TakerExamQuestion{
-    id :number;
-    question: string;
+export interface TakerExamQuestion {
+  id: number;
+  questionText: string;
+  examTakerAnswerText: string;
 }

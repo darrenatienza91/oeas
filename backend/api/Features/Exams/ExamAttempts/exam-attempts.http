@@ -1,0 +1,79 @@
+### GetExamAttempt
+# @name GetExamAttemp
+# @import ../auth/auth.http
+# @ref login
+GET {{HOST}}/api/exam-attempts/15/questions/10 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+### GetExamAttemptCurrentQuestion
+# @name GetExamAttemp
+# @import ../auth/auth.http
+# @ref login
+GET {{HOST}}/api/exam-attempts/19/current-question HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+### SetAnswer
+# @name SetAnswer
+# @import ../auth/auth.http
+# @ref login
+PUT {{HOST}}/api/exam-attempts/14/questions/1/answer HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+    "AnswerText": "<p>My Answer2</p>"
+}
+
+### MoveNextQuestion
+# @name MoveNextQuestion
+# @import ../auth/auth.http
+# @ref login
+POST {{HOST}}/api/exam-attempts/28/next-question HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+### MovePreviousQuestion
+# @name MovePreviousQuestion
+# @import ../auth/auth.http
+# @ref login
+POST {{HOST}}/api/exam-attempts/28/previous-question HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+### InitializedExamAttempUploadRecording
+# @name InitializedExamAttempUploadRecording
+# @import ../auth/auth.http
+# @ref login
+POST {{HOST}}/api/exam-attempts/52/recording/init HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+
+### FinalizedUploadRecording
+# @name FinalizedUploadRecording
+# @import ../auth/auth.http
+# @ref login
+POST {{HOST}}/api/exam-attempts/52/recording/finalize HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+    "sessionId": "attempt-52",
+    "fileName": "52-recording.webm",
+    "totalChunks":3
+}
+
+### ExamResult
+# @name ExamResult
+# @import ../../auth/auth.http
+# @ref login
+GET {{HOST}}/api/exams/10/my-result HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json

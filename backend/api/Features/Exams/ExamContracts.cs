@@ -25,7 +25,8 @@ namespace api.Contracts
     string Subject,
     string Instructions,
     int SectionId,
-    string DepartmentName
+    string DepartmentName,
+    bool hasQuestions
   );
 
   public record AddExamDto(
@@ -48,9 +49,19 @@ namespace api.Contracts
     bool? IsActive
   ) : ExamWriteDto(Name, Subject, StartOn, Duration, SectionId, Instructions, IsActive);
 
+  public record ExamAttempDto(int Id, string RecUrl, DateTimeOffset CreateDate);
+
+  public record ExamAttemptDetailDto(
+    int Id,
+    string RecUrl,
+    DateTimeOffset CreateDate,
+    bool IsSubmitted,
+    int ExamId
+  );
+
   public static class ExamMapper
   {
-    public static ExamDto MapToExamDto(Exam exam) =>
+    public static ExamDto MapToExamDto(this Exam exam) =>
       new(
         exam.Id,
         exam.Name,
@@ -60,7 +71,8 @@ namespace api.Contracts
         exam.Subject,
         exam.Instructions,
         exam.SectionId,
-        exam.Section.Department.Name
+        exam.Section.Department.Name,
+        exam.HasQuestions
       );
 
     public static Exam MapToExam(ExamWriteDto dto, int userDetailId)
@@ -75,7 +87,6 @@ namespace api.Contracts
         Instructions = dto.Instructions,
       };
 
-      exam.SetUserDetailId(userDetailId);
       exam.Activate(true);
       return exam;
     }
@@ -89,6 +100,16 @@ namespace api.Contracts
       exam.Subject = dto.Subject ?? exam.Subject;
       exam.Instructions = dto.Instructions ?? exam.Instructions;
       exam.Activate(dto.IsActive ?? exam.IsActive);
+    }
+
+    internal static ExamAttempDto? MapToExamTakerDto(ExamTaker? examTaker)
+    {
+      if (examTaker is not null)
+      {
+        return new(examTaker.Id, examTaker.RecUrl, examTaker.CreateDate);
+      }
+
+      return null;
     }
   }
 }

@@ -1,54 +1,48 @@
 <div class="m-3">
   <nz-page-header
     (nzBack)="onBack()"
-    [nzBackIcon]="
-      takeExamState === TakeExamStateEnum.instructionView ? '' : null
-    "
-    nzTitle="{{ (examDetail$ | async)?.name }}"
+    [nzBackIcon]="takeExamView() === TakeExamViewEnum.instructionView ? '' : null"
+    nzTitle="{{ examDetail()?.name }}"
     ><nz-page-header-extra>
-      <!-- <cd-timer
-        style="font-size: 24px"
-        #cdTimer
-        [autoStart]="false"
-        format="hms"
-        [countdown]="true"
-        [startTime]="startCdCount"
-        (onComplete)="onCompleteTimer()"
-      ></cd-timer> -->
+      <div class="recording-timer-container">
+        @if (takeExamView() === TakeExamViewEnum.takeExamQuestionView) {
+          @if (this.isScreenRecording()) {
+            <p class="recording">Recording</p>
+          }
+          <p>{{ examinationDurationRemaining() }}</p>
+        }
+      </div>
     </nz-page-header-extra></nz-page-header
   >
   <batstateu-exam-instruction-view
-    [examDetail]="examDetail"
-    [hidden]="takeExamState !== TakeExamStateEnum.instructionView"
+    [examDetail]="examDetail()"
+    [hidden]="takeExamView() !== TakeExamViewEnum.instructionView"
   ></batstateu-exam-instruction-view>
 
-  <div *ngIf="takeExamState === TakeExamStateEnum.takeExamQuestionView">
+  @if (takeExamView() === TakeExamViewEnum.takeExamQuestionView) {
     <batstateu-take-exam-question-view
-      [videoVisible$]="videoVisible$"
-      [currentQuestion]="currentQuestion"
-      [question]="question"
-      [currentQuestion$]="currentQuestion$"
+      [videoVisible]="videoVisible()"
+      [currentQuestion]="currentQuestion()"
       (save)="onSubmitAnswer($event)"
-      [tabActive$]="tabActive$"
     ></batstateu-take-exam-question-view>
-  </div>
+
+    @if (appConfig.allowRecording) {
+      <batstateu-take-exam-screen-recording
+        #takeExamScreenRecorder
+        (startExam)="onStartExam()"
+      ></batstateu-take-exam-screen-recording>
+    }
+  }
 
   <batstateu-take-exam-control
     [takeExamControlState]="takeExamControlState"
-    [takeExamState]="takeExamState"
+    [takeExamState]="takeExamView()"
     [isStartExam]="isStartExam"
     [enableNextButton]="enableNextButton"
     [enablePreviousButton]="enablePreviousButton"
     (startRecord)="onStartRecord()"
-    (nextQuestion)="onNexQuestion()"
-    (prevQuestion)="onPrevQuestion()"
+    (nextQuestion)="onNextQuestion()"
+    (prevQuestion)="onPreviousQuestion()"
     (finishExam)="onFinishExamination()"
   ></batstateu-take-exam-control>
-
-  <batstateu-take-exam-recording
-    [limit$]="limit$"
-    (startExam)="onStartExam()"
-    (uploadRecord)="onUploadRecord($event)"
-    [tabActive$]="tabActive$"
-  ></batstateu-take-exam-recording>
 </div>

@@ -44,6 +44,11 @@ import { LayoutComponent } from 'libs/layout/src/lib/containers/layout/layout.co
           loadChildren: () => import('@batstateu/account').then((module) => module.AccountModule),
           canActivate: [AuthGuard],
         },
+        {
+          path: 'playground',
+          loadComponent: () => import('@batstateu/playground').then((module) => module.Playground),
+          canActivate: [AuthGuard],
+        },
       ],
       {
         initialNavigation: 'enabledBlocking',

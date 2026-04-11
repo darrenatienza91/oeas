@@ -1,5 +1,7 @@
-export interface TakerExamDetail{
-    userDetailId: number,
-    examId: number,
-    recUrl: string
+export interface TakerExamDetail {
+  id: number;
+  userDetailId: number;
+  examId: number;
+  recUrl: string;
+  isSubmitted: boolean;
 }

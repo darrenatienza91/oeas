@@ -1,4 +1,4 @@
-export enum ExamState {
-    instructionView,
-    takeExamQuestionView,
+export enum ExamView {
+  instructionView,
+  takeExamQuestionView,
 }

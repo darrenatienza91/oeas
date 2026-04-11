@@ -1,5 +1,12 @@
-export const environment = {
+import { AppConfig } from '@batstateu/app-config';
+
+export const environment: AppConfig = {
   production: true,
-  API_URL: 'http://oeas.online/api',
-  UPLOAD_URL: 'http://oeas.online/api',
+  apiUrl: 'http://oeas.online/api',
+  uploadUrl: 'http://oeas.online/api',
+  allowRecording: false,
+  fetchPreviousExam: false,
+  inactiveTimeInSeconds: 0,
+  recordingToPauseTimeInSeconds: 10,
+  allowInactiveTimePenalty: true,
 };

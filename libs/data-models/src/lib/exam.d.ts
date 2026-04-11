@@ -9,4 +9,5 @@ export interface Exam {
   departmentName: string;
   isActive: boolean;
   instructions: string;
+  hasQuestions: boolean;
 }

@@ -1,4 +1,4 @@
-import { User } from './user.model';
+import { Role, User } from './user.model';
 
 export interface UserDetail extends User {
   code: string;
@@ -15,7 +15,7 @@ export interface UserDetail extends User {
   contactNumberPrefix: string;
   sectionName: string;
   departmentName: string;
-  role: string;
+  role: Role;
   userTypeId: number;
   isResetPassword: boolean;
 }

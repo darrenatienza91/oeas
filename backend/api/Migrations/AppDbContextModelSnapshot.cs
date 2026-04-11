@@ -107,10 +107,19 @@ namespace api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<int>("CheckingStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("CurrentQuestionIndex")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("ExamId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsAttemptSubmitted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("RecUrl")
@@ -135,6 +144,9 @@ namespace api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("AcquiredPoints")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("AnswerId")
                         .HasColumnType("INTEGER");
 
@@ -142,7 +154,7 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ExamTakerId")

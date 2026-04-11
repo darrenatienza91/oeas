@@ -1,17 +1,22 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 using api.Auth;
 using api.Data;
 using api.Endpoints;
 using api.Exceptions;
 using api.Features.Departments;
+using api.Features.ExamAttempts;
+using api.Features.Exams;
 using api.Features.Users;
 using api.Models;
 using api.Services;
+using api.Shared;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +27,11 @@ var builder = WebApplication.CreateBuilder(args);
 // JWT config values
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+  options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 // Add Authentication
 builder
@@ -53,6 +63,11 @@ builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+builder.Services.Configure<FormOptions>(options =>
+{
+  options.MultipartBodyLengthLimit = long.MaxValue;
+});
+
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -63,6 +78,10 @@ builder.Services.AddScoped<ISectionService, SectionService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IExamAttemptService, ExamAttemptService>();
+builder.Services.AddScoped<IChunkedUploadService, ChunkedUploadService>();
+builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
+builder.Services.AddScoped<IExamAttemptRecordingService, ExamAttemptRecordingService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
   options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -83,83 +102,7 @@ builder.Services.AddCors(options =>
 });
 var app = builder.Build();
 
-app.UseExceptionHandler(errorApp =>
-{
-  errorApp.Run(async context =>
-  {
-    var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
-
-    ProblemDetails problem;
-
-    switch (exception)
-    {
-      case DomainException domainEx:
-        problem = new ProblemDetails
-        {
-          Title = "Domain validation failed",
-          Status = StatusCodes.Status400BadRequest,
-          Detail = domainEx.Message,
-          Instance = context.Request.Path,
-        };
-        context.Response.StatusCode = StatusCodes.Status400BadRequest;
-        break;
-
-      case ValidationException validationEx: // FluentValidation
-        var errors = validationEx
-          .Errors.GroupBy(e => e.PropertyName)
-          .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
-
-        problem = new ProblemDetails
-        {
-          Title = "Validation failed",
-          Status = StatusCodes.Status400BadRequest,
-          Detail = "One or more validation errors occurred.",
-          Instance = context.Request.Path,
-        };
-
-        problem.Extensions["errors"] = errors;
-
-        context.Response.StatusCode = StatusCodes.Status400BadRequest;
-        break;
-
-      case NotFoundException notFoundEx:
-        problem = new ProblemDetails
-        {
-          Title = "Resource not found",
-          Status = StatusCodes.Status404NotFound,
-          Detail = notFoundEx.Message,
-          Instance = context.Request.Path,
-        };
-        context.Response.StatusCode = StatusCodes.Status404NotFound;
-        break;
-
-      case InvalidPasswordException invalidPasswordEx:
-        problem = new ProblemDetails
-        {
-          Title = "Invalid Password",
-          Status = StatusCodes.Status400BadRequest,
-          Detail = invalidPasswordEx.Message,
-          Instance = context.Request.Path,
-        };
-        context.Response.StatusCode = StatusCodes.Status400BadRequest;
-        break;
-
-      default:
-        problem = new ProblemDetails
-        {
-          Title = "Internal Server Error",
-          Status = StatusCodes.Status500InternalServerError,
-          Detail = "An unexpected error occurred.",
-          Instance = context.Request.Path,
-        };
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        break;
-    }
-
-    context.Response.ContentType = "application/problem+json";
-    await context.Response.WriteAsJsonAsync(problem);
-  });
-});
+app.UseExceptionHandler(ExceptionHandler.Handle);
 
 // ⚠️ Order matters
 app.UseCors("AllowFrontend");
@@ -170,6 +113,7 @@ var api = app.MapGroup("/api");
 api.MapAuthEndpoints();
 api.MapUserEndpoints();
 api.MapExamEndpoints();
+api.MapExamAttemptEndpoints();
 api.MapQuestionEndpoints();
 api.MapSectionEndpoints();
 api.MapDepartmentEndpoints();
@@ -182,4 +126,4 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.Run();
+await app.RunAsync();
