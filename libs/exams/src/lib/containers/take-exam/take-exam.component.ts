@@ -377,7 +377,7 @@ export class TakeExamComponent {
   }
 
   private startExamAndLoadQuestion(): void {
-    if (this.appConfig.fetchPreviousExam) {
+    if (this.appConfig.fetchPreviousExam && this.examTakerId) {
       this.loadCurrentQuestion(this.examTakerId)
         .pipe(
           tap((question) => {
@@ -415,6 +415,7 @@ export class TakeExamComponent {
           }
 
           this.currentQuestion.set(question);
+          this.onStartExam();
         }),
         catchError((err) => {
           if (err.message === 'NO_CURRENT_QUESTION') {
@@ -500,11 +501,18 @@ export class TakeExamComponent {
   }
 
   public onFinishExamination(): void {
-    this.takeExamState.set(TakeExamState.Finished);
-    this.recordingToPauseCountdownTimer.pause();
-    this.inActiveTabCountdownTimer.pause();
-    this.examinationDurationCountdownTimer.pause();
-    this.screenRecorderFacadeService.stop();
+    this.takeExamService
+      .finishExam(this.examTakerId)
+      .pipe(
+        tap(() => {
+          this.takeExamState.set(TakeExamState.Finished);
+          this.recordingToPauseCountdownTimer.pause();
+          this.inActiveTabCountdownTimer.pause();
+          this.examinationDurationCountdownTimer.pause();
+          this.screenRecorderFacadeService.stop();
+        }),
+      )
+      .subscribe();
   }
 
   private goToResults() {

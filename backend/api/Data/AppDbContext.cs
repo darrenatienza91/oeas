@@ -48,6 +48,7 @@ namespace api.Data
           !currentUser.IsAuthenticated
           || (
             currentUser.Role == Roles.Student
+            && x.UserDetailId == currentUser.UserDetailId
             && x.Exam.SectionId == currentUser.SectionId
             && x.Exam.IsActive
           )
@@ -80,7 +81,7 @@ namespace api.Data
 
       foreach (var entry in ChangeTracker.Entries<IOptionalUserOwned>())
       {
-        if (entry.State == EntityState.Added && entry.Entity.UserDetailId != null)
+        if (entry.State == EntityState.Added)
         {
           entry.Entity.UserDetailId = currentUser.UserDetailId;
         }

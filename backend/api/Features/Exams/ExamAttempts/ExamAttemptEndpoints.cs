@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Exceptions;
 using api.Features.Exams;
+using api.Helpers;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,11 @@ namespace api.Features.ExamAttempts
   {
     public static void MapExamAttemptEndpoints(this IEndpointRouteBuilder app)
     {
+      app.MapPatch("/exam-attempts/{id}", Edit)
+        .RequireAuthorization(policy =>
+          policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
+        );
+
       app.MapGet("/exam-attempts/{attemptId}/questions/{questionId}", GetExamAttemptQuestion)
         .RequireAuthorization(policy =>
           policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
@@ -54,6 +60,24 @@ namespace api.Features.ExamAttempts
         .RequireAuthorization(policy =>
           policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
         );
+    }
+
+    static async Task<IResult> Edit(
+      HttpContext context,
+      IExamAttemptService service,
+      [FromRoute] int id
+    )
+    {
+      var patch = await PatchRequestReader.ReadAsync<ExamTakerPatchDto>(context.Request);
+
+      if (patch is null)
+      {
+        return Results.BadRequest();
+      }
+
+      await service.EditAsync(id, patch.Model, patch.ModifiedProperties);
+
+      return Results.NoContent();
     }
 
     static async Task<IResult> GetResult(IExamAttemptService service, [FromRoute] int id)

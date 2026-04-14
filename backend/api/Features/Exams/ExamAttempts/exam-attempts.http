@@ -77,3 +77,15 @@ GET {{HOST}}/api/exams/10/my-result HTTP/1.1
 Authorization: Bearer {{login.token}}
 Content-Type: application/json
 Accept: application/json
+
+### ExamResult
+# @name ExamResult
+# @import ../../auth/auth.http
+# @ref login
+PATCH {{HOST}}/api/exam-attempts/52 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+"isAttemptSubmitted": false
+}
