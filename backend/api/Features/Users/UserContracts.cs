@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Helpers;
 using api.Models;
 
 namespace api.Features.Users
@@ -126,12 +127,13 @@ namespace api.Features.Users
     {
       user.UserDetail ??= new UserDetail();
 
-      if (modified.Contains(nameof(dto.DepartmentId)))
-      {
-        user.UserDetail.DepartmentId = dto.DepartmentId;
-      }
-      if (modified.Contains(nameof(dto.SectionId)))
-        user.UserDetail.SectionId = dto.SectionId;
+      new PatchBuilder<PatchUserDto>(dto, modified)
+        .Map(
+          nameof(dto.DepartmentId),
+          x => x.DepartmentId,
+          value => user.UserDetail.DepartmentId = value
+        )
+        .Map(nameof(dto.SectionId), x => x.SectionId, value => user.UserDetail.SectionId = value);
     }
   }
 }

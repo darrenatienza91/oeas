@@ -90,9 +90,7 @@ namespace api.Endpoints
 
       await service.AddExam(exam);
 
-      var response = ExamMapper.MapToExamDto(exam);
-
-      return Results.Created($"{http.Request.Path}/{exam.Id}", response);
+      return Results.Created($"{http.Request.Path}/{exam.Id}", exam);
     }
 
     static async Task<IResult> AddExamAttempt(IExamService service, HttpContext http, int id)

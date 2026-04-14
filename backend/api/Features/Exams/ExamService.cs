@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Auth;
 using api.Contracts;
 using api.Data;
 using api.Exceptions;
@@ -14,7 +15,7 @@ namespace api.Services
 {
   public interface IExamService
   {
-    Task<Exam> AddExam(Exam exam);
+    Task AddExam(Exam exam);
     Task RemoveExam(Exam exam);
     Task<Exam> EditExam(Exam exam);
     Task<Exam?> GetExamById(int id);
@@ -28,13 +29,11 @@ namespace api.Services
   {
     private readonly AppDbContext appDbContext = appDbContext;
 
-    public async Task<Exam> AddExam(Exam exam)
+    public async Task AddExam(Exam exam)
     {
       await appDbContext.Exams.AddAsync(exam);
 
       await appDbContext.SaveChangesAsync();
-
-      return exam;
     }
 
     public async Task RemoveExam(Exam exam)

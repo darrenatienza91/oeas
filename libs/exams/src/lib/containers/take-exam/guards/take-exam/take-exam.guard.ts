@@ -18,11 +18,7 @@ export const takeExamGuard: CanActivateFn = (route, state) => {
   return takeExamService.getExamAttemptByExamId(id).pipe(
     take(1),
     map((detail) => {
-      if (!detail) {
-        return router.createUrlTree([`dashboard`]);
-      }
-
-      if (detail.isSubmitted) {
+      if (detail?.isSubmitted) {
         return router.createUrlTree([`exams/${id}/result`]);
       }
 

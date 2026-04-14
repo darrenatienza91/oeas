@@ -13,8 +13,8 @@ import { map, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class TakeExamService {
-  private httpClient: HttpClient = inject(HttpClient);
-  private appConfig: AppConfig = inject(APP_CONFIG);
+  private readonly httpClient: HttpClient = inject(HttpClient);
+  private readonly appConfig: AppConfig = inject(APP_CONFIG);
 
   public movePreviousQuestion(takerExamId: number): Observable<{ isFirst: boolean }> {
     return this.httpClient.post<{ isFirst: boolean }>(
@@ -76,5 +76,11 @@ export class TakeExamService {
       `${this.appConfig.apiUrl}/records/takerExams/${takerExamId}`,
       val,
     );
+  }
+
+  public finishExam(examAttemptId: number): Observable<void> {
+    return this.httpClient.patch<void>(`${this.appConfig.apiUrl}/exam-attempts/${examAttemptId}`, {
+      isAttemptSubmitted: true,
+    });
   }
 }

@@ -1,7 +1,6 @@
 ### Login
 # @name login
 POST {{HOST}}/api/auth/login HTTP/1.1
-Authorization: Bearer 123
 Content-Type: application/json
 Accept: application/json
 
@@ -10,10 +9,15 @@ Accept: application/json
 //   "password": "admin"
 // }
 
-{
-  "username": "s1",
-  "password": "s1"
-}
+ {
+   "username": "s1",
+   "password": "s1"
+ }
+
+// {
+  // "username": "s2",
+  // "password": "s2"
+// }
 
 ### Register
 {{

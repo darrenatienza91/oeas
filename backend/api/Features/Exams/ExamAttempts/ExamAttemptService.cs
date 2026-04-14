@@ -19,6 +19,7 @@ public interface IExamAttemptService
   Task<MovePreviousQuestionResult> MovePreviousQuestion(int attemptId);
   Task<bool> HasExamAttempt(int attemptId);
   Task<ExamAttemptResultDto> GetResult(int id);
+  Task EditAsync(int id, ExamTakerPatchDto dto, HashSet<string> modified);
 }
 
 public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
@@ -200,5 +201,18 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
   public async Task<bool> HasExamAttempt(int attemptId)
   {
     return await GetExamTaker(attemptId) is not null;
+  }
+
+  public async Task EditAsync(int id, ExamTakerPatchDto dto, HashSet<string> modified)
+  {
+    var attempt =
+      await appDbContext.ExamTakers.FirstOrDefaultAsync(x => x.Id == id)
+      ?? throw new NotFoundException($"Attemp with id {id}  was not found.");
+
+    ExamAttemptMapper.ApplyPatch(attempt, dto, modified);
+
+    appDbContext.ExamTakers.Update(attempt);
+
+    await appDbContext.SaveChangesAsync();
   }
 }
