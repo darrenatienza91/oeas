@@ -1,4 +1,4 @@
-export interface ExamTakerList {
+export interface ExamAttemptList {
   id: number;
   userDetailId: number;
   examId: number;

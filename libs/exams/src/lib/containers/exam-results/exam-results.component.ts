@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ExamTakerResultList } from '@batstateu/data-models';
 import { ExamsService } from '@batstateu/shared';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { ExamResultListComponent } from '../../components/exam-result-list/exam-result-list.component';
+import { ExamAttemptResultList } from '@batstateu/data-models';
 
 @Component({
   imports: [ExamResultListComponent],
@@ -14,7 +14,7 @@ import { ExamResultListComponent } from '../../components/exam-result-list/exam-
 export class ExamResultsComponent implements OnInit {
   examId!: number;
   userDetailId!: number;
-  examTakerResultList!: ExamTakerResultList[];
+  examAttemptResultList!: ExamAttemptResultList[];
   criteria = '';
   private searchSubject$ = new BehaviorSubject<string>('');
   onSearch(criteria: string) {
@@ -23,27 +23,26 @@ export class ExamResultsComponent implements OnInit {
   }
   getAll(criteria: string) {
     this.examService
-      .getAllTakerAnswersByCriteria(
-        this.userDetailId,
-        this.examId,
-        criteria
-      )
+      .getAllAttemptAnswersByCriteria(this.userDetailId, this.examId, criteria)
       .subscribe((val) => {
-        this.examTakerResultList = val;
+        this.examAttemptResultList = val;
       });
   }
-  constructor(private examService: ExamsService, private route: ActivatedRoute) { }
+  constructor(
+    private examService: ExamsService,
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
     this.examId = Number(this.route.snapshot.paramMap.get('examId'));
-    this.userDetailId = Number(this.route.snapshot.paramMap.get('takerId'));
+    this.userDetailId = Number(this.route.snapshot.paramMap.get('attemptId'));
     this.getAll('');
     this.searchSubject$
       .asObservable()
       .pipe(
         map((val) => val.trim()),
         debounceTime(1000),
-        distinctUntilChanged()
+        distinctUntilChanged(),
       )
       .subscribe((val) => {
         this.getAll(val);

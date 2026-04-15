@@ -7,7 +7,6 @@ import {
   EventEmitter,
   inject,
   input,
-  Input,
   Output,
 } from '@angular/core';
 import {
@@ -17,10 +16,9 @@ import {
   UntypedFormControl,
   Validators,
 } from '@angular/forms';
-import { TakerExamQuestion } from '@batstateu/data-models';
+import { ExamAttemptQuestion } from '@batstateu/data-models';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
-import { Observable } from 'rxjs';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { TakeExamCameraViewComponent } from '../take-exam-camera-view/take-exam-camera-view.component';
 
@@ -43,22 +41,28 @@ export class TakeExamQuestionViewComponent {
   private readonly modal: NzModalService = inject(NzModalService);
   private readonly location: Location = inject(Location);
 
-  public currentQuestion = input<TakerExamQuestion | null>(null);
+  public currentQuestion = input<ExamAttemptQuestion | null>(null);
   @Output() save = new EventEmitter();
   public videoVisible = input(true);
   limit = 60;
+  public editor!: Editor;
 
   public validateForm = this.fb.group({
-    answer: ['', [Validators.required]],
+    answer: ['x', [Validators.required]],
   });
+
+  constructor() {
+    this.editor = new Editor();
+  }
 
   private readonly _ = effect(() => {
     if (this.currentQuestion()) {
-      this.validateForm.patchValue({ answer: this.currentQuestion()?.examTakerAnswerText });
+      this.validateForm.patchValue({
+        answer: this.currentQuestion()?.examAttemptAnswerText || '<p></p>',
+      });
     }
   });
 
-  public editor: Editor = new Editor();
   public questionSpan = computed(() => (this.videoVisible() ? 16 : 24));
   toolbar: Toolbar = [
     // default value

@@ -54,9 +54,9 @@ namespace api.Endpoints
 
     static async Task<IResult> GetExamAttempt(IExamService service, [FromRoute] int id)
     {
-      var examTaker = await service.GetAttemptDetails(id);
+      var examAttempt = await service.GetAttemptDetails(id);
 
-      return Results.Ok(examTaker);
+      return Results.Ok(examAttempt);
     }
 
     static async Task<IResult> GetExams(
@@ -95,9 +95,9 @@ namespace api.Endpoints
 
     static async Task<IResult> AddExamAttempt(IExamService service, HttpContext http, int id)
     {
-      var examTaker = await service.AddAttempt(new() { ExamId = id, RecUrl = "" });
+      var examAttempt = await service.AddAttempt(new() { ExamId = id, RecUrl = "" });
 
-      return Results.Created($"{http.Request.Path}/{id}/my-attempt", examTaker);
+      return Results.Created($"{http.Request.Path}/{id}/my-attempt", examAttempt);
     }
 
     static async Task<IResult> Edit(

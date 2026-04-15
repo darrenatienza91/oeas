@@ -13,7 +13,7 @@ namespace api.Models
     public bool IsCorrect { get; set; }
     public int QuestionId { get; set; }
     public Question Question { get; set; } = null!;
-    public ICollection<ExamTakerAnswer> ExamTakerAnswers { get; set; } = [];
+    public ICollection<ExamAttemptAnswer> ExamAttemptAnswers { get; set; } = [];
   }
 
   public class AnswerConfiguration : IEntityTypeConfiguration<Answer>

@@ -2,7 +2,7 @@
   <nz-page-header nzTitle="Results">
     <nz-breadcrumb nz-page-header-breadcrumb>
       <nz-breadcrumb-item>Exams</nz-breadcrumb-item>
-      <nz-breadcrumb-item>Takers</nz-breadcrumb-item>
+      <nz-breadcrumb-item>Attempts</nz-breadcrumb-item>
       <nz-breadcrumb-item>Results</nz-breadcrumb-item>
     </nz-breadcrumb>
     <nz-page-header-extra>
@@ -21,7 +21,7 @@
     </nz-page-header-extra>
   </nz-page-header>
 
-  <nz-table #basicTable [nzData]="examTakerResultList" nzBordered>
+  <nz-table #basicTable [nzData]="examAttemptResultList" nzBordered>
     <thead>
       <tr>
         <th>Question</th>
@@ -42,19 +42,12 @@
             nzTooltipTitle="Edit"
             routerLink="{{ data?.id }}"
           >
-            <i
-              nz-icon
-              [nzType]="'edit'"
-              [nzTheme]="'twotone'"
-              [nzTwotoneColor]="'#faad14'"
-            ></i>
+            <i nz-icon [nzType]="'edit'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#faad14'"></i>
           </a>
           <nz-dropdown-menu #menu="nzDropdownMenu">
             <ul nz-menu>
               <li nz-menu-item>
-                <a style="color: #8c8c8c" routerLink="{{ data?.id }}/takers"
-                  >View Takers</a
-                >
+                <a style="color: #8c8c8c" routerLink="{{ data?.id }}/attempts">View Attempts</a>
               </li>
             </ul>
           </nz-dropdown-menu>

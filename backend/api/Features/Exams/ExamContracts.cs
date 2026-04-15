@@ -102,11 +102,11 @@ namespace api.Contracts
       exam.Activate(dto.IsActive ?? exam.IsActive);
     }
 
-    internal static ExamAttempDto? MapToExamTakerDto(ExamTaker? examTaker)
+    internal static ExamAttempDto? MapToExamAttemptDto(ExamAttempt? examAttempt)
     {
-      if (examTaker is not null)
+      if (examAttempt is not null)
       {
-        return new(examTaker.Id, examTaker.RecUrl, examTaker.CreateDate);
+        return new(examAttempt.Id, examAttempt.RecUrl, examAttempt.CreateDate);
       }
 
       return null;

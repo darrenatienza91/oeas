@@ -7,9 +7,9 @@ import {
   ExamAnswer,
   ExamCard,
   ExamRecordViewModel,
-  ExamTakerList,
-  ExamTakerResultList,
+  ExamAttemptResultList,
   ResponseWrapper,
+  ExamAttemptList,
 } from '@batstateu/data-models';
 import { map, Observable } from 'rxjs';
 
@@ -30,11 +30,14 @@ export class ExamsService {
   public getAllStartOn(date: string, sectionId: number | null): Observable<ExamCard[]> {
     return this.httpClient.get<ExamCard[]>(`${this.appConfig.apiUrl}/exams?startOn=${date}`);
   }
-  getExamTakerByExamIdTakerId(examId: number, takerId: number): Observable<ExamRecordViewModel> {
+  getExamAttemptByExamIdAttemptId(
+    examId: number,
+    attemptId: number,
+  ): Observable<ExamRecordViewModel> {
     return this.httpClient
       .get<
         ResponseWrapper<ExamRecordViewModel>
-      >(`${this.appConfig.apiUrl}/records/takerExams?filter=userDetailId,eq,${takerId}&filter=examId,eq,${examId}`)
+      >(`${this.appConfig.apiUrl}/records/attemptExams?filter=userDetailId,eq,${attemptId}&filter=examId,eq,${examId}`)
       .pipe(
         map((res: ResponseWrapper<any>) => {
           return res.records[0];
@@ -86,7 +89,7 @@ export class ExamsService {
     return this.httpClient.get<Exam[]>(`${this.appConfig.apiUrl}/exams?criteria=${criteria}`);
   }
 
-  getAllTakerAnswers(userDetailId: number, examId: number): Observable<ExamAnswer[]> {
+  getAllAttemptAnswers(userDetailId: number, examId: number): Observable<ExamAnswer[]> {
     return this.httpClient
       .get<
         ResponseWrapper<ExamAnswer>
@@ -98,18 +101,18 @@ export class ExamsService {
       );
   }
 
-  getAllTakerAnswersByCriteria(
+  getAllAttemptAnswersByCriteria(
     userDetailId: number,
     examId: number,
     criteria: string,
-  ): Observable<ExamTakerResultList[]> {
+  ): Observable<ExamAttemptResultList[]> {
     return this.httpClient
       .get<
-        ResponseWrapper<ExamTakerResultList>
+        ResponseWrapper<ExamAttemptResultList>
       >(`${this.appConfig.apiUrl}/records/examAnswers?join=questions&filter=userDetailId,eq,${userDetailId}&filter=examId,eq,${examId}`)
       .pipe(
         map((res: ResponseWrapper<any>) => {
-          const rec: ExamTakerResultList[] = [];
+          const rec: ExamAttemptResultList[] = [];
           res.records.map((val) => {
             if (val.questionId?.question.toLowerCase().includes(criteria.toLowerCase())) {
               rec.push({
@@ -124,14 +127,14 @@ export class ExamsService {
       );
   }
 
-  getAllExamTakers(examId: number, criteria: string): Observable<ExamTakerList[]> {
+  getAllExamAttempts(examId: number, criteria: string): Observable<ExamAttemptList[]> {
     return this.httpClient
       .get<
-        ResponseWrapper<ExamTakerList>
-      >(`${this.appConfig.apiUrl}/records/takerExams?join=userDetails,departments&join=userDetails,sections&filter=examId,eq,${examId}`)
+        ResponseWrapper<ExamAttemptList>
+      >(`${this.appConfig.apiUrl}/records/ExamsAttempts?join=userDetails,departments&join=userDetails,sections&filter=examId,eq,${examId}`)
       .pipe(
         map((res: ResponseWrapper<any>) => {
-          const rec: ExamTakerList[] = [];
+          const rec: ExamAttemptList[] = [];
           res.records.map((val) => {
             if (
               val.userDetailId.firstName.toLowerCase().includes(criteria.toLowerCase()) ||

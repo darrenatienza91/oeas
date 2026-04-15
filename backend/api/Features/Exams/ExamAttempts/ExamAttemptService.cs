@@ -19,29 +19,29 @@ public interface IExamAttemptService
   Task<MovePreviousQuestionResult> MovePreviousQuestion(int attemptId);
   Task<bool> HasExamAttempt(int attemptId);
   Task<ExamAttemptResultDto> GetResult(int id);
-  Task EditAsync(int id, ExamTakerPatchDto dto, HashSet<string> modified);
+  Task EditAsync(int id, ExamAttemptPatchDto dto, HashSet<string> modified);
 }
 
 public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 {
   public async Task<ExamAttemptResultDto> GetResult(int id)
   {
-    var examTakerResult =
+    var examAttemptResult =
       await appDbContext
-        .ExamTakers.Select(x => new
+        .ExamAttempts.Select(x => new
         {
           ExamId = x.ExamId,
           x.CheckingStatus,
-          Points = x.ExamTakerAnswers.Select(ans => new
+          Points = x.ExamAttemptAnswers.Select(ans => new
           {
             ans.AcquiredPoints,
             QuestionPoints = ans.Question.Points,
           }),
         })
         .FirstOrDefaultAsync(x => x.ExamId == id)
-      ?? throw new NotFoundException($"Exam Taker with exam id {id} not found");
+      ?? throw new NotFoundException($"Exam Attempt with exam id {id} not found");
 
-    var checkingStatus = examTakerResult?.CheckingStatus ?? 0;
+    var checkingStatus = examAttemptResult?.CheckingStatus ?? 0;
 
     if (checkingStatus == ExamAttemptCheckingStatus.NotYetChecked)
     {
@@ -61,10 +61,10 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
     double totalAcquired = 0;
     double totalPossible = 0;
 
-    if (examTakerResult?.CheckingStatus == ExamAttemptCheckingStatus.Done)
+    if (examAttemptResult?.CheckingStatus == ExamAttemptCheckingStatus.Done)
     {
-      totalAcquired = examTakerResult?.Points.Sum(x => x.AcquiredPoints) ?? 0;
-      totalPossible = examTakerResult?.Points.Sum(x => x.QuestionPoints) ?? 0;
+      totalAcquired = examAttemptResult?.Points.Sum(x => x.AcquiredPoints) ?? 0;
+      totalPossible = examAttemptResult?.Points.Sum(x => x.QuestionPoints) ?? 0;
 
       totalPercentage = totalPossible is 0 ? 0 : totalAcquired / totalPossible * 100;
       result = totalPercentage >= 75 ? ExamAttemptResult.Pass : ExamAttemptResult.Failed;
@@ -81,22 +81,22 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 
   public async Task<ExamAttemptQuestionDto?> GetCurrentExamAttemptQuestion(int attemptId)
   {
-    var examTaker =
+    var examAttempt =
       await appDbContext
-        .ExamTakers.AsNoTracking()
+        .ExamAttempts.AsNoTracking()
         .Where(x => x.Id == attemptId)
         .Select(x => new { x.ExamId, x.CurrentQuestionIndex })
         .FirstOrDefaultAsync()
-      ?? throw new NotFoundException($"ExamTaker {attemptId} not found");
+      ?? throw new NotFoundException($"ExamAttempt {attemptId} not found");
 
     return await appDbContext
-      .Questions.Where(q => q.ExamId == examTaker.ExamId)
+      .Questions.Where(q => q.ExamId == examAttempt.ExamId)
       .OrderBy(q => q.Id)
-      .Skip(examTaker.CurrentQuestionIndex)
+      .Skip(examAttempt.CurrentQuestionIndex)
       .Select(q => new ExamAttemptQuestionDto(
         q.Id,
         q.Description,
-        q.ExamTakerAnswers.Where(a => a.ExamTakerId == attemptId)
+        q.ExamAttemptAnswers.Where(a => a.ExamAttemptId == attemptId)
           .Select(a => a.AnswerText)
           .FirstOrDefault()
           ?? ""
@@ -106,35 +106,35 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 
   public async Task<Models.Question?> GetExamAttemptQuestion(int attemptId, int questionId)
   {
-    var examTaker = await GetExamTaker(attemptId);
+    var examAttempt = await GetExamAttempt(attemptId);
     return await appDbContext
-      .Questions.Where(x => x.ExamId == examTaker.ExamId && x.Id == questionId)
+      .Questions.Where(x => x.ExamId == examAttempt.ExamId && x.Id == questionId)
       .FirstOrDefaultAsync();
   }
 
   public async Task SetAnswer(int attemptId, int questionId, string answerText)
   {
-    await GetExamTaker(attemptId);
+    await GetExamAttempt(attemptId);
     await GetQuestion(questionId);
 
-    var examTakerAnswer = await appDbContext.ExamTakerAnswers.FirstOrDefaultAsync(x =>
-      x.QuestionId == questionId && x.ExamTakerId == attemptId
+    var examAttemptAnswer = await appDbContext.ExamAttemptAnswers.FirstOrDefaultAsync(x =>
+      x.QuestionId == questionId && x.ExamAttemptId == attemptId
     );
 
-    if (examTakerAnswer is null)
+    if (examAttemptAnswer is null)
     {
-      appDbContext.ExamTakerAnswers.Add(
+      appDbContext.ExamAttemptAnswers.Add(
         new()
         {
           AnswerText = answerText,
           QuestionId = questionId,
-          ExamTakerId = attemptId,
+          ExamAttemptId = attemptId,
         }
       );
     }
     else
     {
-      examTakerAnswer.AnswerText = answerText;
+      examAttemptAnswer.AnswerText = answerText;
     }
 
     await appDbContext.SaveChangesAsync();
@@ -142,30 +142,30 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 
   public async Task<MoveNextQuestionResult> MoveNextQuestion(int attemptId)
   {
-    var examTaker = await GetExamTaker(attemptId);
+    var examAttempt = await GetExamAttempt(attemptId);
 
     var questionCount = await appDbContext
-      .Questions.Where(q => q.ExamId == examTaker.ExamId)
+      .Questions.Where(q => q.ExamId == examAttempt.ExamId)
       .CountAsync();
 
-    if (examTaker.CurrentQuestionIndex + 1 >= questionCount)
+    if (examAttempt.CurrentQuestionIndex + 1 >= questionCount)
     {
       return MoveNextQuestionResult.Last;
     }
 
-    examTaker.CurrentQuestionIndex++;
+    examAttempt.CurrentQuestionIndex++;
 
     await appDbContext.SaveChangesAsync();
 
     return MoveNextQuestionResult.Moved;
   }
 
-  private async Task<ExamTaker> GetExamTaker(
+  private async Task<ExamAttempt> GetExamAttempt(
     int attemptId,
-    Func<IQueryable<ExamTaker>, IQueryable<ExamTaker>>? include = null
+    Func<IQueryable<ExamAttempt>, IQueryable<ExamAttempt>>? include = null
   )
   {
-    IQueryable<ExamTaker> query = appDbContext.ExamTakers;
+    IQueryable<ExamAttempt> query = appDbContext.ExamAttempts;
 
     if (include is not null)
     {
@@ -173,7 +173,7 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
     }
 
     return await query.FirstOrDefaultAsync(x => x.Id == attemptId)
-      ?? throw new NotFoundException($"Exam Taker with id {attemptId} not found");
+      ?? throw new NotFoundException($"Exam Attempt with id {attemptId} not found");
   }
 
   private async Task<Question> GetQuestion(int questionId)
@@ -184,14 +184,14 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 
   public async Task<MovePreviousQuestionResult> MovePreviousQuestion(int attemptId)
   {
-    var examTaker = await GetExamTaker(attemptId);
+    var examAttempt = await GetExamAttempt(attemptId);
 
-    if (examTaker.CurrentQuestionIndex == 0)
+    if (examAttempt.CurrentQuestionIndex == 0)
     {
       return MovePreviousQuestionResult.First;
     }
 
-    examTaker.CurrentQuestionIndex--;
+    examAttempt.CurrentQuestionIndex--;
 
     await appDbContext.SaveChangesAsync();
 
@@ -200,18 +200,18 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 
   public async Task<bool> HasExamAttempt(int attemptId)
   {
-    return await GetExamTaker(attemptId) is not null;
+    return await GetExamAttempt(attemptId) is not null;
   }
 
-  public async Task EditAsync(int id, ExamTakerPatchDto dto, HashSet<string> modified)
+  public async Task EditAsync(int id, ExamAttemptPatchDto dto, HashSet<string> modified)
   {
     var attempt =
-      await appDbContext.ExamTakers.FirstOrDefaultAsync(x => x.Id == id)
+      await appDbContext.ExamAttempts.FirstOrDefaultAsync(x => x.Id == id)
       ?? throw new NotFoundException($"Attemp with id {id}  was not found.");
 
     ExamAttemptMapper.ApplyPatch(attempt, dto, modified);
 
-    appDbContext.ExamTakers.Update(attempt);
+    appDbContext.ExamAttempts.Update(attempt);
 
     await appDbContext.SaveChangesAsync();
   }
