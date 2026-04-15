@@ -20,7 +20,7 @@
     </nz-page-header-extra>
   </nz-page-header>
 
-  <nz-table #basicTable [nzData]="examTakerList" nzBordered>
+  <nz-table #basicTable [nzData]="examAttemptList" nzBordered>
     <thead>
       <tr>
         <th nzWidth="24px"></th>
@@ -50,9 +50,7 @@
         <td>{{ data?.department }}</td>
         <td>{{ data?.section }}</td>
         <td>
-          <a (click)="onViewScore(data.userDetailId, data.examId)"
-            >View Scores</a
-          >
+          <a (click)="onViewScore(data.userDetailId, data.examId)">View Scores</a>
         </td>
         <td>
           <a
@@ -77,12 +75,7 @@
             nzTooltipTitle="Play Recording"
             routerLink="{{ data?.userDetailId }}/recording"
           >
-            <i
-              nz-icon
-              nzType="play-square"
-              nzTheme="twotone"
-              [nzTwotoneColor]="'#f5222d'"
-            ></i>
+            <i nz-icon nzType="play-square" nzTheme="twotone" [nzTwotoneColor]="'#f5222d'"></i>
           </a>
         </td>
       </tr>

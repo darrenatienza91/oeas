@@ -68,7 +68,7 @@ namespace api.Features.ExamAttempts
       [FromRoute] int id
     )
     {
-      var patch = await PatchRequestReader.ReadAsync<ExamTakerPatchDto>(context.Request);
+      var patch = await PatchRequestReader.ReadAsync<ExamAttemptPatchDto>(context.Request);
 
       if (patch is null)
       {
@@ -82,9 +82,9 @@ namespace api.Features.ExamAttempts
 
     static async Task<IResult> GetResult(IExamAttemptService service, [FromRoute] int id)
     {
-      var examTaker = await service.GetResult(id);
+      var examAttempt = await service.GetResult(id);
 
-      return Results.Ok(examTaker);
+      return Results.Ok(examAttempt);
     }
 
     static async Task<IResult> FinalizeRecordingUpload(

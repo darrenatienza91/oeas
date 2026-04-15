@@ -13,10 +13,10 @@ import { Location } from '@angular/common';
 import { TakeExamScreenRecordingComponent } from './take-exam-screen-recording/take-exam-screen-recording.component';
 import {
   Exam,
+  ExamAttemptDetail,
+  ExamAttemptQuestion,
   ExamState as ExamView,
   TakeExamControlState,
-  TakerExamDetail,
-  TakerExamQuestion,
 } from '@batstateu/data-models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExamsService, VideoRecorderFacadeService } from '@batstateu/shared';
@@ -53,7 +53,7 @@ import {
 } from './countdown-timer-injection-token';
 import { toSeconds } from './to-seconds';
 import { toTimeFormatFromSeconds } from './to-time-format-from-seconds';
-import { ExamTakerRecordingUploadService } from '../../services/exam-taker-recording-upload/exam-taker-recording-upload.service';
+import { ExamAttemptRecordingUploadService } from '../../services/exam-attempt-recording-upload/exam-attempt-recording-upload.service';
 import { TakeExamState } from './take-exam-state';
 import { screenRecorderSetup } from './screen-recorder-setup';
 import { TakeExamService } from '../../services/take-exam/take-exam.service';
@@ -85,8 +85,8 @@ export class TakeExamComponent {
   private readonly modal: NzModalService = inject(NzModalService);
   private readonly takeExamService: TakeExamService = inject(TakeExamService);
   public readonly appConfig = inject<AppConfig>(APP_CONFIG);
-  private readonly uploadService: ExamTakerRecordingUploadService = inject(
-    ExamTakerRecordingUploadService,
+  private readonly uploadService: ExamAttemptRecordingUploadService = inject(
+    ExamAttemptRecordingUploadService,
   );
 
   private readonly inActiveTabCountdownTimer = inject<CountdownTimerService>(INACTIVE_COUNTDOWN);
@@ -111,8 +111,8 @@ export class TakeExamComponent {
   enableNextButton = false;
   enablePreviousButton = false;
   public examDetail = signal<Exam | null>(null);
-  questions!: TakerExamQuestion[];
-  public currentQuestion = signal<TakerExamQuestion | null>(null);
+  questions!: ExamAttemptQuestion[];
+  public currentQuestion = signal<ExamAttemptQuestion | null>(null);
   public tabActive = signal<boolean>(false);
 
   public examinationDurationInSeconds = signal<number>(0);
@@ -121,7 +121,7 @@ export class TakeExamComponent {
   public cameraVisible = false;
   public hasInactiveStatus = false;
   private readonly timeLeft = this.appConfig.inactiveTimeInSeconds;
-  private readonly examTaker = signal<TakerExamDetail | null>(null);
+  private readonly examAttempt = signal<ExamAttemptDetail | null>(null);
   private readonly examId = Number(this.route.snapshot.paramMap.get('examId'));
 
   private readonly submitAnswer$ = new Subject<string>();
@@ -139,21 +139,21 @@ export class TakeExamComponent {
   private readonly examFlow$ = merge(
     this.submitAnswer$.pipe(
       switchMap((answer) =>
-        this.takeExamService.addAnswer(this.examTakerId, this.currentQuestionId, {
+        this.takeExamService.addAnswer(this.examAttempt()?.id ?? 0, this.currentQuestionId, {
           answerText: answer,
         }),
       ),
-      switchMap(() => this.takeExamService.moveNextQuestion(this.examTakerId)),
+      switchMap(() => this.takeExamService.moveNextQuestion(this.examAttemptId)),
       this.handleQuestionNavigation('next'),
     ),
 
     this.nextQuestion$.pipe(
-      switchMap(() => this.takeExamService.moveNextQuestion(this.examTakerId)),
+      switchMap(() => this.takeExamService.moveNextQuestion(this.examAttemptId)),
       this.handleQuestionNavigation('next'),
     ),
 
     this.previousQuestion$.pipe(
-      switchMap(() => this.takeExamService.movePreviousQuestion(this.examTakerId)),
+      switchMap(() => this.takeExamService.movePreviousQuestion(this.examAttemptId)),
       this.handleQuestionNavigation('previous'),
     ),
   )
@@ -275,13 +275,15 @@ export class TakeExamComponent {
 
     this.finishExaminationThenUploadRecordingEffect.destroy();
 
-    const file = new File([blob], `${this.examTakerId}-recording.webm`, {
+    const file = new File([blob], `${this.examAttemptId}-recording.webm`, {
       type: blob.type,
     });
 
     console.log('Blob', this.screenRecorderFacadeService.recordedBlob());
 
-    this.uploadService.uploadRecording(file, this.examTakerId).subscribe(() => this.goToResults());
+    this.uploadService
+      .uploadRecording(file, this.examAttemptId)
+      .subscribe(() => this.goToResults());
   });
 
   private onTabHidden(): void {
@@ -333,7 +335,7 @@ export class TakeExamComponent {
         this.recordingToPauseCountdownTimer.start(this.appConfig.recordingToPauseTimeInSeconds);
         this.recordingToPauseCountdownTimer.pause();
         this.takeExamState.set(TakeExamState.Ongoing);
-        this.examTaker.set(record);
+        this.examAttempt.set(record);
       }),
 
       map(() => void 0),
@@ -377,8 +379,8 @@ export class TakeExamComponent {
   }
 
   private startExamAndLoadQuestion(): void {
-    if (this.appConfig.fetchPreviousExam && this.examTakerId) {
-      this.loadCurrentQuestion(this.examTakerId)
+    if (this.appConfig.fetchPreviousExam && this.examAttemptId) {
+      this.loadCurrentQuestion(this.examAttemptId)
         .pipe(
           tap((question) => {
             if (!question) {
@@ -405,8 +407,9 @@ export class TakeExamComponent {
     }
 
     this.takeExamService
-      .addExamTaker(this.examId)
+      .addExamAttempt(this.examId)
       .pipe(
+        tap((val) => this.examAttempt.set(val)),
         map((val) => val.id),
         switchMap((id) => this.loadCurrentQuestion(id)),
         tap((question) => {
@@ -437,8 +440,8 @@ export class TakeExamComponent {
     this.takeExamView.set(ExamView.takeExamQuestionView);
   }
 
-  private get examTakerId(): number {
-    return this.examTaker()?.id ?? 0;
+  private get examAttemptId(): number {
+    return this.examAttempt()?.id ?? 0;
   }
 
   private get currentQuestionId(): number {
@@ -458,7 +461,7 @@ export class TakeExamComponent {
       isLast?: boolean;
       isFirst?: boolean;
     }>,
-  ) => Observable<TakerExamQuestion> {
+  ) => Observable<ExamAttemptQuestion> {
     return (source$: Observable<{ isLast?: boolean; isFirst?: boolean }>) =>
       source$.pipe(
         switchMap((val) => {
@@ -472,7 +475,7 @@ export class TakeExamComponent {
             return EMPTY;
           }
 
-          return this.loadCurrentQuestion(this.examTakerId);
+          return this.loadCurrentQuestion(this.examAttemptId);
         }),
         tap((question) => {
           if (!question) {
@@ -502,7 +505,7 @@ export class TakeExamComponent {
 
   public onFinishExamination(): void {
     this.takeExamService
-      .finishExam(this.examTakerId)
+      .finishExam(this.examAttemptId)
       .pipe(
         tap(() => {
           this.takeExamState.set(TakeExamState.Finished);

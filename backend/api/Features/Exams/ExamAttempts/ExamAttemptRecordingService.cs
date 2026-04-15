@@ -78,9 +78,9 @@ public class ExamAttemptRecordingService(IChunkedUploadService upload, AppDbCont
     return path;
   }
 
-  private async Task<ExamTaker> GetValidAttempt(int attemptId, CancellationToken ct)
+  private async Task<ExamAttempt> GetValidAttempt(int attemptId, CancellationToken ct)
   {
-    return await appDbContext.ExamTakers.FindAsync([attemptId], ct)
+    return await appDbContext.ExamAttempts.FindAsync([attemptId], ct)
       ?? throw new NotFoundException("Exam attempt not found.");
   }
 }

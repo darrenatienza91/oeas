@@ -17,7 +17,7 @@ namespace api.Models
     // Navigation
     public Exam Exam { get; set; } = null!;
     public ICollection<Answer> Answers { get; set; } = [];
-    public ICollection<ExamTakerAnswer> ExamTakerAnswers { get; set; } = [];
+    public ICollection<ExamAttemptAnswer> ExamAttemptAnswers { get; set; } = [];
   }
 
   public class QuestionConfiguration : IEntityTypeConfiguration<Question>

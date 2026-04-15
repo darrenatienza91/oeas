@@ -2,17 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ExamTakerList } from '@batstateu/data-models';
+import { ExamAttemptList } from '@batstateu/data-models';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 
 @Component({
   imports: [FormsModule, NgZorroAntdModule, RouterLink, CommonModule],
-  selector: 'batstateu-exam-takers-list',
-  templateUrl: './exam-takers-list.component.html',
-  styleUrls: ['./exam-takers-list.component.less'],
+  selector: 'batstateu-exam-attempt-list',
+  templateUrl: './exam-attempt-list.component.html',
+  styleUrls: ['./exam-attempt-list.component.less'],
 })
-export class ExamTakersListComponent implements OnInit {
-  @Input() examTakerList: ExamTakerList[] = [];
+export class ExamAttemptListComponent implements OnInit {
+  @Input() examAttemptList: ExamAttemptList[] = [];
   @Output() viewScore = new EventEmitter();
   @Output() search = new EventEmitter<string>();
   searchText = '';

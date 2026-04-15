@@ -17,25 +17,24 @@ export class ExamRecordingComponent implements OnInit {
 
   url = '';
   examId = 0;
-  takerId = 0;
+  attemptId = 0;
 
-  getTakerExam() {
+  getExamAttempt() {
     this.examService
-      .getExamTakerByExamIdTakerId(this.examId, this.takerId)
+      .getExamAttemptByExamIdAttemptId(this.examId, this.attemptId)
       .subscribe((val) => {
         this.examRecordViewModelSubject$.next(val);
-
       });
   }
   constructor(
     private examService: ExamsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     this.examId = Number(this.route.snapshot.paramMap.get('examId'));
-    this.takerId = Number(this.route.snapshot.paramMap.get('takerId'));
+    this.attemptId = Number(this.route.snapshot.paramMap.get('attemptId'));
   }
 
   ngOnInit(): void {
-    this.getTakerExam();
+    this.getExamAttempt();
   }
 }

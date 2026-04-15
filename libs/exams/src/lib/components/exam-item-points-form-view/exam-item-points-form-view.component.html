@@ -1,18 +1,13 @@
 <nz-page-header class="site-page-header" nzTitle="Add Exam Points">
   <nz-breadcrumb nz-page-header-breadcrumb>
     <nz-breadcrumb-item>Exams</nz-breadcrumb-item>
-    <nz-breadcrumb-item> Takers </nz-breadcrumb-item>
+    <nz-breadcrumb-item> Attempts </nz-breadcrumb-item>
     <nz-breadcrumb-item>Results</nz-breadcrumb-item>
     <nz-breadcrumb-item>Add Points</nz-breadcrumb-item>
   </nz-breadcrumb>
 </nz-page-header>
 <nz-card>
-  <form
-    nz-form
-    [formGroup]="validateForm"
-    nzLayout="vertical"
-    (ngSubmit)="submitForm()"
-  >
+  <form nz-form [formGroup]="validateForm" nzLayout="vertical" (ngSubmit)="submitForm()">
     <nz-form-item class="form-item">
       <nz-form-label nzFor="question">Question</nz-form-label>
       <div class="disabled-field" [innerHtml]="question"></div>
@@ -29,14 +24,9 @@
     </nz-form-item>
     <nz-form-item class="form-item">
       <nz-form-label nzFor="points">Points</nz-form-label>
-      <nz-form-control
-        nzErrorTip="Please input points between 1 to {{ limit }}!"
-      >
+      <nz-form-control nzErrorTip="Please input points between 1 to {{ limit }}!">
         <div>
-          <nz-input-group
-            class="points-field"
-            nzAddOnAfter="out of {{ limit }}"
-          >
+          <nz-input-group class="points-field" nzAddOnAfter="out of {{ limit }}">
             <nz-input-number
               style="width: 100%"
               nz-input
@@ -51,9 +41,7 @@
       <nz-form-control class="submit-area">
         <div>
           <nz-space>
-            <button *nzSpaceItem nz-button nzType="default" (click)="cancel()">
-              Cancel
-            </button>
+            <button *nzSpaceItem nz-button nzType="default" (click)="cancel()"> Cancel </button>
             <button *nzSpaceItem nz-button nzType="primary">Submit</button>
           </nz-space>
         </div>

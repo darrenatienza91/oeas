@@ -24,7 +24,7 @@ namespace api.Models
     public Section Section { get; set; } = null!;
     public UserDetail? UserDetail { get; set; }
     public ICollection<Question> Questions { get; set; } = [];
-    public ICollection<ExamTaker> ExamTakers { get; set; } = [];
+    public ICollection<ExamAttempt> ExamAttempts { get; set; } = [];
 
     public void Activate(bool isActive)
     {

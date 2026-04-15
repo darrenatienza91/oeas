@@ -8,7 +8,7 @@ using api.Models;
 
 namespace api.Features.ExamAttempts
 {
-  public record ExamAttemptQuestionDto(int Id, string QuestionText, string ExamTakerAnswerText);
+  public record ExamAttemptQuestionDto(int Id, string QuestionText, string ExamAttemptAnswerText);
 
   public record ExamAttemptResultDto(
     ExamAttemptCheckingStatus CheckingStatus,
@@ -22,7 +22,7 @@ namespace api.Features.ExamAttempts
 
   public record RecordingUploadDto(string SessionId, string FileName, int TotalChunks);
 
-  public record ExamTakerPatchDto(bool IsAttemptSubmitted);
+  public record ExamAttemptPatchDto(bool IsAttemptSubmitted);
 
   public static class ExamAttemptMapper
   {
@@ -32,15 +32,15 @@ namespace api.Features.ExamAttempts
     }
 
     internal static void ApplyPatch(
-      ExamTaker examTaker,
-      ExamTakerPatchDto dto,
+      ExamAttempt examAttempt,
+      ExamAttemptPatchDto dto,
       HashSet<string> modified
     )
     {
-      new PatchBuilder<ExamTakerPatchDto>(dto, modified).Map(
+      new PatchBuilder<ExamAttemptPatchDto>(dto, modified).Map(
         nameof(dto.IsAttemptSubmitted),
         x => x.IsAttemptSubmitted,
-        value => examTaker.IsAttemptSubmitted = value
+        value => examAttempt.IsAttemptSubmitted = value
       );
     }
   }

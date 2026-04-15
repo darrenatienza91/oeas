@@ -20,9 +20,9 @@ namespace api.Services
     Task<Exam> EditExam(Exam exam);
     Task<Exam?> GetExamById(int id);
     Task<IEnumerable<Exam>> GetExamsAsync(DateTimeOffset? startOn, string? criteria);
-    Task<ExamTaker?> GetAttempt(int examId);
+    Task<ExamAttempt?> GetAttempt(int examId);
     Task<ExamAttemptDetailDto?> GetAttemptDetails(int examId);
-    Task<ExamTaker?> AddAttempt(ExamTaker examTaker);
+    Task<ExamAttempt?> AddAttempt(ExamAttempt examAttempt);
   }
 
   public class ExamService(AppDbContext appDbContext) : IExamService
@@ -74,24 +74,24 @@ namespace api.Services
       return await query.ToListAsync();
     }
 
-    public async Task<ExamTaker?> GetAttempt(int examId)
+    public async Task<ExamAttempt?> GetAttempt(int examId)
     {
-      return await appDbContext.ExamTakers.FirstOrDefaultAsync(x => x.ExamId == examId);
+      return await appDbContext.ExamAttempts.FirstOrDefaultAsync(x => x.ExamId == examId);
     }
 
-    public async Task<ExamTaker?> AddAttempt(ExamTaker examTaker)
+    public async Task<ExamAttempt?> AddAttempt(ExamAttempt examAttempt)
     {
-      appDbContext.ExamTakers.Add(examTaker);
+      appDbContext.ExamAttempts.Add(examAttempt);
 
       await appDbContext.SaveChangesAsync();
 
-      return examTaker;
+      return examAttempt;
     }
 
     public async Task<ExamAttemptDetailDto?> GetAttemptDetails(int examId)
     {
       return await appDbContext
-        .ExamTakers.Where(x => x.ExamId == examId)
+        .ExamAttempts.Where(x => x.ExamId == examId)
         .Select(x => new ExamAttemptDetailDto(
           Id: x.Id,
           RecUrl: x.RecUrl,

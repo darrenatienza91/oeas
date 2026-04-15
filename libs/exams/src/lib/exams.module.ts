@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ExamListComponent } from './components/exam-list/exam-list.component';
-import { ExamTakersListComponent } from './components/exam-takers-list/exam-takers-list.component';
+import { ExamAttemptListComponent } from './components/exam-attempt-list/exam-attempt-list.component';
 import { ExamRecordingViewComponent } from './components/exam-recording-view/exam-recording-view.component';
 import { ExamResultListComponent } from './components/exam-result-list/exam-result-list.component';
 import { ExamResultsComponent } from './containers/exam-results/exam-results.component';
 import { ExamRecordingComponent } from './containers/exam-recording/exam-recording.component';
-import { ExamTakersComponent } from './containers/exam-takers/exam-takers.component';
+import { ExamAttemptsComponent } from './containers/exam-attempts/exam-attempts.component';
 import { ExamItemPointsComponent } from './containers/exam-item-points/exam-item-points.component';
 import { ExamFormViewComponent } from './components/exam-form-view/exam-form-view.component';
 import { ExamFormComponent } from './containers/exam-form/exam-form.component';
@@ -38,13 +38,13 @@ import { TakeExamResultViewComponent } from './containers/take-exam/exam-attempt
   imports: [
     ExamListComponent,
     ExamFormComponent,
-    ExamTakersListComponent,
+    ExamAttemptListComponent,
     ExamItemPointsFormViewComponent,
     ExamRecordingViewComponent,
     ExamResultListComponent,
     ExamResultsComponent,
     ExamRecordingComponent,
-    ExamTakersComponent,
+    ExamAttemptsComponent,
     ExamItemPointsComponent,
     ExamFormViewComponent,
     ExamItemPointsFormViewComponent,

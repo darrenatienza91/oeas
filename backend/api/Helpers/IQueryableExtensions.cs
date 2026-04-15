@@ -9,15 +9,15 @@ namespace api.Helpers
 {
   public static class IQueryableExtensions
   {
-    private static IQueryable<ExamTaker> IncludeExamData(
-      this IQueryable<ExamTaker> query,
+    private static IQueryable<ExamAttempt> IncludeExamData(
+      this IQueryable<ExamAttempt> query,
       bool includeQuestions,
       bool includeAnswers
     )
     {
       if (includeAnswers)
       {
-        return query.Include(x => x.Exam.Questions).ThenInclude(q => q.ExamTakerAnswers);
+        return query.Include(x => x.Exam.Questions).ThenInclude(q => q.ExamAttemptAnswers);
       }
 
       if (includeQuestions)

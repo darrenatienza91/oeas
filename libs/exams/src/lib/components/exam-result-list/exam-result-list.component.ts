@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ExamTakerResultList } from '@batstateu/data-models';
+import { ExamAttemptResultList } from '@batstateu/data-models';
+
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 
 @Component({
@@ -12,7 +13,7 @@ import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
   styleUrls: ['./exam-result-list.component.less'],
 })
 export class ExamResultListComponent implements OnInit {
-  @Input() examTakerResultList: ExamTakerResultList[] = [];
+  @Input() examAttemptResultList: ExamAttemptResultList[] = [];
   @Output() search = new EventEmitter<string>();
   searchText = '';
   onSearchChange(criteria: string) {

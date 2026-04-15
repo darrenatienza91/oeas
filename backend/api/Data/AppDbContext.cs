@@ -16,8 +16,8 @@ namespace api.Data
     public DbSet<Answer> Answers => Set<Answer>();
     public DbSet<Department> Departments => Set<Department>();
     public DbSet<Exam> Exams => Set<Exam>();
-    public DbSet<ExamTaker> ExamTakers => Set<ExamTaker>();
-    public DbSet<ExamTakerAnswer> ExamTakerAnswers => Set<ExamTakerAnswer>();
+    public DbSet<ExamAttempt> ExamAttempts => Set<ExamAttempt>();
+    public DbSet<ExamAttemptAnswer> ExamAttemptAnswers => Set<ExamAttemptAnswer>();
     public DbSet<Question> Questions => Set<Question>();
     public DbSet<Section> Sections => Set<Section>();
     public DbSet<UserDetail> UserDetails => Set<UserDetail>();
@@ -43,7 +43,7 @@ namespace api.Data
         );
 
       modelBuilder
-        .Entity<ExamTaker>()
+        .Entity<ExamAttempt>()
         .HasQueryFilter(x =>
           !currentUser.IsAuthenticated
           || (
