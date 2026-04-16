@@ -65,9 +65,13 @@ namespace api.Features.ExamAttempts
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher));
     }
 
-    static async Task<IResult> GetExamAttempts(IExamAttemptService service, [FromRoute] int id)
+    static async Task<IResult> GetExamAttempts(
+      IExamAttemptService service,
+      [FromRoute] int id,
+      string? criteria
+    )
     {
-      var examAttempQuestion = await service.GetExamAttempts(id).ToListAsync();
+      var examAttempQuestion = await service.GetExamAttempts(id, criteria).ToListAsync();
 
       return Results.Ok(examAttempQuestion);
     }

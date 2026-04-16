@@ -28,6 +28,7 @@ namespace api.Features.ExamAttempts
     int Id,
     string FullName,
     string Department,
+    string Section,
     double FinalScore,
     bool HasRecording,
     string RecUrl

@@ -125,10 +125,4 @@ export class ExamsService {
         }),
       );
   }
-
-  public getAllExamAttempts(examId: number, criteria: string): Observable<ExamAttemptList[]> {
-    return this.httpClient.get<ExamAttemptList[]>(
-      `${this.appConfig.apiUrl}/exams/${examId}?criteria=${criteria}`,
-    );
-  }
 }
