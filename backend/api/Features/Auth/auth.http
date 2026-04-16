@@ -9,10 +9,16 @@ Accept: application/json
 //   "password": "admin"
 // }
 
+#  {
+#    "username": "s1",
+#    "password": "s1"
+#  }
+
  {
-   "username": "s1",
-   "password": "s1"
+   "username": "teacher",
+   "password": "teacher"
  }
+
 
 // {
   // "username": "s2",

@@ -24,6 +24,16 @@ namespace api.Features.ExamAttempts
 
   public record ExamAttemptPatchDto(bool IsAttemptSubmitted);
 
+  public record ExamAttemptListDto(
+    int Id,
+    string FullName,
+    string Department,
+    string Section,
+    double FinalScore,
+    bool HasRecording,
+    string RecUrl
+  );
+
   public static class ExamAttemptMapper
   {
     public static ExamAttemptQuestionDto MapToExamAttemptQuestionDto(this Question question)

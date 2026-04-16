@@ -15,7 +15,8 @@ export * from '../../../exams/src/lib/services/exams/exams.service';
 export * from './services/question/question.service';
 export * from './guards/exam/exam.guard';
 export * from './validators/confirm-password-validator';
-
+export * from './builders/http-params-builder';
+export * from './services/base-api.service';
 @NgModule({
   imports: [CommonModule, ReactiveFormsModule, NgZorroAntdModule, RouterModule, StatusPipe],
 

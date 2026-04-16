@@ -1,5 +1,4 @@
 <batstateu-exam-attempt-list
-  [examAttemptList]="examAttemptList"
-  (viewScore)="onViewScore($event)"
-  (search)="onSearch($event)"
+  [examAttemptList]="examAttemptList()"
+  [(searchText)]="searchText"
 ></batstateu-exam-attempt-list>

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ExamListComponent } from './components/exam-list/exam-list.component';
-import { ExamAttemptListComponent } from './components/exam-attempt-list/exam-attempt-list.component';
+import { ExamAttemptListComponent } from './containers/exam-attempts/exam-attempt-list/exam-attempt-list.component';
 import { ExamRecordingViewComponent } from './components/exam-recording-view/exam-recording-view.component';
 import { ExamResultListComponent } from './components/exam-result-list/exam-result-list.component';
 import { ExamResultsComponent } from './containers/exam-results/exam-results.component';
@@ -85,7 +85,7 @@ import { TakeExamResultViewComponent } from './containers/take-exam/exam-attempt
       //   path: ':examId/takers/:takerId/results/:examAnsId',
       //   component: ExamItemPointsComponent,
       // },
-      // { path: ':examId/takers', component: ExamTakersComponent },
+      { path: ':examId/attempts', component: ExamAttemptsComponent },
       // {
       //   path: ':examId/takers/:takerId/recording',
       //   component: ExamRecordingComponent,

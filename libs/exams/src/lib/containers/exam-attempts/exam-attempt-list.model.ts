@@ -1,11 +1,11 @@
 export interface ExamAttemptList {
   id: number;
-  userDetailId: number;
-  examId: number;
-  name: string;
+  fullName: string;
   section: string;
   department: string;
-  score: string;
+  finalScore: number;
   hasRecording: boolean;
   recUrl: string;
+  userDetailId: number;
+  examId: number;
 }

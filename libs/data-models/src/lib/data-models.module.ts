@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 export { Authenticate } from './authenticate.model';
 export { User } from './user.model';
 export { ExamList } from './exam-list';
-export { ExamAttemptList } from './exam-attempt-list';
 export { ExamAttemptResultList } from './exam-attempt-result-list';
 export { QuestionList } from './question-list';
 export { UserList } from './user-list';

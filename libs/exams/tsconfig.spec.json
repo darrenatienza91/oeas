@@ -16,5 +16,5 @@
     "**/*.spec.ts",
     "**/*.d.ts",
     "jest.config.ts"
-  ]
+, "src/lib/containers/exam-attempts/exam-attempt-list.model.ts"  ]
 }

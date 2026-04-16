@@ -20,6 +20,7 @@ public interface IExamAttemptService
   Task<bool> HasExamAttempt(int attemptId);
   Task<ExamAttemptResultDto> GetResult(int id);
   Task EditAsync(int id, ExamAttemptPatchDto dto, HashSet<string> modified);
+  IAsyncEnumerable<ExamAttemptListDto> GetExamAttempts(int examId, string? criteria);
 }
 
 public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
@@ -214,5 +215,27 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
     appDbContext.ExamAttempts.Update(attempt);
 
     await appDbContext.SaveChangesAsync();
+  }
+
+  public IAsyncEnumerable<ExamAttemptListDto> GetExamAttempts(int examId, string? criteria)
+  {
+    return appDbContext
+      .ExamAttempts.Where(x => x.ExamId == examId)
+      .Where(x =>
+        EF.Functions.Like(x.UserDetail.FirstName, $"%{criteria}%")
+        || EF.Functions.Like(x.UserDetail.LastName, $"%{criteria}%")
+        || EF.Functions.Like(x.UserDetail.Section.Name, $"%{criteria}%")
+        || EF.Functions.Like(x.UserDetail.Department.Name, $"%{criteria}%")
+      )
+      .Select(x => new ExamAttemptListDto(
+        x.Id,
+        x.UserDetail.FullName,
+        x.UserDetail.Department.Name,
+        x.UserDetail.Section.Name,
+        x.FinalScore,
+        x.HasRecording,
+        x.RecUrl
+      ))
+      .AsAsyncEnumerable();
   }
 }
