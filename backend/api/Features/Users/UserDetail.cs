@@ -25,6 +25,10 @@ namespace api.Models
     // Navigation
     public ICollection<Exam> Exams { get; set; } = new List<Exam>();
     public ICollection<ExamAttempt> ExamAttempts { get; set; } = new List<ExamAttempt>();
+    public string FullName
+    {
+      get { return $"{FirstName} {LastName}"; }
+    }
   }
 
   public class UserDetailConfiguration : IEntityTypeConfiguration<UserDetail>

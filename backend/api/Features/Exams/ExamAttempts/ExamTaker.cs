@@ -21,6 +21,11 @@ namespace api.Models
     public int CurrentQuestionIndex { get; set; }
     public ExamAttemptCheckingStatus CheckingStatus { get; set; }
     public bool IsAttemptSubmitted { get; set; }
+    public double FinalScore { get; set; }
+    public bool HasRecording
+    {
+      get => !string.IsNullOrEmpty(RecUrl);
+    }
   }
 
   public class ExamAttemptConfiguration : IEntityTypeConfiguration<ExamAttempt>

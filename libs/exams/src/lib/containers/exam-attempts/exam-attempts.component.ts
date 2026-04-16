@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ExamsService } from '@batstateu/shared';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, map } from 'rxjs';
-import { ExamAttemptListComponent } from '../../components/exam-attempt-list/exam-attempt-list.component';
-import { ExamAttemptList } from '@batstateu/data-models';
+import { BehaviorSubject } from 'rxjs';
+import { ExamAttemptListComponent } from './exam-attempt-list/exam-attempt-list.component';
+import { ExamAttemptList } from './exam-attempt-list.model';
 
 @Component({
   imports: [ExamAttemptListComponent],
@@ -49,15 +49,15 @@ export class ExamAttemptsComponent implements OnInit {
   ngOnInit(): void {
     this.examId = Number(this.route.snapshot.paramMap.get('examId'));
 
-    this.searchSubject$
-      .asObservable()
-      .pipe(
-        map((val) => val.trim()),
-        debounceTime(1000),
-        distinctUntilChanged(),
-      )
-      .subscribe((val) => {
-        this.getAll(val);
-      });
+    // this.searchSubject$
+    //   .asObservable()
+    //   .pipe(
+    //     map((val) => val.trim()),
+    //     debounceTime(1000),
+    //     distinctUntilChanged(),
+    //   )
+    //   .subscribe((val) => {
+    //     this.getAll(val);
+    //   });
   }
 }

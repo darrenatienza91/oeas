@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
 import {
   AnswerFormModel,
   Exam,
@@ -9,9 +8,9 @@ import {
   ExamRecordViewModel,
   ExamAttemptResultList,
   ResponseWrapper,
-  ExamAttemptList,
 } from '@batstateu/data-models';
 import { map, Observable } from 'rxjs';
+import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
 
 @Injectable({
   providedIn: 'root',
@@ -89,7 +88,7 @@ export class ExamsService {
     return this.httpClient.get<Exam[]>(`${this.appConfig.apiUrl}/exams?criteria=${criteria}`);
   }
 
-  getAllAttemptAnswers(userDetailId: number, examId: number): Observable<ExamAnswer[]> {
+  public getAllAttemptAnswers(userDetailId: number, examId: number): Observable<ExamAnswer[]> {
     return this.httpClient
       .get<
         ResponseWrapper<ExamAnswer>
@@ -127,35 +126,9 @@ export class ExamsService {
       );
   }
 
-  getAllExamAttempts(examId: number, criteria: string): Observable<ExamAttemptList[]> {
-    return this.httpClient
-      .get<
-        ResponseWrapper<ExamAttemptList>
-      >(`${this.appConfig.apiUrl}/records/ExamsAttempts?join=userDetails,departments&join=userDetails,sections&filter=examId,eq,${examId}`)
-      .pipe(
-        map((res: ResponseWrapper<any>) => {
-          const rec: ExamAttemptList[] = [];
-          res.records.map((val) => {
-            if (
-              val.userDetailId.firstName.toLowerCase().includes(criteria.toLowerCase()) ||
-              val.userDetailId.middleName.toLowerCase().includes(criteria.toLowerCase()) ||
-              val.userDetailId.lastName.toLowerCase().includes(criteria.toLowerCase())
-            ) {
-              rec.push({
-                id: val.id,
-                name: `${val.userDetailId?.firstName} ${val.userDetailId?.middleName} ${val.userDetailId?.lastName}`,
-                section: val.userDetailId?.sectionId?.name,
-                department: val.userDetailId?.departmentId?.name,
-                score: '',
-                hasRecording: val.recUrl !== '',
-                recUrl: val.recUrl,
-                userDetailId: val.userDetailId?.id,
-                examId: val.examId,
-              });
-            }
-          });
-          return rec;
-        }),
-      );
+  public getAllExamAttempts(examId: number, criteria: string): Observable<ExamAttemptList[]> {
+    return this.httpClient.get<ExamAttemptList[]>(
+      `${this.appConfig.apiUrl}/exams/${examId}?criteria=${criteria}`,
+    );
   }
 }

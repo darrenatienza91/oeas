@@ -20,6 +20,7 @@ public interface IExamAttemptService
   Task<bool> HasExamAttempt(int attemptId);
   Task<ExamAttemptResultDto> GetResult(int id);
   Task EditAsync(int id, ExamAttemptPatchDto dto, HashSet<string> modified);
+  IAsyncEnumerable<ExamAttemptListDto> GetExamAttempts(int examId);
 }
 
 public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
@@ -214,5 +215,20 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
     appDbContext.ExamAttempts.Update(attempt);
 
     await appDbContext.SaveChangesAsync();
+  }
+
+  public IAsyncEnumerable<ExamAttemptListDto> GetExamAttempts(int examId)
+  {
+    return appDbContext
+      .ExamAttempts.Where(x => x.ExamId == examId)
+      .Select(x => new ExamAttemptListDto(
+        x.Id,
+        x.UserDetail.FullName,
+        x.UserDetail.Department.Name,
+        x.FinalScore,
+        x.HasRecording,
+        x.RecUrl
+      ))
+      .AsAsyncEnumerable();
   }
 }

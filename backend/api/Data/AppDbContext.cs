@@ -48,9 +48,12 @@ namespace api.Data
           !currentUser.IsAuthenticated
           || (
             currentUser.Role == Roles.Student
-            && x.UserDetailId == currentUser.UserDetailId
-            && x.Exam.SectionId == currentUser.SectionId
-            && x.Exam.IsActive
+              && x.UserDetailId == currentUser.UserDetailId
+              && x.Exam.SectionId == currentUser.SectionId
+              && x.Exam.IsActive
+            || (
+              currentUser.Role == Roles.Teacher && x.Exam.UserDetailId == currentUser.UserDetailId
+            )
           )
         );
 

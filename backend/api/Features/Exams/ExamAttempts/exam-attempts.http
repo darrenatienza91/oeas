@@ -89,3 +89,12 @@ Accept: application/json
 {
 "isAttemptSubmitted": false
 }
+
+### ExamAttemptOverview
+# @name ExamAttemptOverview
+# @import ../../auth/auth.http
+# @ref login
+GET {{HOST}}/api/exams/32/attempts?name=s1 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json

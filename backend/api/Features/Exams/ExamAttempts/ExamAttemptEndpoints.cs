@@ -60,6 +60,16 @@ namespace api.Features.ExamAttempts
         .RequireAuthorization(policy =>
           policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
         );
+
+      app.MapGet("/exams/{id}/attempts", GetExamAttempts)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher));
+    }
+
+    static async Task<IResult> GetExamAttempts(IExamAttemptService service, [FromRoute] int id)
+    {
+      var examAttempQuestion = await service.GetExamAttempts(id).ToListAsync();
+
+      return Results.Ok(examAttempQuestion);
     }
 
     static async Task<IResult> Edit(
