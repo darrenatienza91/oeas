@@ -58,6 +58,22 @@ namespace api.Data
         );
 
       modelBuilder
+        .Entity<ExamAttemptAnswer>()
+        .HasQueryFilter(x =>
+          !currentUser.IsAuthenticated
+          || (
+            currentUser.Role == Roles.Student
+              && x.ExamAttempt.UserDetailId == currentUser.UserDetailId
+              && x.ExamAttempt.Exam.SectionId == currentUser.SectionId
+              && x.ExamAttempt.Exam.IsActive
+            || (
+              currentUser.Role == Roles.Teacher
+              && x.ExamAttempt.Exam.UserDetailId == currentUser.UserDetailId
+            )
+          )
+        );
+
+      modelBuilder
         .Entity<Question>()
         .HasQueryFilter(x =>
           !currentUser.IsAuthenticated

@@ -34,6 +34,8 @@ namespace api.Features.ExamAttempts
     string RecUrl
   );
 
+  public record ExamAttemptAnswerListDto(int Id, string Question, int Score);
+
   public static class ExamAttemptMapper
   {
     public static ExamAttemptQuestionDto MapToExamAttemptQuestionDto(this Question question)

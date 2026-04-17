@@ -63,6 +63,20 @@ namespace api.Features.ExamAttempts
 
       app.MapGet("/exams/{id}/attempts", GetExamAttempts)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher));
+
+      app.MapGet("/exam-attempts/{id}/answers", GetExamAttemptAnswers)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher));
+    }
+
+    static async Task<IResult> GetExamAttemptAnswers(
+      IExamAttemptService service,
+      [FromRoute] int id,
+      string? criteria
+    )
+    {
+      var examAttempQuestion = await service.GetExamAttemptAnswers(id, criteria).ToListAsync();
+
+      return Results.Ok(examAttempQuestion);
     }
 
     static async Task<IResult> GetExamAttempts(
