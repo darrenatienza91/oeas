@@ -98,3 +98,12 @@ GET {{HOST}}/api/exams/32/attempts?criteria=x HTTP/1.1
 Authorization: Bearer {{login.token}}
 Content-Type: application/json
 Accept: application/json
+
+### ExamAttemptOverview
+# @name ExamAttemptOverview
+# @import ../../auth/auth.http
+# @ref login
+GET {{HOST}}/api/exam-attempts/2/answers?criteria= HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json

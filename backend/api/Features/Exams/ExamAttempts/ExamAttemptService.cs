@@ -21,6 +21,7 @@ public interface IExamAttemptService
   Task<ExamAttemptResultDto> GetResult(int id);
   Task EditAsync(int id, ExamAttemptPatchDto dto, HashSet<string> modified);
   IAsyncEnumerable<ExamAttemptListDto> GetExamAttempts(int examId, string? criteria);
+  IAsyncEnumerable<ExamAttemptAnswerListDto> GetExamAttemptAnswers(int id, string? criteria);
 }
 
 public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
@@ -236,6 +237,15 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
         x.HasRecording,
         x.RecUrl
       ))
+      .AsAsyncEnumerable();
+  }
+
+  public IAsyncEnumerable<ExamAttemptAnswerListDto> GetExamAttemptAnswers(int id, string? criteria)
+  {
+    return appDbContext
+      .ExamAttemptAnswers.Where(x => x.ExamAttemptId == id)
+      .Where(x => EF.Functions.Like(x.Question.Description, $"%{criteria}%"))
+      .Select(x => new ExamAttemptAnswerListDto(x.Id, x.Question.Description, x.AcquiredPoints))
       .AsAsyncEnumerable();
   }
 }

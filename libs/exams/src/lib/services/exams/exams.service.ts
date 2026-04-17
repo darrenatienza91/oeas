@@ -6,7 +6,6 @@ import {
   ExamAnswer,
   ExamCard,
   ExamRecordViewModel,
-  ExamAttemptResultList,
   ResponseWrapper,
 } from '@batstateu/data-models';
 import { map, Observable } from 'rxjs';
@@ -96,32 +95,6 @@ export class ExamsService {
       .pipe(
         map((res: ResponseWrapper<any>) => {
           return res.records;
-        }),
-      );
-  }
-
-  getAllAttemptAnswersByCriteria(
-    userDetailId: number,
-    examId: number,
-    criteria: string,
-  ): Observable<ExamAttemptResultList[]> {
-    return this.httpClient
-      .get<
-        ResponseWrapper<ExamAttemptResultList>
-      >(`${this.appConfig.apiUrl}/records/examAnswers?join=questions&filter=userDetailId,eq,${userDetailId}&filter=examId,eq,${examId}`)
-      .pipe(
-        map((res: ResponseWrapper<any>) => {
-          const rec: ExamAttemptResultList[] = [];
-          res.records.map((val) => {
-            if (val.questionId?.question.toLowerCase().includes(criteria.toLowerCase())) {
-              rec.push({
-                id: val.id,
-                name: val.questionId?.question,
-                points: val.points,
-              });
-            }
-          });
-          return rec;
         }),
       );
   }

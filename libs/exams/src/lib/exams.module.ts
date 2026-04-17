@@ -4,8 +4,8 @@ import { RouterModule } from '@angular/router';
 import { ExamListComponent } from './components/exam-list/exam-list.component';
 import { ExamAttemptListComponent } from './containers/exam-attempts/exam-attempt-list/exam-attempt-list.component';
 import { ExamRecordingViewComponent } from './components/exam-recording-view/exam-recording-view.component';
-import { ExamResultListComponent } from './components/exam-result-list/exam-result-list.component';
-import { ExamResultsComponent } from './containers/exam-results/exam-results.component';
+import { AttemptAnswerListComponent } from './containers/exam-attempts/attempt-answers/attempt-answer-list/attempt-answer-list.component';
+import { AttemptAnswersComponent } from './containers/exam-attempts/attempt-answers/attempt-answers.component';
 import { ExamRecordingComponent } from './containers/exam-recording/exam-recording.component';
 import { ExamAttemptsComponent } from './containers/exam-attempts/exam-attempts.component';
 import { ExamItemPointsComponent } from './containers/exam-item-points/exam-item-points.component';
@@ -41,8 +41,8 @@ import { TakeExamResultViewComponent } from './containers/take-exam/exam-attempt
     ExamAttemptListComponent,
     ExamItemPointsFormViewComponent,
     ExamRecordingViewComponent,
-    ExamResultListComponent,
-    ExamResultsComponent,
+    AttemptAnswerListComponent,
+    AttemptAnswersComponent,
     ExamRecordingComponent,
     ExamAttemptsComponent,
     ExamItemPointsComponent,
@@ -77,10 +77,10 @@ import { TakeExamResultViewComponent } from './containers/take-exam/exam-attempt
       //   path: ':examId/takers/:takerId/recording',
       //   component: ExamRecordingComponent,
       // },
-      // {
-      //   path: ':examId/takers/:takerId/results',
-      //   component: ExamResultComponent,
-      // },
+      {
+        path: ':examId/attempts/:attemptId/results',
+        component: AttemptAnswersComponent,
+      },
       // {
       //   path: ':examId/takers/:takerId/results/:examAnsId',
       //   component: ExamItemPointsComponent,
