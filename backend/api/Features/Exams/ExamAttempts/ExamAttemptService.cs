@@ -22,6 +22,13 @@ public interface IExamAttemptService
   Task EditAsync(int id, ExamAttemptPatchDto dto, HashSet<string> modified);
   IAsyncEnumerable<ExamAttemptListDto> GetExamAttempts(int examId, string? criteria);
   IAsyncEnumerable<ExamAttemptAnswerListDto> GetExamAttemptAnswers(int id, string? criteria);
+  Task EditAnswerPointsAsync(
+    int id,
+    int attemptId,
+    ExamAttemptAnswerPatchDto model,
+    HashSet<string> modifiedProperties
+  );
+  Task<ExamAttemptAnswerDetailDto?> GetExamAttemptAnswer(int id, int attemptId);
 }
 
 public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
@@ -247,5 +254,64 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
       .Where(x => EF.Functions.Like(x.Question.Description, $"%{criteria}%"))
       .Select(x => new ExamAttemptAnswerListDto(x.Id, x.Question.Description, x.AcquiredPoints))
       .AsAsyncEnumerable();
+  }
+
+  public async Task EditAnswerPointsAsync(
+    int id,
+    int attemptId,
+    ExamAttemptAnswerPatchDto model,
+    HashSet<string> modifiedProperties
+  )
+  {
+    var examAttempt =
+      await appDbContext.ExamAttempts.FirstOrDefaultAsync(x => x.Id == attemptId)
+      ?? throw new NotFoundException($"Attempt with id {attemptId}  was not found.");
+
+    var attemptAnswer =
+      await appDbContext
+        .ExamAttemptAnswers.Include(x => x.Question)
+        .Where(x => x.Id == id)
+        .Select(x => new { Entity = x, MaxPoints = x.Question.Points })
+        .FirstOrDefaultAsync()
+      ?? throw new NotFoundException($"Attempt Answer with id {id}  was not found.");
+
+    if (model.AcquiredPoints > attemptAnswer.MaxPoints)
+    {
+      throw new BusinessRuleException(
+        $"Acquired points ({model.AcquiredPoints}) cannot exceed max points ({attemptAnswer.MaxPoints})"
+      );
+    }
+
+    if (examAttempt.IsAttemptSubmitted)
+    {
+      throw new BusinessRuleException(
+        $"Modifiying Answer is not allowed when attempt is already submitted!"
+      );
+    }
+
+    ExamAttemptMapper.ApplyPatchToAnswer(attemptAnswer.Entity, model, modifiedProperties);
+
+    appDbContext.ExamAttemptAnswers.Update(attemptAnswer.Entity);
+
+    await appDbContext.SaveChangesAsync();
+  }
+
+  public async Task<ExamAttemptAnswerDetailDto?> GetExamAttemptAnswer(int id, int attemptId)
+  {
+    var _ =
+      await appDbContext.ExamAttempts.FirstOrDefaultAsync(x => x.Id == attemptId)
+      ?? throw new NotFoundException($"Attempt with id {id}  was not found.");
+
+    return await appDbContext
+      .ExamAttemptAnswers.Where(x => x.Id == id)
+      .Select(x => new ExamAttemptAnswerDetailDto(
+        x.Id,
+        x.Question.Description,
+        x.AnswerText,
+        x.Question.CorrectAnswer,
+        x.Question.Points,
+        x.AcquiredPoints
+      ))
+      .FirstOrDefaultAsync();
   }
 }

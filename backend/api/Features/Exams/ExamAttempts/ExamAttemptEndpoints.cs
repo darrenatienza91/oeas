@@ -66,6 +66,42 @@ namespace api.Features.ExamAttempts
 
       app.MapGet("/exam-attempts/{id}/answers", GetExamAttemptAnswers)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher));
+
+      app.MapGet("/exam-attempts/{attemptId}/answers/{id}", GetExamAttemptAnswer)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher));
+
+      app.MapPatch("/exam-attempts/{attemptId}/answers/{id}", PatchExamAttemptAnswers)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher));
+    }
+
+    static async Task<IResult> GetExamAttemptAnswer(
+      IExamAttemptService service,
+      [FromRoute] int id,
+      [FromRoute] int attemptId
+    )
+    {
+      var examAttempQuestion = await service.GetExamAttemptAnswer(id, attemptId);
+
+      return Results.Ok(examAttempQuestion);
+    }
+
+    static async Task<IResult> PatchExamAttemptAnswers(
+      HttpContext context,
+      IExamAttemptService service,
+      [FromRoute] int id,
+      [FromRoute] int attemptId
+    )
+    {
+      var patch = await PatchRequestReader.ReadAsync<ExamAttemptAnswerPatchDto>(context.Request);
+
+      if (patch is null)
+      {
+        return Results.BadRequest();
+      }
+
+      await service.EditAnswerPointsAsync(id, attemptId, patch.Model, patch.ModifiedProperties);
+
+      return Results.Ok();
     }
 
     static async Task<IResult> GetExamAttemptAnswers(

@@ -36,6 +36,17 @@ namespace api.Features.ExamAttempts
 
   public record ExamAttemptAnswerListDto(int Id, string Question, int Score);
 
+  public record ExamAttemptAnswerDetailDto(
+    int Id,
+    string Question,
+    string Answer,
+    string CorrectAnswer,
+    int MaxPoints,
+    int AcquiredPoints
+  );
+
+  public record ExamAttemptAnswerPatchDto(int AcquiredPoints);
+
   public static class ExamAttemptMapper
   {
     public static ExamAttemptQuestionDto MapToExamAttemptQuestionDto(this Question question)
@@ -53,6 +64,19 @@ namespace api.Features.ExamAttempts
         nameof(dto.IsAttemptSubmitted),
         x => x.IsAttemptSubmitted,
         value => examAttempt.IsAttemptSubmitted = value
+      );
+    }
+
+    internal static void ApplyPatchToAnswer(
+      ExamAttemptAnswer examAttemptAnswer,
+      ExamAttemptAnswerPatchDto dto,
+      HashSet<string> modified
+    )
+    {
+      new PatchBuilder<ExamAttemptAnswerPatchDto>(dto, modified).Map(
+        nameof(dto.AcquiredPoints),
+        x => x.AcquiredPoints,
+        value => examAttemptAnswer.AcquiredPoints = value
       );
     }
   }

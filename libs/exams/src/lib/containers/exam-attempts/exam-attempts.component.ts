@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ExamAttemptListComponent } from './exam-attempt-list/exam-attempt-list.component';
+import { ExamAttemptListViewComponent } from './exam-attempt-list-view/exam-attempt-list-view.component';
 import { ExamAttemptService } from './services/exam-attempt/exam-attempt.service';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs';
 
 @Component({
-  imports: [ExamAttemptListComponent],
+  imports: [ExamAttemptListViewComponent],
   selector: 'batstateu-exam-attempts',
   templateUrl: './exam-attempts.component.html',
   styleUrls: ['./exam-attempts.component.less'],

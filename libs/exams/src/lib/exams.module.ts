@@ -2,16 +2,16 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ExamListComponent } from './components/exam-list/exam-list.component';
-import { ExamAttemptListComponent } from './containers/exam-attempts/exam-attempt-list/exam-attempt-list.component';
+import { ExamAttemptListViewComponent } from './containers/exam-attempts/exam-attempt-list-view/exam-attempt-list-view.component';
 import { ExamRecordingViewComponent } from './components/exam-recording-view/exam-recording-view.component';
-import { AttemptAnswerListComponent } from './containers/exam-attempts/attempt-answers/attempt-answer-list/attempt-answer-list.component';
+import { AttemptAnswerListViewComponent } from './containers/exam-attempts/attempt-answers/attempt-answer-list-view/attempt-answer-list-view.component';
 import { AttemptAnswersComponent } from './containers/exam-attempts/attempt-answers/attempt-answers.component';
 import { ExamRecordingComponent } from './containers/exam-recording/exam-recording.component';
 import { ExamAttemptsComponent } from './containers/exam-attempts/exam-attempts.component';
-import { ExamItemPointsComponent } from './containers/exam-item-points/exam-item-points.component';
+import { AttemptAnswerComponent } from './containers/exam-attempts/attempt-answer/attempt-answer.component';
 import { ExamFormViewComponent } from './components/exam-form-view/exam-form-view.component';
 import { ExamFormComponent } from './containers/exam-form/exam-form.component';
-import { ExamItemPointsFormViewComponent } from './components/exam-item-points-form-view/exam-item-points-form-view.component';
+import { AttemptAnswerFormViewComponent } from './containers/exam-attempts/attempt-answer/attempt-answer-form-view/attempt-answer-form-view.component';
 import { ExamsComponent } from './containers/exams/exams.component';
 import { NgZorroAntdModule } from '@batstateu/ng-zorro-antd';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -38,16 +38,16 @@ import { TakeExamResultViewComponent } from './containers/take-exam/exam-attempt
   imports: [
     ExamListComponent,
     ExamFormComponent,
-    ExamAttemptListComponent,
-    ExamItemPointsFormViewComponent,
+    ExamAttemptListViewComponent,
+    AttemptAnswerFormViewComponent,
     ExamRecordingViewComponent,
-    AttemptAnswerListComponent,
+    AttemptAnswerListViewComponent,
     AttemptAnswersComponent,
     ExamRecordingComponent,
     ExamAttemptsComponent,
-    ExamItemPointsComponent,
+    AttemptAnswerComponent,
     ExamFormViewComponent,
-    ExamItemPointsFormViewComponent,
+    AttemptAnswerFormViewComponent,
     ExamsComponent,
     QuestionsComponent,
     QuestionFormComponent,
@@ -81,10 +81,10 @@ import { TakeExamResultViewComponent } from './containers/take-exam/exam-attempt
         path: ':examId/attempts/:attemptId/results',
         component: AttemptAnswersComponent,
       },
-      // {
-      //   path: ':examId/takers/:takerId/results/:examAnsId',
-      //   component: ExamItemPointsComponent,
-      // },
+      {
+        path: ':examId/attempts/:attemptId/results/:examAnsId',
+        component: AttemptAnswerComponent,
+      },
       { path: ':examId/attempts', component: ExamAttemptsComponent },
       // {
       //   path: ':examId/takers/:takerId/recording',

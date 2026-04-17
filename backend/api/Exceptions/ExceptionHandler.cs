@@ -20,6 +20,17 @@ namespace api.Exceptions
 
         switch (exception)
         {
+          case BusinessRuleException businessRuleViolationEx:
+            problem = new ProblemDetails
+            {
+              Title = "Business Rule validation failed",
+              Status = StatusCodes.Status422UnprocessableEntity,
+              Detail = businessRuleViolationEx.Message,
+              Instance = context.Request.Path,
+            };
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            break;
+
           case DomainException domainEx:
             problem = new ProblemDetails
             {

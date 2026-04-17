@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import {
-  AnswerFormModel,
   Exam,
   ExamAnswer,
   ExamCard,
@@ -39,30 +38,6 @@ export class ExamsService {
       .pipe(
         map((res: ResponseWrapper<any>) => {
           return res.records[0];
-        }),
-      );
-  }
-
-  editAnswerPoints(id: number, points: number): Observable<number> {
-    return this.httpClient
-      .put<number>(`${this.appConfig.apiUrl}/records/examAnswers/${id}`, {
-        points: points,
-      })
-      .pipe(map((res: number) => res));
-  }
-
-  getExamAnswer(id: number) {
-    return this.httpClient
-      .get<AnswerFormModel>(`${this.appConfig.apiUrl}/records/examAnswers/${id}?join=questions`)
-      .pipe(
-        map((res: any) => {
-          const rec: AnswerFormModel = {
-            question: res.questionId.question,
-            correctAnswer: res.questionId.correctAnswer,
-            answer: res.answer,
-            maxPoints: res.questionId.maxpoints,
-          };
-          return rec;
         }),
       );
   }
