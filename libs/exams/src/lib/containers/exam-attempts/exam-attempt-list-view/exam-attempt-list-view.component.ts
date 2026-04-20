@@ -8,12 +8,12 @@ import { NzTooltipDirective } from 'ng-zorro-antd/tooltip';
 
 @Component({
   imports: [FormsModule, NgZorroAntdModule, RouterLink, CommonModule, NzTooltipDirective],
-  selector: 'batstateu-exam-attempt-list',
-  templateUrl: './exam-attempt-list.component.html',
-  styleUrls: ['./exam-attempt-list.component.less'],
+  selector: 'batstateu-exam-attempt-list-view',
+  templateUrl: './exam-attempt-list-view.component.html',
+  styleUrls: ['./exam-attempt-list-view.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExamAttemptListComponent {
+export class ExamAttemptListViewComponent {
   public examAttemptList = input<ExamAttemptList[]>([]);
 
   public searchText = model<string>();

@@ -1,12 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AttemptAnswerListComponent } from './attempt-answer-list/attempt-answer-list.component';
+import { AttemptAnswerListViewComponent } from './attempt-answer-list-view/attempt-answer-list-view.component';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ExamAttemptService } from '../services/exam-attempt/exam-attempt.service';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs';
 
 @Component({
-  imports: [AttemptAnswerListComponent],
+  imports: [AttemptAnswerListViewComponent],
   selector: 'batstateu-attempt-answers',
   templateUrl: './attempt-answers.component.html',
   styleUrls: ['./attempt-answers.component.less'],

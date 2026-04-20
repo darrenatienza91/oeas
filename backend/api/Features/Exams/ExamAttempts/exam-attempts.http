@@ -107,3 +107,24 @@ GET {{HOST}}/api/exam-attempts/2/answers?criteria= HTTP/1.1
 Authorization: Bearer {{login.token}}
 Content-Type: application/json
 Accept: application/json
+
+### PatchExamtAttemptQuestionAnswerPoints
+# @name PatchExamtAttemptQuestionAnswerPoints
+# @import ../../auth/auth.http
+# @ref login
+PATCH {{HOST}}/api/exam-attempts/2/answers/4 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json
+{
+    "acquiredPoints": 1
+}
+
+### GetExamAttemptAnswer
+# @name GetExamAttemptAnswer
+# @import ../../auth/auth.http
+# @ref login
+GET {{HOST}}/api/exam-attempts/2/answers/4 HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json

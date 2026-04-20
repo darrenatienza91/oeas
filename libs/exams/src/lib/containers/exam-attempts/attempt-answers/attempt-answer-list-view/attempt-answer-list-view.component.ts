@@ -8,11 +8,11 @@ import { ExamAttemptAnswerList } from '../../services/exam-attempt/exam-attempt-
 
 @Component({
   imports: [ReactiveFormsModule, FormsModule, NgZorroAntdModule, RouterLink, CommonModule],
-  selector: 'batstateu-attempt-answer-list',
-  templateUrl: './attempt-answer-list.component.html',
-  styleUrls: ['./attempt-answer-list.component.less'],
+  selector: 'batstateu-attempt-answer-list-view',
+  templateUrl: './attempt-answer-list-view.component.html',
+  styleUrls: ['./attempt-answer-list-view.component.less'],
 })
-export class AttemptAnswerListComponent {
+export class AttemptAnswerListViewComponent {
   public examAttemptResultList = input<ExamAttemptAnswerList[]>([]);
   public searchText = model<string>('');
 }

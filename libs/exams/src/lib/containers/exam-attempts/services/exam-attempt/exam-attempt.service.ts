@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { ExamAttemptCriteria } from './exam-attempt-criteria';
 import { ExamAttemptAnswerCriteria } from './exam-attempt-answer-criteria';
 import { ExamAttemptAnswerList } from './exam-attempt-answer-list';
+import { AttemptAnswerDto } from '../../attempt-answer.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,21 @@ export class ExamAttemptService extends BaseApiService {
     return this.get<ExamAttemptAnswerList[]>(
       `${this.appConfig.apiUrl}/exam-attempts/${attemptId}/answers`,
       params,
+    );
+  }
+
+  public getAttemptAnswer(id: number, attemptId: number): Observable<AttemptAnswerDto> {
+    return this.get<AttemptAnswerDto>(
+      `${this.appConfig.apiUrl}/exam-attempts/${attemptId}/answers/${id}`,
+    );
+  }
+
+  public editAnswerPoints(id: number, attemptId: number, points: number): Observable<void> {
+    return this.http.patch<void>(
+      `${this.appConfig.apiUrl}/exam-attempts/${attemptId}/answers/${id}`,
+      {
+        acquiredPoints: points,
+      },
     );
   }
 }

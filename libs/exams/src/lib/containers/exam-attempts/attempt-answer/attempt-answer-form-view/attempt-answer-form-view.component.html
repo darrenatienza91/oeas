@@ -1,0 +1,57 @@
+<nz-page-header class="site-page-header" nzTitle="Add Exam Points">
+  <nz-breadcrumb nz-page-header-breadcrumb>
+    <nz-breadcrumb-item>Exams</nz-breadcrumb-item>
+    <nz-breadcrumb-item>Attempts</nz-breadcrumb-item>
+    <nz-breadcrumb-item>Results</nz-breadcrumb-item>
+    <nz-breadcrumb-item>Add Points</nz-breadcrumb-item>
+  </nz-breadcrumb>
+</nz-page-header>
+
+<nz-card>
+  @if (attemptAnswer(); as answer) {
+    <form nz-form [formGroup]="validateForm" nzLayout="vertical" (ngSubmit)="submitForm()">
+      <nz-form-item class="form-item">
+        <nz-form-label nzFor="question">Question</nz-form-label>
+        <nz-form-control>
+          <div class="disabled-field" [innerHTML]="answer.question"></div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="form-item">
+        <nz-form-label nzFor="answer">Answer</nz-form-label>
+        <div class="disabled-field" [innerHTML]="answer.answer"></div>
+      </nz-form-item>
+
+      <nz-form-item class="form-item">
+        <nz-form-label nzFor="correctAnswer">Correct Answer</nz-form-label>
+        <nz-form-control>
+          <div class="disabled-field" [innerHTML]="answer.correctAnswer"></div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="form-item">
+        <nz-form-label nzFor="acquiredPoints">Points</nz-form-label>
+
+        <nz-form-control nzErrorTip="Please input points between 1 to {{ answer.maxPoints }}!">
+          <nz-input-number
+            nz-input
+            id="acquiredPoints"
+            formControlName="acquiredPoints"
+            style="width: 100%"
+          >
+            <span nzInputAddonAfter>out of {{ answer.maxPoints }}</span>
+          </nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control class="submit-area">
+          <nz-space>
+            <button nz-button nzType="default" type="button" (click)="cancel()"> Cancel </button>
+            <button nz-button nzType="primary" htmlType="submit"> Submit </button>
+          </nz-space>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  }
+</nz-card>
