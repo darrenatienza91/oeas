@@ -8,11 +8,13 @@
 </nz-page-header>
 
 <nz-card>
-  <form nz-form [formGroup]="validateForm" nzLayout="vertical" (ngSubmit)="submitForm()">
-    @if (attemptAnswer(); as answer) {
+  @if (attemptAnswer(); as answer) {
+    <form nz-form [formGroup]="validateForm" nzLayout="vertical" (ngSubmit)="submitForm()">
       <nz-form-item class="form-item">
         <nz-form-label nzFor="question">Question</nz-form-label>
-        <div class="disabled-field" [innerHTML]="answer.question"></div>
+        <nz-form-control>
+          <div class="disabled-field" [innerHTML]="answer.question"></div>
+        </nz-form-control>
       </nz-form-item>
 
       <nz-form-item class="form-item">
@@ -22,32 +24,34 @@
 
       <nz-form-item class="form-item">
         <nz-form-label nzFor="correctAnswer">Correct Answer</nz-form-label>
-        <div class="disabled-field" [innerHTML]="answer.correctAnswer"></div>
+        <nz-form-control>
+          <div class="disabled-field" [innerHTML]="answer.correctAnswer"></div>
+        </nz-form-control>
       </nz-form-item>
 
       <nz-form-item class="form-item">
         <nz-form-label nzFor="acquiredPoints">Points</nz-form-label>
 
         <nz-form-control nzErrorTip="Please input points between 1 to {{ answer.maxPoints }}!">
-          <nz-input-group class="points-field" nzAddOnAfter="out of {{ answer.maxPoints }}">
-            <nz-input-number
-              nz-input
-              id="acquiredPoints"
-              formControlName="acquiredPoints"
-              style="width: 100%"
-            />
-          </nz-input-group>
+          <nz-input-number
+            nz-input
+            id="acquiredPoints"
+            formControlName="acquiredPoints"
+            style="width: 100%"
+          >
+            <span nzInputAddonAfter>out of {{ answer.maxPoints }}</span>
+          </nz-input-number>
         </nz-form-control>
       </nz-form-item>
-    }
 
-    <nz-form-item>
-      <nz-form-control class="submit-area">
-        <nz-space>
-          <button nz-button nzType="default" type="button" (click)="cancel()"> Cancel </button>
-          <button nz-button nzType="primary" htmlType="submit"> Submit </button>
-        </nz-space>
-      </nz-form-control>
-    </nz-form-item>
-  </form>
+      <nz-form-item>
+        <nz-form-control class="submit-area">
+          <nz-space>
+            <button nz-button nzType="default" type="button" (click)="cancel()"> Cancel </button>
+            <button nz-button nzType="primary" htmlType="submit"> Submit </button>
+          </nz-space>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  }
 </nz-card>

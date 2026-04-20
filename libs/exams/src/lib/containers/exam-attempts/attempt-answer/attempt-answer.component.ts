@@ -5,7 +5,6 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { AttemptAnswerFormViewComponent } from './attempt-answer-form-view/attempt-answer-form-view.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ExamAttemptService } from '../services/exam-attempt/exam-attempt.service';
-import { AttemptAnswerDto } from '../attempt-answer.dto';
 
 @Component({
   imports: [AttemptAnswerFormViewComponent],
@@ -21,9 +20,7 @@ export class AttemptAnswerComponent {
   private readonly id = Number(this.route.snapshot.paramMap.get('examAnsId'));
   private readonly attemptId = Number(this.route.snapshot.paramMap.get('attemptId'));
 
-  public attemptAnswer = toSignal(this.examService.getAttemptAnswer(this.id, this.attemptId), {
-    initialValue: {} as AttemptAnswerDto,
-  });
+  public attemptAnswer = toSignal(this.examService.getAttemptAnswer(this.id, this.attemptId));
 
   onSave(points: number) {
     this.examService.editAnswerPoints(this.id, this.attemptId, points).subscribe(() => {

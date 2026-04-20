@@ -39,8 +39,11 @@ export class ExamAttemptService extends BaseApiService {
   }
 
   public editAnswerPoints(id: number, attemptId: number, points: number): Observable<void> {
-    return this.http.put<void>(`${this.appConfig.apiUrl}/attempt-answers/${id}`, {
-      acquiredPoints: points,
-    });
+    return this.http.patch<void>(
+      `${this.appConfig.apiUrl}/exam-attempts/${attemptId}/answers/${id}`,
+      {
+        acquiredPoints: points,
+      },
+    );
   }
 }

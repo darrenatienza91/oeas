@@ -35,7 +35,7 @@ export class AttemptAnswerFormViewComponent {
     }
 
     this.validateForm = this.fb.group({
-      points: [
+      acquiredPoints: [
         this.attemptAnswer()?.acquiredPoints,
         [Validators.required, confirmationValidator(this.attemptAnswer()?.maxPoints ?? 0)],
       ],
@@ -44,6 +44,10 @@ export class AttemptAnswerFormViewComponent {
     this.formEffect.destroy();
   });
 
+  private get acquiredPoints(): AbstractControl {
+    return this.validateForm.get('acquiredPoints')!;
+  }
+
   submitForm(): void {
     if (this.validateForm.valid) {
       this.modal.confirm({
@@ -51,7 +55,7 @@ export class AttemptAnswerFormViewComponent {
         nzTitle: 'Submit Points',
         nzContent: `Are you sure you want to submit points? <br/> Submitted points can't be reverted.`,
         nzOnOk: () => {
-          this.save.emit(this.validateForm.controls['points'].value);
+          this.save.emit(this.acquiredPoints.value);
         },
       });
     } else {
@@ -70,10 +74,6 @@ export class AttemptAnswerFormViewComponent {
 
 export const confirmationValidator = (limit: number): ValidatorFn => {
   return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) {
-      return { required: true };
-    }
-
     if (control.value > limit) {
       return { confirm: true, error: true };
     }
