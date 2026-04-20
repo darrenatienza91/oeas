@@ -86,10 +86,6 @@ import { TakeExamResultViewComponent } from './containers/take-exam/exam-attempt
         component: AttemptAnswerComponent,
       },
       { path: ':examId/attempts', component: ExamAttemptsComponent },
-      // {
-      //   path: ':examId/takers/:takerId/recording',
-      //   component: ExamRecordingComponent,
-      // },
       { path: ':examId/take-exam', component: TakeExamComponent, canActivate: [takeExamGuard] },
       { path: ':examId/questions', component: QuestionsComponent },
       {
