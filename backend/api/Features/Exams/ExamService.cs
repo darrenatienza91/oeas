@@ -94,7 +94,7 @@ namespace api.Services
         .ExamAttempts.Where(x => x.ExamId == examId)
         .Select(x => new ExamAttemptDetailDto(
           Id: x.Id,
-          RecUrl: x.RecUrl,
+          RecUrl: x.RecordingFileName,
           CreateDate: x.CreateDate,
           IsSubmitted: x.IsAttemptSubmitted,
           ExamId: x.ExamId

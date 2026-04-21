@@ -6,6 +6,8 @@ using api.Data;
 using api.Exceptions;
 using api.Models;
 using api.Shared;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.Exams;
 
@@ -24,6 +26,12 @@ public interface IExamAttemptRecordingService
     int attemptId,
     string sessionId,
     int total,
+    string fileName,
+    CancellationToken ct
+  );
+
+  Task<(FileStream fileStream, string contentType)> GetRecordingAsync(
+    int attemptId,
     string fileName,
     CancellationToken ct
   );
@@ -82,5 +90,46 @@ public class ExamAttemptRecordingService(IChunkedUploadService upload, AppDbCont
   {
     return await appDbContext.ExamAttempts.FindAsync([attemptId], ct)
       ?? throw new NotFoundException("Exam attempt not found.");
+  }
+
+  public async Task<(FileStream fileStream, string contentType)> GetRecordingAsync(
+    int attemptId,
+    string fileName,
+    CancellationToken ct
+  )
+  {
+    var _ =
+      await appDbContext.ExamAttempts.FirstOrDefaultAsync(
+        x => x.Id == attemptId && x.RecordingFileName == fileName,
+        ct
+      ) ?? throw new NotFoundException("Exam attempt not found.");
+
+    var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), @"uploads\final");
+
+    var safeFileName = Path.GetFileName(fileName);
+    var fullPath = Path.Combine(uploadsPath, safeFileName);
+
+    if (!File.Exists(fullPath))
+    {
+      throw new NotFoundException("Recording not found.");
+    }
+
+    var provider = new FileExtensionContentTypeProvider();
+
+    if (!provider.TryGetContentType(fullPath, out var contentType))
+    {
+      contentType = "application/octet-stream";
+    }
+
+    var stream = new FileStream(
+      fullPath,
+      FileMode.Open,
+      FileAccess.Read,
+      FileShare.Read,
+      bufferSize: 64 * 1024,
+      useAsync: true
+    );
+
+    return (stream, contentType);
   }
 }

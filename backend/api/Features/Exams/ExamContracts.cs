@@ -106,7 +106,7 @@ namespace api.Contracts
     {
       if (examAttempt is not null)
       {
-        return new(examAttempt.Id, examAttempt.RecUrl, examAttempt.CreateDate);
+        return new(examAttempt.Id, examAttempt.RecordingFileName, examAttempt.CreateDate);
       }
 
       return null;

@@ -242,7 +242,7 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
         x.UserDetail.Section.Name,
         x.FinalScore,
         x.HasRecording,
-        x.RecUrl
+        x.RecordingFileName
       ))
       .AsAsyncEnumerable();
   }

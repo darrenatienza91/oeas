@@ -95,7 +95,7 @@ namespace api.Endpoints
 
     static async Task<IResult> AddExamAttempt(IExamService service, HttpContext http, int id)
     {
-      var examAttempt = await service.AddAttempt(new() { ExamId = id, RecUrl = "" });
+      var examAttempt = await service.AddAttempt(new() { ExamId = id, RecordingFileName = "" });
 
       return Results.Created($"{http.Request.Path}/{id}/my-attempt", examAttempt);
     }
