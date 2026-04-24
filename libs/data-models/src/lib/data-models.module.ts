@@ -18,7 +18,6 @@ export { ChangePassword } from './change-password';
 export { Exam } from './exam';
 export { ForgotPassword } from './forgot-password';
 export { QuestionDetail } from './question-detail';
-export { ExamAttemptDetail } from './exam-attempt-detail';
 export { ExamAttemptQuestion } from './exam-attempt-question';
 export { ExamAnswer } from './exam-answer';
 export { ExamAnswerList } from './exam-answer-list';

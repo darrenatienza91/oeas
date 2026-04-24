@@ -8,11 +8,7 @@
   </nz-page-header>
 
   <div class="video-container" style="display: flex; align-items: center">
-    <video
-      id="video_{{ idx }}"
-      class="video-js vjs-default-skin vjs-big-play-centered"
-      playsinline
-    ></video>
+    <video #player class="video-js vjs-default-skin vjs-big-play-centered" playsinline></video>
   </div>
   <div style="display: flex; justify-content: right">
     <a nz-button nzType="default" routerLink="../..">Back</a>

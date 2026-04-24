@@ -1,7 +1,7 @@
-export interface ExamAttemptDetail {
+export interface ExamAttemptDetailDto {
   id: number;
   userDetailId: number;
   examId: number;
-  recUrl: string;
+  recordingUrl: string;
   isSubmitted: boolean;
 }

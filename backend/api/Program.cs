@@ -28,6 +28,8 @@ var builder = WebApplication.CreateBuilder(args);
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
 
+builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("ApiSettings"));
+
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
   options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());

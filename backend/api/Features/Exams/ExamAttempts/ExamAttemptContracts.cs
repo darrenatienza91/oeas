@@ -30,8 +30,7 @@ namespace api.Features.ExamAttempts
     string Department,
     string Section,
     double FinalScore,
-    bool HasRecording,
-    string RecUrl
+    bool HasRecording
   );
 
   public record ExamAttemptAnswerListDto(int Id, string Question, int Score);

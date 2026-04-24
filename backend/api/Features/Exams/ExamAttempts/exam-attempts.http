@@ -128,3 +128,12 @@ GET {{HOST}}/api/exam-attempts/2/answers/4 HTTP/1.1
 Authorization: Bearer {{login.token}}
 Content-Type: application/json
 Accept: application/json
+
+### GetExamAttempt
+# @name GetExamAttempt
+# @import ../../auth/auth.http
+# @ref login
+GET {{HOST}}/api/exam-attempts/2/recording-preview HTTP/1.1
+Authorization: Bearer {{login.token}}
+Content-Type: application/json
+Accept: application/json

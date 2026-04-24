@@ -21,7 +21,6 @@ namespace api.Services
     Task<Exam?> GetExamById(int id);
     Task<IEnumerable<Exam>> GetExamsAsync(DateTimeOffset? startOn, string? criteria);
     Task<ExamAttempt?> GetAttempt(int examId);
-    Task<ExamAttemptDetailDto?> GetAttemptDetails(int examId);
     Task<ExamAttempt?> AddAttempt(ExamAttempt examAttempt);
   }
 
@@ -86,20 +85,6 @@ namespace api.Services
       await appDbContext.SaveChangesAsync();
 
       return examAttempt;
-    }
-
-    public async Task<ExamAttemptDetailDto?> GetAttemptDetails(int examId)
-    {
-      return await appDbContext
-        .ExamAttempts.Where(x => x.ExamId == examId)
-        .Select(x => new ExamAttemptDetailDto(
-          Id: x.Id,
-          RecUrl: x.RecordingFileName,
-          CreateDate: x.CreateDate,
-          IsSubmitted: x.IsAttemptSubmitted,
-          ExamId: x.ExamId
-        ))
-        .FirstOrDefaultAsync();
     }
   }
 }

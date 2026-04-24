@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Auth;
+using api.Contracts;
 using api.Data;
 using api.Exceptions;
 using api.Features.Exams.ExamAttempts;
 using api.Models;
+using api.Shared;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace api.Features.ExamAttempts;
 
@@ -29,10 +33,33 @@ public interface IExamAttemptService
     HashSet<string> modifiedProperties
   );
   Task<ExamAttemptAnswerDetailDto?> GetExamAttemptAnswer(int id, int attemptId);
+  Task<ExamAttemptDetailDto?> GetCurrentUserExamAttemptByExamId(int examId);
+  Task<ExamAttemptPreviewRecordingDto?> GetExamAttemptRecordingPreview(int id);
 }
 
-public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
+public class ExamAttemptService(
+  AppDbContext appDbContext,
+  IOptions<AppSetting> appSettings,
+  ICurrentUser currentUser
+) : IExamAttemptService
 {
+  private readonly IOptions<AppSetting> appSettings = appSettings;
+  private readonly ICurrentUser currentUser = currentUser;
+
+  public async Task<ExamAttemptDetailDto?> GetCurrentUserExamAttemptByExamId(int examId)
+  {
+    return await appDbContext
+      .ExamAttempts.Where(x => x.ExamId == examId && x.UserDetailId == currentUser.UserDetailId)
+      .Select(x => new ExamAttemptDetailDto(
+        Id: x.Id,
+        RecordingUrl: x.RecordingFileName,
+        CreateDate: x.CreateDate,
+        IsSubmitted: x.IsAttemptSubmitted,
+        ExamId: x.ExamId
+      ))
+      .FirstOrDefaultAsync();
+  }
+
   public async Task<ExamAttemptResultDto> GetResult(int id)
   {
     var examAttemptResult =
@@ -115,7 +142,10 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 
   public async Task<Models.Question?> GetExamAttemptQuestion(int attemptId, int questionId)
   {
-    var examAttempt = await GetExamAttempt(attemptId);
+    var examAttempt =
+      await appDbContext.ExamAttempts.FirstOrDefaultAsync(x => x.Id == attemptId)
+      ?? throw new NotFoundException($"ExamAttempt {attemptId} not found");
+
     return await appDbContext
       .Questions.Where(x => x.ExamId == examAttempt.ExamId && x.Id == questionId)
       .FirstOrDefaultAsync();
@@ -123,7 +153,10 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 
   public async Task SetAnswer(int attemptId, int questionId, string answerText)
   {
-    await GetExamAttempt(attemptId);
+    var _ =
+      await appDbContext.ExamAttempts.FirstOrDefaultAsync(x => x.Id == attemptId)
+      ?? throw new NotFoundException($"ExamAttempt {attemptId} not found");
+
     await GetQuestion(questionId);
 
     var examAttemptAnswer = await appDbContext.ExamAttemptAnswers.FirstOrDefaultAsync(x =>
@@ -151,7 +184,9 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 
   public async Task<MoveNextQuestionResult> MoveNextQuestion(int attemptId)
   {
-    var examAttempt = await GetExamAttempt(attemptId);
+    var examAttempt =
+      await appDbContext.ExamAttempts.FirstOrDefaultAsync(x => x.Id == attemptId)
+      ?? throw new NotFoundException($"ExamAttempt {attemptId} not found");
 
     var questionCount = await appDbContext
       .Questions.Where(q => q.ExamId == examAttempt.ExamId)
@@ -169,22 +204,6 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
     return MoveNextQuestionResult.Moved;
   }
 
-  private async Task<ExamAttempt> GetExamAttempt(
-    int attemptId,
-    Func<IQueryable<ExamAttempt>, IQueryable<ExamAttempt>>? include = null
-  )
-  {
-    IQueryable<ExamAttempt> query = appDbContext.ExamAttempts;
-
-    if (include is not null)
-    {
-      query = include(query);
-    }
-
-    return await query.FirstOrDefaultAsync(x => x.Id == attemptId)
-      ?? throw new NotFoundException($"Exam Attempt with id {attemptId} not found");
-  }
-
   private async Task<Question> GetQuestion(int questionId)
   {
     return await appDbContext.Questions.FindAsync(questionId)
@@ -193,7 +212,9 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 
   public async Task<MovePreviousQuestionResult> MovePreviousQuestion(int attemptId)
   {
-    var examAttempt = await GetExamAttempt(attemptId);
+    var examAttempt =
+      await appDbContext.ExamAttempts.FirstOrDefaultAsync(x => x.Id == attemptId)
+      ?? throw new NotFoundException($"ExamAttempt {attemptId} not found");
 
     if (examAttempt.CurrentQuestionIndex == 0)
     {
@@ -209,7 +230,7 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
 
   public async Task<bool> HasExamAttempt(int attemptId)
   {
-    return await GetExamAttempt(attemptId) is not null;
+    return await appDbContext.ExamAttempts.AnyAsync(x => x.Id == attemptId);
   }
 
   public async Task EditAsync(int id, ExamAttemptPatchDto dto, HashSet<string> modified)
@@ -241,8 +262,7 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
         x.UserDetail.Department.Name,
         x.UserDetail.Section.Name,
         x.FinalScore,
-        x.HasRecording,
-        x.RecordingFileName
+        x.HasRecording
       ))
       .AsAsyncEnumerable();
   }
@@ -313,5 +333,17 @@ public class ExamAttemptService(AppDbContext appDbContext) : IExamAttemptService
         x.AcquiredPoints
       ))
       .FirstOrDefaultAsync();
+  }
+
+  public async Task<ExamAttemptPreviewRecordingDto?> GetExamAttemptRecordingPreview(int id)
+  {
+    return await appDbContext
+        .ExamAttempts.Where(x => x.Id == id)
+        .Select(x => new ExamAttemptPreviewRecordingDto(
+          RecordingUrl: $"{appSettings.Value.BaseUrl}/exam-attempts/{x.Id}/recordings/{x.RecordingFileName}",
+          CreateDate: x.CreateDate
+        ))
+        .FirstOrDefaultAsync()
+      ?? throw new NotFoundException($"ExamAttempt {id} not found");
   }
 }

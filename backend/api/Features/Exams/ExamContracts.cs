@@ -53,11 +53,13 @@ namespace api.Contracts
 
   public record ExamAttemptDetailDto(
     int Id,
-    string RecUrl,
+    string RecordingUrl,
     DateTimeOffset CreateDate,
     bool IsSubmitted,
     int ExamId
   );
+
+  public record ExamAttemptPreviewRecordingDto(string RecordingUrl, DateTimeOffset CreateDate);
 
   public static class ExamMapper
   {

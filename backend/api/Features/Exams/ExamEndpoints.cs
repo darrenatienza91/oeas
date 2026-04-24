@@ -44,19 +44,6 @@ namespace api.Endpoints
 
       app.MapPatch("/exams/{id}/de-activate", Deactivate)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.SuperAdmin));
-
-      app.MapGet("/exams/{id}/my-attempt", GetExamAttempt)
-        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.Student));
-
-      app.MapPost("/exams/{id}/my-attempt", AddExamAttempt)
-        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.Student));
-    }
-
-    static async Task<IResult> GetExamAttempt(IExamService service, [FromRoute] int id)
-    {
-      var examAttempt = await service.GetAttemptDetails(id);
-
-      return Results.Ok(examAttempt);
     }
 
     static async Task<IResult> GetExams(
@@ -91,13 +78,6 @@ namespace api.Endpoints
       await service.AddExam(exam);
 
       return Results.Created($"{http.Request.Path}/{exam.Id}", exam);
-    }
-
-    static async Task<IResult> AddExamAttempt(IExamService service, HttpContext http, int id)
-    {
-      var examAttempt = await service.AddAttempt(new() { ExamId = id, RecordingFileName = "" });
-
-      return Results.Created($"{http.Request.Path}/{id}/my-attempt", examAttempt);
     }
 
     static async Task<IResult> Edit(

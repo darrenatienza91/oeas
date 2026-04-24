@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ExamListComponent } from './components/exam-list/exam-list.component';
 import { ExamAttemptListViewComponent } from './containers/exam-attempts/exam-attempt-list-view/exam-attempt-list-view.component';
-import { ExamRecordingViewComponent } from './components/exam-recording-view/exam-recording-view.component';
+import { ExamAttemptRecordingViewComponent } from './containers/exam-attempts/exam-attempt-recording/exam-attempt-recording-view/exam-attempt-recording-view.component';
 import { AttemptAnswerListViewComponent } from './containers/exam-attempts/attempt-answers/attempt-answer-list-view/attempt-answer-list-view.component';
 import { AttemptAnswersComponent } from './containers/exam-attempts/attempt-answers/attempt-answers.component';
-import { ExamRecordingComponent } from './containers/exam-recording/exam-recording.component';
+import { ExamAttemptRecordingComponent } from './containers/exam-attempts/exam-attempt-recording/exam-attempt-recording.component';
 import { ExamAttemptsComponent } from './containers/exam-attempts/exam-attempts.component';
 import { AttemptAnswerComponent } from './containers/exam-attempts/attempt-answer/attempt-answer.component';
 import { ExamFormViewComponent } from './components/exam-form-view/exam-form-view.component';
@@ -40,10 +40,10 @@ import { TakeExamResultViewComponent } from './containers/take-exam/exam-attempt
     ExamFormComponent,
     ExamAttemptListViewComponent,
     AttemptAnswerFormViewComponent,
-    ExamRecordingViewComponent,
+    ExamAttemptRecordingViewComponent,
     AttemptAnswerListViewComponent,
     AttemptAnswersComponent,
-    ExamRecordingComponent,
+    ExamAttemptRecordingComponent,
     ExamAttemptsComponent,
     AttemptAnswerComponent,
     ExamFormViewComponent,
@@ -73,10 +73,10 @@ import { TakeExamResultViewComponent } from './containers/take-exam/exam-attempt
       { path: 'form', component: ExamFormComponent },
       { path: ':examId/form', component: ExamFormComponent },
       // { path: 'item-points', component: ExamItemPointsComponent },
-      // {
-      //   path: ':examId/takers/:takerId/recording',
-      //   component: ExamRecordingComponent,
-      // },
+      {
+        path: ':examId/attempts/:attemptId/recording',
+        component: ExamAttemptRecordingComponent,
+      },
       {
         path: ':examId/attempts/:attemptId/results',
         component: AttemptAnswersComponent,
