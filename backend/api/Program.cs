@@ -13,6 +13,7 @@ using api.Features.Users;
 using api.Models;
 using api.Services;
 using api.Shared;
+using api.Shared.MediaConverter;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
@@ -73,7 +74,8 @@ builder.Services.Configure<FormOptions>(options =>
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
+builder.Services.AddScoped<IMediaConverter, Mp4MediaConverter>();
+builder.Services.AddScoped<IMediaConverterResolver, MediaConverterResolver>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IExamService, ExamService>();
 builder.Services.AddScoped<ISectionService, SectionService>();
