@@ -1,13 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
-import {
-  ExamAnswer,
-  ExamAttemptDetail,
-  ExamAttemptQuestion,
-  ResponseWrapper,
-} from '@batstateu/data-models';
+import { ExamAnswer, ExamAttemptQuestion, ResponseWrapper } from '@batstateu/data-models';
 import { map, Observable } from 'rxjs';
+import { ExamAttemptDetailDto } from '../../containers/exam-attempts/services/exam-attempt/exam-attempt-detail.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -53,25 +49,20 @@ export class TakeExamService {
       >(`${this.appConfig.apiUrl}/records/examAnswers?filter=userDetailId,eq,${userDetailId}`)
       .pipe(map((res: ResponseWrapper<any>) => res.records));
   }
-  public getExamAttemptByExamId(examId: number): Observable<ExamAttemptDetail> {
-    return this.httpClient.get<ExamAttemptDetail>(
+  public getExamAttemptByExamId(examId: number): Observable<ExamAttemptDetailDto> {
+    return this.httpClient.get<ExamAttemptDetailDto>(
       `${this.appConfig.apiUrl}/exams/${examId}/my-attempt`,
     );
   }
-  get(examAttemptId: number): Observable<ExamAttemptDetail> {
-    return this.httpClient.get<ExamAttemptDetail>(
-      `${this.appConfig.apiUrl}/records/exam-attempts/${examAttemptId}`,
-    );
-  }
 
-  public addExamAttempt(examId: number): Observable<ExamAttemptDetail> {
-    return this.httpClient.post<ExamAttemptDetail>(
+  public addExamAttempt(examId: number): Observable<ExamAttemptDetailDto> {
+    return this.httpClient.post<ExamAttemptDetailDto>(
       `${this.appConfig.apiUrl}/exams/${examId}/my-attempt`,
       {},
     );
   }
 
-  updateExamAttempt(examAttemptId: number, val: ExamAttemptDetail): Observable<number> {
+  updateExamAttempt(examAttemptId: number, val: ExamAttemptDetailDto): Observable<number> {
     return this.httpClient.put<number>(
       `${this.appConfig.apiUrl}/records/exams-attempts/${examAttemptId}`,
       val,

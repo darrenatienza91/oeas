@@ -53,11 +53,13 @@ namespace api.Contracts
 
   public record ExamAttemptDetailDto(
     int Id,
-    string RecUrl,
+    string RecordingUrl,
     DateTimeOffset CreateDate,
     bool IsSubmitted,
     int ExamId
   );
+
+  public record ExamAttemptPreviewRecordingDto(string RecordingUrl, DateTimeOffset CreateDate);
 
   public static class ExamMapper
   {
@@ -106,7 +108,7 @@ namespace api.Contracts
     {
       if (examAttempt is not null)
       {
-        return new(examAttempt.Id, examAttempt.RecUrl, examAttempt.CreateDate);
+        return new(examAttempt.Id, examAttempt.RecordingFileName, examAttempt.CreateDate);
       }
 
       return null;

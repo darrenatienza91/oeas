@@ -6,6 +6,7 @@ import { ExamAttemptCriteria } from './exam-attempt-criteria';
 import { ExamAttemptAnswerCriteria } from './exam-attempt-answer-criteria';
 import { ExamAttemptAnswerList } from './exam-attempt-answer-list';
 import { AttemptAnswerDto } from '../../attempt-answer.dto';
+import { ExamAttemptRecordingPreviewDto } from './exam-attempt-recording-preview.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,12 @@ export class ExamAttemptService extends BaseApiService {
     const params = buildHttpParams(criteria);
 
     return this.get<ExamAttemptList[]>(`${this.appConfig.apiUrl}/exams/${examId}/attempts`, params);
+  }
+
+  public getExamAttemptDetail(id: number): Observable<ExamAttemptRecordingPreviewDto> {
+    return this.get<ExamAttemptRecordingPreviewDto>(
+      `${this.appConfig.apiUrl}/exam-attempts/${id}/recording-preview`,
+    );
   }
 
   getAllAttemptAnswersByCriteria(

@@ -1,12 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import {
-  Exam,
-  ExamAnswer,
-  ExamCard,
-  ExamRecordViewModel,
-  ResponseWrapper,
-} from '@batstateu/data-models';
+import { Exam, ExamAnswer, ExamCard, ResponseWrapper } from '@batstateu/data-models';
 import { map, Observable } from 'rxjs';
 import { APP_CONFIG, AppConfig } from '@batstateu/app-config';
 
@@ -26,20 +20,6 @@ export class ExamsService {
   }
   public getAllStartOn(date: string, sectionId: number | null): Observable<ExamCard[]> {
     return this.httpClient.get<ExamCard[]>(`${this.appConfig.apiUrl}/exams?startOn=${date}`);
-  }
-  getExamAttemptByExamIdAttemptId(
-    examId: number,
-    attemptId: number,
-  ): Observable<ExamRecordViewModel> {
-    return this.httpClient
-      .get<
-        ResponseWrapper<ExamRecordViewModel>
-      >(`${this.appConfig.apiUrl}/records/attemptExams?filter=userDetailId,eq,${attemptId}&filter=examId,eq,${examId}`)
-      .pipe(
-        map((res: ResponseWrapper<any>) => {
-          return res.records[0];
-        }),
-      );
   }
 
   public edit(val: Exam): Observable<number> {

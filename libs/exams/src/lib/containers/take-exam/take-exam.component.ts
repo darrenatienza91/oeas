@@ -13,7 +13,6 @@ import { Location } from '@angular/common';
 import { TakeExamScreenRecordingComponent } from './take-exam-screen-recording/take-exam-screen-recording.component';
 import {
   Exam,
-  ExamAttemptDetail,
   ExamAttemptQuestion,
   ExamState as ExamView,
   TakeExamControlState,
@@ -57,6 +56,7 @@ import { ExamAttemptRecordingUploadService } from '../../services/exam-attempt-r
 import { TakeExamState } from './take-exam-state';
 import { screenRecorderSetup } from './screen-recorder-setup';
 import { TakeExamService } from '../../services/take-exam/take-exam.service';
+import { ExamAttemptDetailDto } from '../exam-attempts/services/exam-attempt/exam-attempt-detail.dto';
 
 @Component({
   imports: [
@@ -121,7 +121,7 @@ export class TakeExamComponent {
   public cameraVisible = false;
   public hasInactiveStatus = false;
   private readonly timeLeft = this.appConfig.inactiveTimeInSeconds;
-  private readonly examAttempt = signal<ExamAttemptDetail | null>(null);
+  private readonly examAttempt = signal<ExamAttemptDetailDto | null>(null);
   private readonly examId = Number(this.route.snapshot.paramMap.get('examId'));
 
   private readonly submitAnswer$ = new Subject<string>();

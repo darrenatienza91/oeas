@@ -14,16 +14,16 @@ Accept: application/json
 #    "password": "s1"
 #  }
 
+#  {
+#    "username": "teacher",
+#    "password": "teacher"
+#  }
+
+
  {
-   "username": "teacher",
-   "password": "teacher"
+   "username": "s2",
+   "password": "s2"
  }
-
-
-// {
-  // "username": "s2",
-  // "password": "s2"
-// }
 
 ### Register
 {{

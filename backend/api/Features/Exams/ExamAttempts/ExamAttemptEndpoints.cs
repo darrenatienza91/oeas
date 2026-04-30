@@ -6,7 +6,9 @@ using api.Exceptions;
 using api.Features.Exams;
 using api.Helpers;
 using api.Models;
+using api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace api.Features.ExamAttempts
 {
@@ -61,7 +63,9 @@ namespace api.Features.ExamAttempts
           policy.RequireRole(Roles.Student, Roles.Teacher, Roles.SuperAdmin)
         );
 
-      app.MapGet("/exams/{id}/attempts", GetExamAttempts)
+      app.MapGroup("/exams/{id}/attempts")
+        .WithTags("Exam Attempts")
+        .MapGet("/", GetExamAttempts)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher));
 
       app.MapGet("/exam-attempts/{id}/answers", GetExamAttemptAnswers)
@@ -70,8 +74,58 @@ namespace api.Features.ExamAttempts
       app.MapGet("/exam-attempts/{attemptId}/answers/{id}", GetExamAttemptAnswer)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher));
 
+      app.MapGet("/exam-attempts/{attemptId}/recordings/{fileName}", GetExamAttemptRecording);
+
       app.MapPatch("/exam-attempts/{attemptId}/answers/{id}", PatchExamAttemptAnswers)
         .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher));
+
+      app.MapGet("/exams/{examId}/my-attempt", GetCurrentUserExamAttemptByExamId)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.Student));
+
+      app.MapPost("/exams/{id}/my-attempt", AddExamAttempt)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher, Roles.Student));
+
+      app.MapGet("/exam-attempts/{id}/recording-preview", GetExamAttemptRecordingPreview)
+        .RequireAuthorization(policy => policy.RequireRole(Roles.Teacher));
+    }
+
+    static async Task<IResult> AddExamAttempt(IExamService service, HttpContext http, int id)
+    {
+      var examAttempt = await service.AddAttempt(new() { ExamId = id, RecordingFileName = "" });
+
+      return Results.Created($"{http.Request.Path}/{id}/my-attempt", examAttempt);
+    }
+
+    static async Task<IResult> GetExamAttemptRecordingPreview(
+      IExamAttemptService service,
+      [FromRoute] int id
+    )
+    {
+      var examAttempt = await service.GetExamAttemptRecordingPreview(id);
+
+      return Results.Ok(examAttempt);
+    }
+
+    static async Task<IResult> GetCurrentUserExamAttemptByExamId(
+      IExamAttemptService service,
+      [FromRoute] int examId
+    )
+    {
+      var examAttempt = await service.GetCurrentUserExamAttemptByExamId(examId);
+
+      return Results.Ok(examAttempt);
+    }
+
+    static async Task<IResult> GetExamAttemptRecording(
+      IExamAttemptRecordingService service,
+      [FromRoute] int attemptId,
+      [FromRoute] string fileName,
+      CancellationToken ct
+    )
+    {
+      var (stream, contentType) = await service.GetRecordingAsync(attemptId, fileName, ct);
+
+      return Results.Stream(stream, contentType, enableRangeProcessing: true);
     }
 
     static async Task<IResult> GetExamAttemptAnswer(
@@ -158,7 +212,7 @@ namespace api.Features.ExamAttempts
       CancellationToken ct
     )
     {
-      var path = await service.FinalizeRecordingAsync(
+      await service.FinalizeRecordingAsync(
         attemptId,
         dto.SessionId,
         dto.TotalChunks,
@@ -166,7 +220,7 @@ namespace api.Features.ExamAttempts
         ct
       );
 
-      return Results.Ok(new { path });
+      return Results.Ok();
     }
 
     static async Task<IResult> UploadChunkRecordings(

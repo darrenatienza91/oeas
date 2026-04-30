@@ -5,7 +5,7 @@ export interface ExamAttemptList {
   department: string;
   finalScore: number;
   hasRecording: boolean;
-  recUrl: string;
+  recordingUrl: string;
   userDetailId: number;
   examId: number;
 }

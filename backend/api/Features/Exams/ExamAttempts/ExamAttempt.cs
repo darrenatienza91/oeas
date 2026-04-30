@@ -13,7 +13,7 @@ namespace api.Models
   {
     public int UserDetailId { get; set; }
     public int ExamId { get; set; }
-    public string RecUrl { get; set; }
+    public string RecordingFileName { get; set; } = "";
     public UserDetail UserDetail { get; set; }
     public Exam Exam { get; set; }
     public ICollection<ExamAttemptAnswer> ExamAttemptAnswers { get; set; } = [];
@@ -24,7 +24,7 @@ namespace api.Models
     public double FinalScore { get; set; }
     public bool HasRecording
     {
-      get => !string.IsNullOrEmpty(RecUrl);
+      get => !string.IsNullOrEmpty(RecordingFileName);
     }
   }
 
