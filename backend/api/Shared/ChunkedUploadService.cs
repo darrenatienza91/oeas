@@ -23,10 +23,10 @@ public interface IChunkedUploadService
 public class ChunkedUploadService(
   IWebHostEnvironment env,
   IFileStorage fileStorage,
-  IMediaConverterResolver mediaConverterResolver
+  IMediaConverterResolver mediaConverterResolver,
+  IChunkMerger chunkMerger
 ) : IChunkedUploadService
 {
-  private readonly string _rootPath = Path.Combine(env.ContentRootPath, "uploads");
   private readonly IMediaConverterResolver mediaConverterResolver = mediaConverterResolver;
 
   public async Task UploadChunkAsync(Stream file, int index, string sessionId, CancellationToken ct)
@@ -42,68 +42,29 @@ public class ChunkedUploadService(
     CancellationToken ct
   )
   {
-    var tempDir = Path.Combine(_rootPath, "temp", sessionId);
+    var tempDir = Path.Combine("temp", sessionId);
 
-    if (!Directory.Exists(tempDir))
-    {
-      throw new FinalizeUploadFileException("Temp directory not found.");
-    }
+    var chunkFiles = await fileStorage.GetFilesAsync(tempDir, ct);
 
-    var chunkFiles = Directory.GetFiles(tempDir);
-
-    if (chunkFiles.Length != totalChunks)
-    {
+    if (chunkFiles.Count() != totalChunks)
       throw new FinalizeUploadFileException(
-        $"Missing chunks ({chunkFiles.Length} / {totalChunks})"
+        $"Missing chunks ({chunkFiles.Count()} / {totalChunks})"
       );
-    }
 
-    var orderedChunks = chunkFiles
-      .OrderBy(f => int.Parse(Path.GetFileNameWithoutExtension(f)))
-      .ToList();
+    var orderedChunks = chunkFiles.OrderBy(f => int.Parse(Path.GetFileNameWithoutExtension(f)));
 
-    // Temp merged file (raw concatenation)
-    var mergedPath = Path.Combine(_rootPath, "temp", $"{sessionId}_merged.webm");
+    var mergedPath = Path.Combine(fileStorage.RootPath, "temp", $"{sessionId}_merged.webm");
 
-    await using (
-      var output = new FileStream(
-        mergedPath,
-        FileMode.Create,
-        FileAccess.Write,
-        FileShare.None,
-        bufferSize: 64 * 1024,
-        useAsync: true
-      )
-    )
-    {
-      foreach (var chunk in orderedChunks)
-      {
-        await using var chunkStream = new FileStream(
-          chunk,
-          FileMode.Open,
-          FileAccess.Read,
-          FileShare.Read,
-          bufferSize: 64 * 1024,
-          useAsync: true
-        );
+    await chunkMerger.MergeAsync(orderedChunks, mergedPath, ct);
 
-        await chunkStream.CopyToAsync(output, ct);
-      }
-    }
-
-    // FINAL OUTPUT (force MP4 for best compatibility)
     var finalFileName = Path.ChangeExtension(fileName, ".mp4");
-    var finalFullPath = Path.Combine(_rootPath, "final", finalFileName);
+    var finalPath = Path.Combine(fileStorage.RootPath, "final", finalFileName);
 
-    await mediaConverterResolver
-      .Resolve(ConverterFormats.Mp4)
-      .Convert(finalFullPath, mergedPath, ct);
+    await mediaConverterResolver.Resolve(ConverterFormats.Mp4).Convert(finalPath, mergedPath, ct);
 
-    // Cleanup
-    File.Delete(mergedPath);
-    Directory.Delete(tempDir, true);
+    await fileStorage.DeleteAsync(mergedPath, ct);
+    await fileStorage.DeleteAsync(tempDir, ct);
 
-    // Return relative path (adjust if needed)
-    return Path.Combine("final", finalFileName);
+    return finalFileName;
   }
 }

@@ -62,7 +62,7 @@ public class ExamAttemptRecordingService(IChunkedUploadService upload, AppDbCont
     await upload.UploadChunkAsync(file, index, sessionId, ct);
   }
 
-  public async Task<string> FinalizeRecordingAsync(
+  public async Task FinalizeRecordingAsync(
     int attemptId,
     string sessionId,
     int total,
@@ -70,20 +70,20 @@ public class ExamAttemptRecordingService(IChunkedUploadService upload, AppDbCont
     CancellationToken ct
   )
   {
-    await GetValidAttempt(attemptId, ct);
+    var attempt = await GetValidAttempt(attemptId, ct);
 
     // Example domain rules
     // if (attempt.IsSubmitted)
     //   throw new InvalidOperationException("Attempt already submitted.");
 
-    var path = await upload.FinalizeAsync(sessionId, total, fileName, ct);
+    var finalFileName = await upload.FinalizeAsync(sessionId, total, fileName, ct);
 
     // Save recording reference
-    // attempt.RecordingPath = path;
+    attempt.RecordingFileName = finalFileName;
 
     await appDbContext.SaveChangesAsync(ct);
 
-    return path;
+    return finalFileName;
   }
 
   private async Task<ExamAttempt> GetValidAttempt(int attemptId, CancellationToken ct)

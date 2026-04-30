@@ -16,7 +16,7 @@ export class ExamAttemptRecordingViewComponent implements OnDestroy {
   private player: any;
   public readonly takeExamRecording = viewChild<ElementRef<HTMLVideoElement>>('player');
 
-  private playerEffect = effect(() => {
+  private readonly playerEffect = effect(() => {
     if (this.takeExamRecording() && this.recordingPreview()?.recordingUrl) {
       this.player = videojs(
         this.takeExamRecording()!.nativeElement,

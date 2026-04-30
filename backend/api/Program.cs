@@ -75,6 +75,7 @@ builder.Services.Configure<FormOptions>(options =>
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IMediaConverter, Mp4MediaConverter>();
+builder.Services.AddScoped<IChunkMerger, ChunkMerger>();
 builder.Services.AddScoped<IMediaConverterResolver, MediaConverterResolver>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IExamService, ExamService>();

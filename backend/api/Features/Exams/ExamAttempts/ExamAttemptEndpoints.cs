@@ -212,7 +212,7 @@ namespace api.Features.ExamAttempts
       CancellationToken ct
     )
     {
-      var path = await service.FinalizeRecordingAsync(
+      await service.FinalizeRecordingAsync(
         attemptId,
         dto.SessionId,
         dto.TotalChunks,
@@ -220,7 +220,7 @@ namespace api.Features.ExamAttempts
         ct
       );
 
-      return Results.Ok(new { path });
+      return Results.Ok();
     }
 
     static async Task<IResult> UploadChunkRecordings(
