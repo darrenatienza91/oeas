@@ -22,7 +22,7 @@ public interface IExamAttemptRecordingService
     CancellationToken ct
   );
 
-  Task<string> FinalizeRecordingAsync(
+  Task FinalizeRecordingAsync(
     int attemptId,
     string sessionId,
     int total,
@@ -83,7 +83,6 @@ public class ExamAttemptRecordingService(IChunkedUploadService upload, AppDbCont
 
     await appDbContext.SaveChangesAsync(ct);
 
-    return finalFileName;
   }
 
   private async Task<ExamAttempt> GetValidAttempt(int attemptId, CancellationToken ct)
